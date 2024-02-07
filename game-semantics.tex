@@ -1,0 +1,226 @@
+\newcommand{\invar}[1]{#1_{\mathrm{in}}}
+\newcommand{\outvar}[1]{#1_{\mathrm{out}}}
+
+\section{Game semantics}
+\label{sec:game-semantics}
+
+This section is devoted to the proof of Theorem~\ref{thm:single-use-closed}. To construct the function space $X \Rightarrow Y$, we use game semantics to identify a certain normal form of programs that compute single-use functions. Since the reader might not be familiar with game semantics, we begin with a simple version that will allow use to describe functions that do not use atoms. 
+
+While it is intuitively clear which functtions should be allowed as singele-use for simple types such as $\atoms \to 1+1$ or $\atoms \otimes \atoms \to \atoms + \atoms$, these intuitions start to falter when considering more complex types. For more complex types, it becomes more useful to give a more principled description of the intuition that pairs of type $X \otimes Y$ can be used on both coordinates, while pairs of type $X + Y$ can be used on a chosen coordinate only. To do this, we will describe a function as an interaction between two players.  This is where game semantics comes in. The first player is called System, and represents the function (we will identify with this player). The second player is called Environment; the role of this player is to supply inputs  and request outputs of the function. If a type $X \& Y$ appears in the input of the function, then it is the System who can choose the coordinate, while if the type appears in the output, then it is the Environment who makes the choice\footnote{In this paper, we consider functions of first-order types of the form $X \to Y$, where $X$ and $Y$ are linear types that do not use $\otimes$, and therefore there will be a clear distinction between input and output values.}.
+
+\begin{example} 
+    Consider the two types 
+    \begin{align*}
+        X \otimes (Y \& Z) 
+        \quad \text{and} \quad
+        (X \otimes Y) \& (X \otimes Z).
+    \end{align*}
+    We will explain why we can distribute in the direction $\rightarrow$, but not in the direction $\leftarrow$. To understand this, we try to describe the interaction in each direction as a game between System and Environment, and we will see that only the $\rightarrow$ will allow player System to distribute.
+
+    Let us first consider the interaction in the  direction $\rightarrow$. Player Environment begins be requesting an output. Since this output is of type $(X \otimes Y) \& (X \otimes Z)$, this means that Environment can chose to request either of the two types  $X \otimes Y$ and $X \otimes Z$. Suppose that Environment requests $X \otimes Y$. Now player System needs to react, and produce two elements: one of type $X$ and one of type $Y$. Both can be obtained from the input; for the second one player System can choose how to resulve the input $Y \& Z$ to get the appropriate value. 
+
+    Consider now the interaction in the opposite direction $\leftarrow$. As we will see, player System will be unable to react to the behaviour of player Environment, which will demonstrate that there is no distributivity in this direction. The problem is that player Envorionment can begin by requesting an element of type $X$. To produce this element, player System will need  choose one of the two coordinates in the input type $(X \otimes Y) \& (X \otimes Z)$, and any of these two  choices will be premature, since player Envorionment can then request the opposite choice in the output type. 
+\end{example}
+
+As explained in the above example, we will use a game to describe the possible behaviours of a function, as model as behaviours of player System. The game will be played in an arena, which will arise from the type of the function, and will tell us what are the possibilities for the moves of both players. The following definition is standard for game semantics, with one added feature being the register operations; these will be used to model the way in which atoms are passed from the input to output. 
+
+\begin{definition}[Arena] 
+    An arena consists of:
+    \begin{enumerate}
+        \item A set $M$ of \emph{moves}. To each move we associate two pieces of information: 
+\begin{enumerate}
+    \item an owner,  which is either System or Environment. 
+    \item a \emph{register operation}, which is either ``none'', ``read'', ``write'', or an atom $a \in \atoms$.
+\end{enumerate}
+        
+        \item A set of plays $P \subseteq M^*$, which is closed under prefixes, and such that in every play, the owner of the first move is Environment, and then the owners alternate.
+    \end{enumerate}
+\end{definition}
+In the above definition, the operations are a non-standard part of the arenas.  The idea is that the operations modify a memory store which has exactly one register, which contain a single atom or be empty.  A move that has an associated operation that is not ``none'' will be called an \emph{atom move}.
+
+
+
+
+\begin{definition}[Strategy]
+    A strategy for player System is a set of plays, which is closed under prefixes, and such that if the strategy contains a play $p$ that ends with a move of player System, then it also contains all possible plays in the arena that extend $p$ with one move of player Environment. Furthermore, every play in the strategy must satisfy the following condition: \begin{quote} {\bf Immediate read condition:}
+        if a move in the play is a write and owned by Environment, then either this is the last move in the play, or the successor move is a read.
+    \end{quote}
+\end{definition}
+
+We are now ready to outline the plan for the rest of this section. 
+\begin{enumerate}
+    \item for every two linear types $X$ and $Y$, we will define an appropriate arena for the type $X \to Y$;
+    \item the set of strategies of player System in this arena will be orbit-finite;
+    \item to each of strategy $\sigma$ of player System we will assign a single-use function $\sem \sigma : X \to Y$;
+    \item there will be enough strategies so that  every single-use function will arise from some strategy;
+    \item we will equip the set of strategies with the structure of a linear type, such that both evaluation and currying will be single-use functions.
+\end{enumerate}
+
+
+\subsection{The arena for a type}
+
+
+\begin{definition}[Basic arenas] \ 
+    \begin{enumerate}
+        \item     The arena for the type $1$ is empty: there are no moves and the only play is the empty sequence. 
+        \item The arena read has two moves: 
+        \begin{enumerate}
+            \item first player Environment plays a move with no register operation;
+            \item then player System plays a move with register operation ``read''.
+        \end{enumerate}
+        There is also a dual arena, called the atom write arena, in which the owners are swapped, and read is replaced by write.
+        Here is a picture of the two arenas:
+        \mypic{2}
+        \item The arena for the constant choice has two moves: 
+        \begin{enumerate}
+            \item first System chooses an atom $a \in \atoms$ and plays a move with register operation $a$;
+            \item then Environment plays move with register operation ``write''.
+        \end{enumerate}
+        Here is a picture of this arena:
+        \mypic{3}
+        \item The arena for equality testing has plays of length at most four:
+        \begin{enumerate}
+            \item first System plays a move with register operation ``read'';
+            \item then Environment plays a move with no register operation;
+            \item then System plays a move with register operation ``read'';
+            \item then Environment plays one of two moves, called $=$ and $\neq$, with no register operation.
+        \end{enumerate}
+        \mypic{4}
+    \end{enumerate}
+\end{definition}
+
+Define an \emph{isomorphism} between two arenas to be a bijection between their moves, which is consistent with the remaining structure: i.e.~the owners, the register operations, and the allowed plays. 
+
+\begin{fact}
+    The equality test arena $E$ is isomorphic to $E \otimes E$. 
+\end{fact}
+
+\begin{definition}[Compound arenas]
+    Let $X$ and $Y$ be arenas. 
+    \begin{enumerate}
+        \item The dual of an arena $X$ is the arena where the moves and plays are the same, except the owners are swapped, and the ``read'' and ``write'' register operations are swapped.
+        \item The arena $X + Y$ and $X \& Y$ are defined  as in the following picture:
+        \mypic{5}
+        A more formal definition is as follows. The moves in the arena $X + Y$ are the disjoint union of the moves of $X$ and $Y$, plus  three extra moves ?, !left, and !right that have no associated  register operations. The set of plays is:
+        \begin{align*}
+        \set{\varepsilon, ?}
+        \quad \cup \quad 
+        ?  !\text{left}\cdot \text{plays in $X$}
+        \quad  \cup \quad 
+        ?!\text{right} \cdot \text{plays in $Y$}
+        \end{align*}
+        An analogous definition is used for $X \& Y$, with the extra moves being ?left, ?right, !left, ?right and the set of plays being 
+        \begin{align*}
+        \set{\varepsilon, ?\text{left}, ?\text{right}}
+        \quad \cup \quad
+        ?\text{left} !\text{left} \cdot \text{plays in $X$}
+        \quad \cup \quad
+        ?\text{right} !\text{right} \cdot \text{plays in $Y$}.
+        \end{align*}
+        \item The arena $X \otimes Y$ is defined as follows. The moves are the disjoint union of the moves in both arenas, with inherited owners and register operations. A play is any sequence which projects to a play in $X$ if we only keep the moves from $X$, and which also projects to a play in $Y$ if we only keep the moves from $Y$.
+    \end{enumerate}
+\end{definition}
+
+
+Using the above rules, we can associate to each type an arena by induction on its structure. For the $\atoms$, we use the atomic read arena, for $1$ we use the empty arena, and for $+$, $\&$, and $\otimes$ we use the rules for compound arenas. Note that the only register operation used here will be the read operation. Similarly, each type has a dual arena, in which only the write operation is the only one that is used. We are finally ready to define the arena for a functional type, i.e.~a type of the form $X \to Y$.
+
+
+\begin{definition}[Arena for a type]
+    Let $X$ and $Y$ be types. 
+    Define the \emph{arena of $X \to Y$} to be the result of combining, using $\otimes$, the following four arenas: the equality test arean, the constant choice arena, the dual of the arena of $X$, and the arena of $Y$.
+\end{definition}
+
+
+
+
+
+
+Consider a play $p$ in the arena of type $X \to Y$. The corresponding play type is defined as follows.
+\begin{enumerate}
+    \item Suppose that $p$ is empty or it ends with a move of player Sytem, which means that the current choice belongs to player Environment. Let $p_1,\ldots,p_n$ be the plays in the arena that extend $p$ with a single move; this set is finite. Then the corresponding type  is 
+    \begin{align*}
+    \text{type of $p_1$} \& \cdots \& \text{type of $p_n$}.
+    \end{align*}
+\end{enumerate}
+
+We will now define for each strategy $\sigma$ for player System in the arena of $X \to Y$ we define a corresponding function of type  $\sem X \to \sem Y$. This function will be single-use, i.e.~it will be a morphism of type $X \to Y$ in the single-use category. Essentially, we are defining a functor from the category of strategies to the single-use category, except that we are not sure if strategies form a category, because we are not sure if composition of strategies is associative.
+
+
+\begin{lemma}
+    Let $X$ and $Y$ be two types. There is some $k$ with the following property. For every strategy $\sigma$ in the arena of $X \to Y$, there is another strategy in this arena, which defines the same function, and in which all plays use at most $k$ atom moves.
+\end{lemma}
+
+We now define a type $\funspace X Y$, which describes all strategies in 
+
+\subsection{Strategies as functions}
+
+\begin{lemma}
+    Let $X$ and $Y$ be linear types. To every strategy $\sigma$ in the arena for $X \to Y$  one can assign a single-use function of type $X \to Y$, called the \emph{function represented by $\sigma$}, so that every function is represented by at least one strategy.
+\end{lemma}
+
+
+
+\subsection{The set of strategies as a linear type}
+Call a strategy $k$-bounded if every play of this strategy uses at most $k$ register operations. Later in this section, we show that such strategies are suffiicent, i.e.~for every linear types $X$ and $Y$ there is some $k$ such that all single-use functions of type $X \to Y$ are represented by $k$-bounded strategies.  The rough idea is that once the number of register operations exceeds a certain threshold, then they become usesless, e.g.~constants are thrown away, or  compared with each other. The benefit of $k$-bounded strategies is that the corresponding game has bounded length, and therefore the space of all strategies can be described in a finite way, using a linear type. 
+
+
+\begin{lemma}\label{lem:linear-type-of-k-bounded-strategies}
+    Let $X$ and $Y$ be linear types, and let $k \in \set{0,1,\ldots}$. One can find: 
+    \begin{enumerate}
+        \item \label{it:k-bounded-type} a linear type, call it $X \Rightarrow_k Y$;
+        \item \label{it:k-bounded-bijection} a bijection of its underlying set with the set of $k$-bounded strategies in the arena for $X \to Y$;
+        \item \label{it:k-bounded-eval} a single-use function of type $X \otimes (X \Rightarrow_k Y) \to Y$;\end{enumerate}
+    such that for every $k$-bounded strategy $\sigma$, the following diagram commutes:
+    \[
+    \begin{tikzcd}[column sep=3.5cm]
+    X  
+    \ar[rr,"{x \mapsto x \otimes \text{(element corresponding to $\sigma$ via bijection in item~\ref{it:k-bounded-bijection}})}"]
+    \ar[dr,"{\text{function represented by $\sigma$}}"']
+    & & 
+    X \otimes (X \Rightarrow_k Y)
+    \ar[dl,"\text{function from item~\ref{it:k-bounded-eval}}"]
+    \\
+    & Y
+    \end{tikzcd}
+    \]    
+\end{lemma}
+
+
+
+\begin{lemma}\label{lem:bounded-k}
+    Let $X$ and $Y$ be linear types. There is some $k$ such that every single-use function of type $X \to Y$ is represented by some $k$-bounded strategy. 
+\end{lemma}
+
+Obeserve from the proof of the above lemma that the strategy optimization is itself single use. More formally, if $k$ is the bound from the lemma, and $\ell \ge k$, then function which maps an $\ell$-bounded strategy to a $k$-bounded strategy is single-use from type $X \Rightarrow_\ell Y$ to $X \Rightarrow_k Y$. This observation will be used in the following proof.
+
+\begin{proof}[Proof of Theorem~\ref{thm:single-use-closed}]
+    Consider two types $X$ and $Y$. Define $X \Rightarrow Y$ to be the type $X \Rightarrow_k Y$ from item~\ref{it:k-bounded-type} in Lemma~\ref{lem:linear-type-of-k-bounded-strategies}, with the bound $k$ arising from Lemma~\ref{lem:bounded-k}. Define the evaluation function 
+    \begin{align*}
+    \text{eval} : X \otimes (X \Rightarrow Y) \to Y 
+    \end{align*}
+    to be the evaluation function in item~\ref{it:k-bounded-eval} in Lemma~\ref{lem:linear-type-of-k-bounded-strategies}. We will now prove that this type admits currying. Consider then some single use function 
+    \begin{align*}
+    f : Z \otimes X \to Y.
+    \end{align*}
+    By Lemma~\ref{lem:bounded-k}, there is some $\ell$ such that $f$ is represented by some  $\ell$-bounded strategy $\sigma$ in the game of type $Z \otimes X \to Y$. For strategies, there is a straightforward notion of currying, which is single-use, as given in the following claim.
+
+    \begin{claim}
+        Let $X$, $Y$, and $Z$ be linear types, and let $\ell \in \set{0,1,\ldots}$. For every $\ell$-bounded strategy $\sigma$ in the game  of type $Z \otimes X \to Y$  there is a single-use function $\Lambda : Z \to (X \Rightarrow_\ell Y)$, such that the following diagram commutes:
+        \[
+        \begin{tikzcd}
+            [column sep=3.5cm]
+        X
+        \ar[r, "{x \mapsto z \otimes x}"]
+        \ar[dr, "\text{strategy represented by $\Lambda(z)$}"']
+        &
+        Z \otimes X 
+        \ar[d, "{\text{strategy represented by $\sigma$}}"] \\
+        &
+        Y
+        \end{tikzcd}
+        \]
+        \end{claim}
+        The currying operation from the above claim gives us almost the currying that is required in Theorem~\ref{thm:single-use-closed}. The only issue is that the output is in $X \Rightarrow_\ell Y$, where the number $\ell$ depends also on the extra set $Z$, instead of $X \Rightarrow_k Y$. To fix this, we post-compose it with the single-use function from $X \Rightarrow_\ell Y$ to $X \Rightarrow_k Y$  that was described in the remarks after Lemma~\ref{lem:bounded-k}. 
+    
+
+\end{proof}

@@ -1,0 +1,106 @@
+\documentclass[a4paper,UKenglish,cleveref, autoref, thm-restate,anonymous]{lipics-v2021}
+
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{proof}
+\usepackage{graphicx}
+\usepackage{xspace}
+\usepackage{color} 
+\usepackage[all]{xy}
+\usepackage{tikz-cd}
+\usepackage{hyperref}
+\usepackage{mathtools}
+\usepackage{macros}
+\usepackage{MnSymbol}
+\usepackage[shortlabels]{enumitem}
+\usepackage{li
+bertine}
+\usepackage{booktabs}
+
+\bibliographystyle{plainurl}% the mandatory bibstyle
+
+
+
+
+\title{Function spaces for orbit-finite sets} %TODO Please add
+
+
+
+\author{Miko{\l}aj Boja\'nczyk}{University of Warsaw}{bojan@mimuw.edu.pl}{https://orcid.org/0000-0002-1825-0097}{(Optional) author-specific funding acknowledgements}
+
+\author{L{\^{e}} Th{\`{a}}nh Dung Nguy{\^{e}}n}{ENS Lyon}{nltd@nguyentito.eu}{https://orcid.org/0000-0002-1825-0097}{(Optional) author-specific funding acknowledgements}
+
+
+\author{Rafa{\l} Stefa\'nski}{University of Warsaw}{rafal.stefanski@mimuw.edu.pl}{https://orcid.org/0000-0002-1825-0097}{(Optional) author-specific funding acknowledgements}
+
+
+
+\authorrunning{M. Boja\'nczyk, L. T. D. Nguy{\^{e}}n and R. Stefa\'nski } %TODO mandatory. First: Use abbreviated first/middle names. Second (only in severe cases): Use first author plus 'et al.'
+
+\Copyright{Miko{\l}aj Boja\'nczyk, L{\^{e}} Th{\`{a}}nh Dung Nguy{\^{e}}n and Rafa{\l} Stefa\'nski } %TODO mandatory, please use full first names. LIPIcs license is "CC-BY";  http://creativecommons.org/licenses/by/3.0/
+
+\ccsdesc[100]{\textcolor{red}{Replace ccsdesc macro with valid one}} %TODO mandatory: Please choose ACM 2012 classifications from https://dl.acm.org/ccs/ccs_flat.cfm 
+
+\keywords{Dummy keyword} %TODO mandatory; please add comma-separated list of keywords
+
+\category{} %optional, e.g. invited paper
+
+\relatedversion{} %optional, e.g. full version hosted on arXiv, HAL, or other respository/website
+%\relatedversiondetails[linktext={opt. text shown instead of the URL}, cite=DBLP:books/mk/GrayR93]{Classification (e.g. Full Version, Extended Version, Previous Version}{URL to related version} %linktext and cite are optional
+
+%\supplement{}%optional, e.g. related research data, source code, ... hosted on a repository like zenodo, figshare, GitHub, ...
+%\supplementdetails[linktext={opt. text shown instead of the URL}, cite=DBLP:books/mk/GrayR93, subcategory={Description, Subcategory}, swhid={Software Heritage Identifier}]{General Classification (e.g. Software, Dataset, Model, ...)}{URL to related version} %linktext, cite, and subcategory are optional
+
+%\funding{(Optional) general funding statement \dots}%optional, to capture a funding statement, which applies to all authors. Please enter author specific funding statements as fifth argument of the \author macro.
+
+\acknowledgements{I want to thank \dots}%optional
+
+%\nolinenumbers %uncomment to disable line numbering
+
+
+
+%Editor-only macros:: begin (do not touch as author)%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\EventEditors{John Q. Open and Joan R. Access}
+\EventNoEds{2}
+\EventLongTitle{42nd Conference on Very Important Topics (CVIT 2016)}
+\EventShortTitle{CVIT 2016}
+\EventAcronym{CVIT}
+\EventYear{2016}
+\EventDate{December 24--27, 2016}
+\EventLocation{Little Whinging, United Kingdom}
+\EventLogo{}
+\SeriesVolume{42}
+\ArticleNo{23}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\begin{document}
+
+
+\newcommand{\loli}{\multimap}
+
+
+\maketitle 
+\begin{abstract}
+    Orbit-finite sets are a generalisation of finite sets, and as such support many operations allowed for finite sets, such as pairing, quotienting, or taking subsets. However, they do not support function spaces, i.e.~if $X$ and $Y$ are orbit-finite sets, then the space of finitely supported functions from $X$ to $Y$ is not orbit-finite. In this paper we propose two solutions to this problem: one is obtained by generalising the notion of orbit-finite set, and the other one is obtained by restricting it. In both cases, function spaces and the original closure properties are retained. Curiously, both solutions are ``linear'': the generalisation is based on linear algebra, while the restriction is based on linear logic.
+\end{abstract}
+
+\input{introduction}
+\input{sets-with-atoms}
+\input{vector}
+\input{single-use}
+% \input{programs}
+
+
+
+\input{game-semantics}
+\input{two-way-automata}
+
+
+
+\bibliography{bib}
+
+
+
+\end{document}

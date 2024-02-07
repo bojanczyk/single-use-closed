@@ -1,0 +1,235 @@
+\section{Single-use sets}
+\label{sec:single-use-sets}
+We now turn to our second solution for the problem of orbit-finite function spaces.  The general idea is that we only allow single-use functions. 
+
+\begin{example}\label{ex:first-single-use-function-space}
+    Let us describe the single-use functions of type $\atoms \to 1 + 1$. (We think of the output type as being the Booleans.) Being single-use means that such a function is constrained to using its argument only once, i.e.~the input can be tested for equality with at most one possible constant. For example, testing if the input atom is equal to John is allowed, but it is not allowed to test if it is equal to either John or Mark.  If the atom constant that we compare to is John, then there are four possibilities for the function:  aleays return true, always return false, check for equality with Mark, and check for disequality with Mark. Since John could be any atom,  the set of single-use functions of type $\atoms \to 1+1$ admits an equivariant bijection with the set 
+    \begin{align}\label{eq:bad-solution-for-function-space}
+        1 + 1 + \atoms + \atoms.
+    \end{align}
+This set is orbit-finite.  In contrast, the full space of finitely suported functions  of type $\atoms \to 1 + 1$ is not orbit-finite, because the input could be compared to any finite number of constants.
+\end{example}
+
+
+The original idea behind this section comes from~\cite[Section 3]{stefansk-msc}, where it was shown that orbit-finite monoids have exactly the same expressive power as deterministic automata in which the transition function is single-use.  The results from~\cite{stefansk-msc} and their extensions from~\cite{bojanczykstefanski2020} were oriented toward automata theory, and did not try to address the more general question: what is a single-use set/function in general, not necessarily in the context of automata?  This more general question was partially addressed in~\cite[Section 2.2]{stefanski-phd}, which contained the following proposal. As the sets we take polynomial orbit-finite sets, i.e.~those that can be constructed from the basic sets $1$ and $\atoms$ using products $\times$ and co-products $+$. As the functions, we take the single-use functions; these are defined in a syntactic way by giving certain prime functions (such as projection or distributivity of $+$ over $\times$) and combinators that combine existing single-use functions to create new ones (such as function composition). The point of the proposal is that the resulting function space is orbit-finite. 
+
+
+Unfortunately, the proposal from~\cite{stefanski-phd} does not constitute a satisfactory solution to the problem of function spaces. The issue is that although the function space  is orbit-finite, the operations on it are not single-use. More specifically, evaluation is single-use, but currying is not single-use. In other words, taking the function spaces takes us out of the category, i.e.~the category is not closed.
+
+
+\begin{example}
+    Consider  the single-use function
+    \begin{align*}
+    f : \atoms \times \atoms \to 1 + 1 \qquad (a,b)  
+    \mapsto \begin{cases}
+        \text{result of test $a = $ Mark} & \text{if } b = \text{Eve} \\
+        \text{result of test $a = $ John} & \text{otherwise}.
+        \end{cases}
+    \end{align*}
+The currying of this function, is a new function which  maps a first argument $a \in \atoms$ to the partially applied function $f(a,\_)$. This currying is
+\begin{align*}
+    a \mapsto \begin{cases}
+        b \mapsto b = \text{Eve} & \text{if } a = \text{Mark} \\
+        b \mapsto b \neq \text{Eve} & \text{if } a = \text{John} \\
+        b \mapsto \text{false} & \text{otherwise}
+        \end{cases}
+\end{align*}
+If we use the representation from~\eqref{eq:bad-solution-for-function-space} to represent the partially applied functions in type $\atoms \to 1+1$, then the currying above  is not single-use, because we need to compare the input atom $a$ to two constants, Mark and John. 
+\end{example}
+
+To solve the issue from the above example, we will  extend the category using a more refined type system, in which we distinguish two different kinds of products, called $\&$ and $\otimes$, as in linear logic. For the  benefit of the impatient reader,   the appropriate type for the function space $\atoms \Rightarrow 1+1$ will turn out to be 
+\begin{align*}
+1 + 1 + \atoms \otimes ((1+1) \& (1+1)).
+\end{align*}
+
+\subsection{The types}
+As mentioned above, to solve the problems with single-use function spaces, we will consider a type system with two kinds of products, as in the following definitoin.
+\begin{definition}[Linear types]\label{def:datatypes}
+    A \emph{linear type} is any expression constructed from the atomic types $1$ and $\atoms$ using the binary type constructors $+, \&$ and $\otimes$. 
+\end{definition}
+In our linear types, it is only the products that are differentiated, while  $+$ comes in only one version\footnote{Thinking of $\otimes$ and $\&$ as being related is perhaps not entirely orthodox for linear logic, where $\&$ corresponds via duality to $+$. In linear logic, there is also a type constructor $\rotatebox[origin=c]{180}{\&}$ that is dual to $\otimes$, but we do not use it here.}.
+    Here is the intuitive explanation of the difference between the two kinds of products, following Girard~\cite[p.2]{girard1995advances}. Having a pair $x \otimes y$ is like having the ability of using both components $x$ and $y$. On the other hand, having a pair $x \& y$ is like having the ability to use one of the two components, at our choice, but not both at once. For example, the input type of the equality test will be $\atoms \otimes \atoms$ and $\atoms \& \atoms$, since the test will need to consume both arguments. This intuition can only go so far; for example it is not entirely clear what ``our choice'' means. We will revisit this intuition in Section~\ref{sec:game-semantics}, where game semantics will be used to indicate who makes which choices. 
+
+
+
+We think of each linear type $X$ as representing an orbit-finite set $\sem X$, as defined below:
+\begin{align*}
+    \sem{1} = 1
+\quad 
+\sem{\atoms} = \atoms 
+\quad 
+\sem{X+Y} = \sem X + \sem Y 
+\quad 
+\sem{X \otimes Y} = \sem X \times \sem Y 
+\quad
+\sem{X \& Y} = \sem X \times \sem Y.
+\end{align*}
+Note that the two kinds of product represent the same set.
+However, the two type constructors will be  different, because different functions will be allowed to operate on them. As the expression goes, ``the proof of the pudding is in the eating''; in this case the pudding is the types and the eating is the functions.  
+
+
+
+\subsection{Single-use functions}
+\label{sec:single-use-functions}
+
+For linear types $X$ and $Y$, the single-use functions of type $X \to Y$  will be defined as a certain subset of the finitely supported functions of type $\sem X \to \sem Y$. As in~\cite{stefanski-phd}, we define this subset  in terms of certain prime and combinators. Two alternative approaches would be: $\lambda$-calculus (we do not pursue this direction) or game semantics (see Section~\ref{sec:game-semantics}).
+
+For the prime functions, we use some standard single-use operations known from linear logic, which are listed in Figure~\ref{fig:prime-morphisms}, and include operations such as projection or various kinds of distributivity. On top of that, to handle the atoms,  we allow an equality test of type $\atoms \otimes \atoms \to 1 + 1$, which tells us if the two input atoms are equal, and for every atom $a \in \atoms$ we have a constant function of type $1 \to \atoms$.
+% \begin{align}\label{eq:eq-test}
+% \text{eq} : \sem{\atoms \otimes \atoms} \to \sem{1+1},
+% \end{align}
+% which returns the left copy of $1$ for equal inputs and the right copy for non-equal inputs,
+% and a constant function
+% \begin{align}\label{eq:const-functions}
+% \text{const}_a : \sem 1 \to \sem \atoms
+% \end{align}
+% for every atom $a \in \atoms$. 
+
+The prime functions can then be put together using combinators. The main combinator is function composition; this will ensure that the single-use functions form a category. The remaining combinators are functoriality of the three type constructors $+$, $\otimes$ and $\&$. More specifically, the combinator for $\otimes$ works as follows. It takes two single-use functions, $f_1$ and $f_2$, with types $X_1 \to Y_1$ and $X_2 \to Y_2$ respectively, and returns a new function $f_1 \otimes f_2$ of type $X_1 \otimes X_2 \to Y_1 \otimes Y_2$, which is defined in the natural way: $x_1 \otimes x_2 \mapsto f_1(x_1) \otimes f_2(x_2)$.  The combinators for $+$ and $\&$ are defined in an analagous way. This completes the definition of the single-use functions, which is  summarised below.
+
+
+\begin{figure}
+    \begin{align*}
+    \begin{array}{llll}
+        \text{Name} & \text{Type} & \text{Definition} \\
+        \hline
+        \addlinespace
+        \text{identity} &  X \to X  & x \mapsto x\\
+    \addlinespace
+    \text{diagonal} &  X \to X \& X  & x \mapsto x \& x\\
+    \addlinespace
+    \text{swap} &  X \otimes Y \to Y \otimes X  & x \otimes y \mapsto y \otimes x\\
+    \addlinespace
+    \text{inl} &  X \to X + Y  & x \mapsto \text{left}(x)\\
+    \addlinespace
+    \text{inr} &  Y \to X + Y  & y \mapsto \text{right}(y)\\
+    \addlinespace
+    \text{proj}_1 &  X \otimes Y \to X & x \otimes y \mapsto x\\
+    \addlinespace
+    \text{proj}_2 &  X \otimes Y \to Y & x \otimes y \mapsto y \\
+    \addlinespace
+    \text{add 1} &  X  \to X \otimes 1 & x  \mapsto x \otimes 1 \\
+    \end{array}
+    \end{align*}
+    \caption{\label{fig:prime-morphisms} The above table shows an infinite family of morphisms, which is indexed by  types $X,Y,Z$.}
+\end{figure}
+
+
+   
+
+
+\begin{definition}[Single-use functions] The class of single-use functions is the least class of functions with the following properties:
+        \begin{enumerate}
+            \item It contains the functions from Figure~\ref{fig:prime-morphisms}, all constant functions\footnote{By this we mean one constant function $1 \to \atoms$ for every atom. Using these constant functions, and the remaining functions and combinators in the system, one can derive every constant function $1 \to X$ for every type $X$.}, and the equality test $\atoms \otimes \atoms \to 1+1$.
+            \item It is closed under composition, as well as under combining functions using  $+$, $\otimes$ and $\&$. 
+        \end{enumerate}
+\end{definition}
+
+By definition, for every types $X$ and $Y$, every single-use function of type $X \to Y$ is a certain function from set $\sem X$ to the set $\sem Y$. One can easily see that this function is  finitely supported, since the prime functions are finitely supported and the combinators preserve this property.  Therefore, one can think of the single-use functions of type $X \to Y$ as being a subset of the set of all finitely supported functions from $\sem X$ to $\sem Y$. This subset is strict: as we will see, the space of single-use functions will be orbit-finite, unlike the space of all finitely supported functions. If we think of the single-use functions as a category, as we will be, then this category admits a faithful functor to the category of polynomial orbit-finite sets with finitely suported functions as morphisms.
+
+
+\begin{example}[A single-use function]\label{ex:six-compositions}
+    Consider the function 
+    \begin{align*}
+    \sem{\atoms \otimes \atoms \otimes \atoms} \to \sem \atoms  \qquad a \otimes b \otimes c \mapsto \begin{cases}
+        b & \text{if } a = \text{Mark} \\
+        c & \text{otherwise}.
+    \end{cases}
+    \end{align*}
+    This is a single-use function. It is obtained by composing the six functions listed below:
+
+\begin{center}
+    \begin{tabular}{ll}
+        Function & Type after function \\
+        \hline
+        Add a copy of $1$ using $\text{add 1}$. & $1 \otimes \atoms \otimes \atoms \otimes \atoms$ \\
+        Replace added $1$ with Mark using the constant function. & $\atoms \otimes \atoms \otimes \atoms \otimes \atoms$ \\
+        Apply the equality test to the first two components. & $(1+1) \otimes \atoms \otimes \atoms$ \\
+        Distribute. & $1 \otimes \atoms \otimes \atoms +  1 \otimes \atoms \otimes \atoms$ \\
+        Project to second and third components, respectively. & $\atoms + \atoms$ \\
+        Co-diagonal & $\atoms$ 
+    \end{tabular}
+\end{center}
+To justify this description, one should also show that the six functions are single-use. The distribute and co-diagonal are prime functions. The other four are obtained by combining prime functions using the combinators. For example, the equality test is paired, using the combinator for $\otimes$, with the identity on the remaining two atoms. 
+\end{example}
+
+% As this example shows, the definition of single-use functions in terms of prime functions and combinators can be a bit cumbersome from the point of view of a programmer. Also, 
+
+Since the single-use functions are closed under composition by definition, one can think of them as being a category. 
+
+
+\begin{definition}[Category of single-use sets]\label{def:single-use-category}
+    The category of single-use sets is:
+    \begin{enumerate}
+        \item The objects are types, as per Definition~\ref{def:datatypes}.
+        \item Morphisms between types $X$ and $Y$ are a single-use functions of type $\sem X \to \sem Y$.
+    \end{enumerate}
+\end{definition}
+
+% We use the name \emph{single-use morphisms} for morphisms of the above category. A single-use morphism is the same as a single-use function, together with the information about the types between which it is a morphism. For example, the idenitity function on $\sem{\atoms \& \atoms}$ is the same as the identity function on $\sem{\atoms \otimes \atoms}$, because the two underlying sets are the same, but the corresponding morphisms are different. 
+% From now on, instead of talking about single-use functions of type $\sem X \to \sem Y$, we will speak about single-use morphisms of type $X \to Y$.
+
+
+
+ 
+The main technical result of this paper is that the category of single-use sets has function spaces, as stated in the following theorem.  The appropriate product will be $\otimes$, and not $\&$. Since the Cartesian product in our category will be $\&$ and not $\otimes$, this means that the result we are targetting is symmetric monoidal closed with respect to $\otimes$, and not Cartesian closed. (The same situation happend for vector spaces.)  Our theorem stops a bit short of saying that the category is monoidal closed, since several different elements of the function space might represent the same function. This non-uniqueness of representation can be overcome  by quotienting the function space  by an equivalence relation that identifies two elements if they represent the same single-use function; this idea will be developed  in Section~\ref{sec:quotient-category}. For now, we stick with non-uniqueness of representation, and we state the theorem as follows.
+
+\begin{theorem}\label{thm:single-use-closed}
+    Let $V$ and $W$ be types. There exists a type, denoted by  $\funspace V W$, and a single-use function 
+    \begin{align*}
+    eval : (\funspace V W) \otimes V \to  W
+    \end{align*}
+    with the following property. For every single-use function
+    \begin{align*}
+    f : {X \otimes V} \to  W
+    \end{align*}
+    there is a (not necessarily unique) single-use function 
+    \begin{align*}
+    h :  X \to (\funspace V W)
+    \end{align*}
+    such that the following diagram commutes in the category of single-use sets:
+    \[
+    \begin{tikzcd}
+    X \otimes V 
+    \arrow[r,"h \otimes id"]
+    \arrow[dr,"f"']
+    &
+    (\funspace V W) \otimes V
+    \arrow[d,"eval"] \\
+    &
+    W
+    \end{tikzcd}
+    \]
+\end{theorem}
+
+The above theorem is the main technical contribution of this paper, and its proof is presented in Section~\ref{sec:game-semantics}. The difficulty in the proof is finding a representation of functions which is rich enough to capture all functions, but simple enough to be described by a finite type (in particular, the corresponding set will be orbit-finite). The main problem is with compositions, i.e.~a function of type $X \to Y$ could be defined as a composition of two functions of types $X \to Z$ and $Z \to Y$. In principle, the intermediate type $Z$ could  be very large, and the number of such compositions could also be large. (Recall that in Example~\ref{ex:six-compositions}, we needed to compose six functions to get a relatively straightforward operation.) Our solution is to use game semantics. We describe single-use functions using strategies in certain games. One can think of these strategies as describing single-use programs in a certain normal form; this normal form will be restricted enough to ensure that the function space can be described using a type, in particular it will be orbit-finite. 
+
+
+
+
+
+
+
+
+\subsection{The quotient category}
+\label{sec:quotient-category}
+A drawback of Theorem~\ref{thm:single-use-closed} is that the function space $\funspace V W$ can contain several different representations of the same function; this will mean that Currying is not unique. To overcome this issue, we use a simple quotient constrution. 
+% Define a \emph{partial equivalence relation} to be an relation that is symmetric and transitive, but not necessarily reflexive.  This is the same as (complete) equivalence relation on some subset. We will use a partial equivalence on the function space $X \Rightarrow Y$ to: (1)
+%  remove objects that do not represent any function; (2) identify two objects if they represent the same function. After such a quotient, the function space will have unique representations for functions. 
+
+
+
+
+\begin{definition}
+    The \emph{quotiented single-use category} is: 
+    \begin{itemize}
+    \item Objects are pairs consisting of a type $X$ and an equivariant  equivalence relation $\sim$ on $\sem X$.
+    \item Morphisms between objects $(X,\sim_X)$ and $(Y,\sim_Y)$ are single-use functions of type $X \to Y$  which respect the equivalences, i.e.~equivalent inputs are mapped to equivalent outputs.
+    \end{itemize}
+\end{definition}
+
+The quotiented single-use category is also equipped with a tensor product $\otimes$ on its objects.
+\begin{theorem}
+    The quotiented single-use category, equipped with the tensor product $\otimes$, is a monoidal closed category, i.e.~it satisfies the conclusions of Theorem~\ref{thm:single-use-closed}, but futhermore the morphism $h$ is unique.
+\end{theorem}
+
