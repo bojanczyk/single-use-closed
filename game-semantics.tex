@@ -8,9 +8,9 @@ This section is devoted to the proof of Theorem~\ref{thm:single-use-closed}. To 
 
 Let us begin with a brief motivation for why game semantics will be useful.
 
-While it is intuitively clear which functtions should be allowed as singele-use for simple types such as $\atoms \to 1+1$ or $\atoms \otimes \atoms \to \atoms + \atoms$, these intuitions start to falter when considering more complex types. After a certain point, it becomes more useful to give a more principled description of the intuition that pairs of type $X \otimes Y$ can be used on both coordinates, while pairs of type $X + Y$ can be used on a chosen coordinate only. The idea behind game semantics is to give the description in terms of an interaction between two players.  The two players are:
+While it is intuitively clear which functions should be allowed as single-use for simple types such as $\atoms \to 1+1$ or $\atoms \otimes \atoms \to \atoms + \atoms$, these intuitions start to falter when considering more complex types. After a certain point, it becomes more useful to give a more principled description of the intuition that pairs of type $X \otimes Y$ can be used on both coordinates, while pairs of type $X + Y$ can be used on a chosen coordinate only. The idea behind game semantics is to give the description in terms of an interaction between two players.  The two players are:
 \begin{enumerate}
-    \item System, whe represents the function (we will identify with this player); and
+    \item System, represents the function (we will identify with this player); and
     \item Environment, who supplies inputs and requests outputs of the function.
 \end{enumerate}
 One of the intuitions behind the setup is that if a type $X \& Y$ appears in the input of the function, then it is the System who can choose the coordinate, while if the type appears in the output, then it is the Environment who makes the choice. (In this paper, we consider functions of first-order types of the form $X \to Y$, where $X$ and $Y$ are linear types that do not use $\otimes$, and therefore there will be a clear distinction between input and output values.)
@@ -25,17 +25,17 @@ Before giving a formal definition of game semantics, we give simple example of t
     \end{align*}
     We will explain why we can distribute in the direction $\rightarrow$, but not in the direction $\leftarrow$. 
 
-    Let us first consider the interaction in the  direction $\rightarrow$. Player Environment begins be requesting an output. Since this output is of type $(X \otimes Y) \& (X \otimes Z)$, this means that Environment can chose to request either of the two types  $X \otimes Y$ and $X \otimes Z$. Suppose that Environment requests $X \otimes Y$. Now player System needs to react, and produce two elements: one of type $X$ and one of type $Y$. Both can be obtained from the input; for the second one player System can choose how to resulve the input $Y \& Z$ to get the appropriate value. 
+    Let us first consider the interaction in the  direction $\rightarrow$. Player Environment begins be requesting an output. Since this output is of type $(X \otimes Y) \& (X \otimes Z)$, this means that Environment can choose to request either of the two types  $X \otimes Y$ and $X \otimes Z$. Suppose that Environment requests $X \otimes Y$. Now player System needs to react, and produce two elements: one of type $X$ and one of type $Y$. Both can be obtained from the input; for the second one player System can choose how to resolve the input $Y \& Z$ to get the appropriate value. 
 
-    Consider now the interaction in the opposite direction $\leftarrow$. As we will see, player System will be unable to react to the behaviour of player Environment, which will demonstrate that there is no distributivity in this direction. The problem is that player Envorionment can begin by requesting an element of type $X$, since the output type is $X \otimes (Y \& Z)$, while still reserving the possibility to request $Y \& Z$ in the future (because the tensor product $\otimes$ means that both output values need to be produced). To produce this element, player System will need  choose one of the two coordinates in the input type $(X \otimes Y) \& (X \otimes Z)$, and any of these two  choices will be premature, since player Envorionment can then request the opposite choice in the output type.  \exampleend
+    Consider now the interaction in the opposite direction $\leftarrow$. As we will see, player System will be unable to react to the behavior of player Environment, which will demonstrate that there is no distributivity in this direction. The problem is that player Environment can begin by requesting an element of type $X$, since the output type is $X \otimes (Y \& Z)$, while still reserving the possibility to request $Y \& Z$ in the future (because the tensor product $\otimes$ means that both output values need to be produced). To produce this element, player System will need  choose one of the two coordinates in the input type $(X \otimes Y) \& (X \otimes Z)$, and any of these two  choices will be premature, since player Environment can then request the opposite choice in the output type.  \exampleend
 \end{example}
 
-As explained in the above example, we will use a game to describe the possible behaviours of a function, as model as behaviours of player System. The game will be played in an arena, which will arise from the type of the function, and will tell us what are the possibilities for the moves of both players. 
+As explained in the above example, we will use a game to describe the possible behaviors of a function, as model as behaviors of player System. The game will be played in an arena, which will arise from the type of the function, and will tell us what are the possibilities for the moves of both players. 
 
 We are now ready to outline the plan for the rest of this section. 
 \begin{enumerate}
     \item For every two linear types $X$ and $Y$, we  define an arena, which is a data structure that describes all possible interactions between players Environment and System that can arise in single-use  functions of type $X \to Y$;
-    \item In each arena, we will be interested in the strategies of player System, i.e.~the ways in which System reacts to moves of Envorionment. We show how such strategies can be interpreted as single-use functions: to each strategy we will assign a single-use function of type $X \to Y$ that is represented by this strategy. 
+    \item In each arena, we will be interested in the strategies of player System, i.e.~the ways in which System reacts to moves of Environment. We show how such strategies can be interpreted as single-use functions: to each strategy we will assign a single-use function of type $X \to Y$ that is represented by this strategy. 
     \item We show that the  set of strategies in an arena is  large enough to represent all single-use functions, but small enough to be orbit-finite. 
     \item We then strengthen this: not only is the set of strategies orbit-finite, but it can be equipped with the structure of a linear type, such that both evaluation and currying will be single-use functions.
 \end{enumerate}
@@ -45,7 +45,7 @@ The arenas from the first step in the plan will also be defined gradually. We be
 \subsection{Arenas and strategies without constants and equality tests}
 \label{sec:arenas-without-constants-and-equality-tests}
 
-We begin with a simpler version of the game semantics, in which the arenas and strategies will describe functions that are not allowed to peform equality tests, and are not allowed to use constants. These strategies will model functions such as the identity function $\atoms \to \atoms$, but will not model the equality test $\atoms \otimes \atoms \to 1 + 1$, or the constant functions of type $1 \to \atoms$. The general idea is to use standard game semantics for linear logic, with an extra feature that we call \emph{register operations}. The register operations will be used to model the way in which atoms are passed from the input to output. For example, in the identity function,  Envrionment will  write the input atom into the register, and then player System will read the output atom from that register. 
+We begin with a simpler version of the game semantics, in which the arenas and strategies will describe functions that are not allowed to perform equality tests, and are not allowed to use constants. These strategies will model functions such as the identity function $\atoms \to \atoms$, but will not model the equality test $\atoms \otimes \atoms \to 1 + 1$, or the constant functions of type $1 \to \atoms$. The general idea is to use standard game semantics for linear logic, with an extra feature that we call \emph{register operations}. The register operations will be used to model the way in which atoms are passed from the input to output. For example, in the identity function,  Environment will  write the input atom into the register, and then player System will read the output atom from that register. 
 
 \begin{definition}[Arena] 
     An \emph{arena} consists of:
@@ -69,11 +69,14 @@ An arena will correspond to a type. The objects of that type, which will be  fun
         \item is closed under prefixes;
         \item if the strategy contains a play $p$ that ends with a move owned by player System, then it also contains all possible plays  in the arena that extend $p$ with one move of player Environment;
         \item if the strategy contains a play $p$ that ends with a move owned by player Environment, then it contains exactly one play  in the arena that extends $p$ with one move of player System;
-        \item every ``read'' move is directly preceded by a ``write'' move (in particular a play cannot begin with ``read''), and every ``write'' move is either the last move, or directly succeedd by a ``read'' move.
+        \item every ``read'' move is directly preceded by a ``write'' move (in particular a play cannot begin with ``read''), and every ``write'' move is either the last move, or directly succeeded by a ``read'' move;
+        \item there is some $k$ such that all plays in the strategy have length at most $k$.
     \end{enumerate}
 \end{definition}
 
-We use the name \emph{immediate read condition} for the last condition in the above defition. This condition does not appear in the usual arenas from game semantics, since they do not have register operations. It ensures that there is matching between ``read'' and ``write'' moves in plays that do not end with write. Since ``write'' will always be owned by Environment, the immediate read condition will ensure a matching between ``write'' and ``read'' moves in the plays that do not end with a move by player Environment, and such plays will be the most important ones. 
+The last condition will be appropriate in our context, since intuitively speaking our types are ``finite'', and there will be no need for unbounded computations.
+
+We use the name \emph{immediate read condition} for the fourth condition in the above definition. This condition does not appear in the usual arenas from game semantics, since they do not have register operations. It ensures that there is matching between ``read'' and ``write'' moves in plays that do not end with write. Since ``write'' will always be owned by Environment, the immediate read condition will ensure a matching between ``write'' and ``read'' moves in the plays that do not end with a move by player Environment, and such plays will be the most important ones. 
 
 We will now show how to associate to each linear type a corresponding arena, and also how to associate an arena to a function type $X \to Y$. This definition will be compositional, i.e.~it will arise through operations on arenas that correspond to the type constructors such as $1$ or $\otimes$. The arenas that we will construct so far will not be our final proposal, since corresponding strategies will not be able to use constants or perform equality tests. This will be fixed in Section~\ref{sec:arenas-with-constants-and-equality-tests}, where a more complex arena will be defined for function types. Before giving formal definition, we begin with a simple example of the arena for the type $\atoms \to \atoms$.
 \begin{example}\label{ex:identity-function-without-equality-tests-and-constants}
@@ -81,7 +84,7 @@ We will now show how to associate to each linear type a corresponding arena, and
 
     The arena is shown in the following picture: 
     \mypic{6}
-    The methodology of drawing this picture will be come clearer later on, as we define operations on arenas such as $\otimes$. For the moment we describe the arena without caring that it arises as a special case of some general construction. The arena has four moves: 
+    The methodology of drawing this picture will become clearer later on, as we define operations on arenas such as $\otimes$. For the moment we describe the arena without caring that it arises as a special case of some general construction. The arena has four moves: 
     \begin{center}
         \begin{tabular}{lll}
          move & owner & register operation \\
@@ -92,12 +95,12 @@ We will now show how to associate to each linear type a corresponding arena, and
             grant output & System & read 
         \end{tabular}    
     \end{center}
-    The set of plays is defined as follows. These are all sequences that begin with a move of player Environment, alternatve between players, use each move only once, and have the following condition:  ``grant output'' can only be played after ``request output'', and likewise for ``grant input'' and ``request input''.  
+    The set of plays is defined as follows. These are all sequences that begin with a move of player Environment, alternative between players, use each move only once, and have the following condition:  ``grant output'' can only be played after ``request output'', and likewise for ``grant input'' and ``request input''.  
 
-    A quick inspection of the above definition reveals that the arena has a unique maximal play, where the moves are played in the order from the table, and all other plays are prefixes of this maximal play. Because of the uniqueness of responses, the set of plays is also a strategy. As mentioned at the beginning of this exaple, the strategy describes the identity function.  \exampleend
+    A quick inspection of the above definition reveals that the arena has a unique maximal play, where the moves are played in the order from the table, and all other plays are prefixes of this maximal play. Because of the uniqueness of responses, the set of plays is also a strategy. As mentioned at the beginning of this example, the strategy describes the identity function.  \exampleend
 \end{example}
 
-We hope that the above example explains some of the intuitions about how arenas describe types and strategies describe functions. We now give a formal definition of arenas. This definition is compositional: we define arenas for the basic types $1$ and $\atoms$, and then we define operations on arenas that correspond to the type constructors  $+$, $\&$, and $\otimes$. We begin with the basic types.
+We hope that the above example explains some intuitions about how arenas describe types and strategies describe functions. We now give a formal definition of arenas. This definition is compositional: we define arenas for the basic types $1$ and $\atoms$, and then we define operations on arenas that correspond to the type constructors  $+$, $\&$, and $\otimes$. We begin with the basic types.
 
 
 \begin{definition}[Arenas for $1$ and $\atoms$]\label{def:arenas-without-atoms-or-functions} \ 
@@ -107,7 +110,7 @@ We hope that the above example explains some of the intuitions about how arenas 
     \end{enumerate}
 \end{definition}
 
-In the above definition, we only described the behaviour of $\atoms$ when viewed as an output type. To get the input type, where the players are swapped and read is swapped with write, we will use duality, which is another operation on arenas. This operation, together with operations that correspond to the type constructors, are defined below.   
+In the above definition, we only described the behavior of $\atoms$ when viewed as an output type. To get the input type, where the players are swapped and read is swapped with write, we will use duality, which is another operation on arenas. This operation, together with operations that correspond to the type constructors, are defined below.   
 
 \begin{definition}[Operations on arenas]\label{def:composition-of-arenas}
     Let  $A$ and $B$ be arenas. We define the following arenas
@@ -126,7 +129,7 @@ Equipped with the above definitions, we  present our first attempt at assigning 
 \begin{definition} Let $X$ and $Y$ be linear types.
     \begin{itemize}
         \item The \emph{arena for  $X$} is defined by inductively applying the constructions from Definition~\ref{def:arenas-without-atoms-or-functions} and Definition~\ref{def:composition-of-arenas} according to the library of $X$.
-        \item The \emph{structureless arena for $X \to Y$} is defined to be (dual of arena of $X$) $\otimes$ (arena of $Y$).
+        \item The \emph{structure-less arena for $X \to Y$} is defined to be (dual of arena of $X$) $\otimes$ (arena of $Y$).
     \end{itemize}
 \end{definition}
 
@@ -166,7 +169,7 @@ In the Section~\ref{sec:arenas-without-constants-and-equality-tests}, we describ
     \end{enumerate}
 \end{definition}
 
-The library arena is infinite. Taking the tensor product of infinitely many copies of the two arenas ensures that it the library arena satisfies the following property, which corresponds to the $!$ operation from linear logic: 
+The library arena is infinite. Taking the tensor product of infinitely many copies of the two arenas ensures that the library arena satisfies the following property, which corresponds to the $!$ operation from linear logic: 
 \begin{align}\label{eq:bang-library-arena}
 \text{library arena} 
 \quad \equiv \quad 
@@ -174,22 +177,27 @@ The library arena is infinite. Taking the tensor product of infinitely many copi
 \text{(equality test arena)} \otimes
  \text{(library arena)}.
 \end{align}
-In the above, $\equiv$ refers to isomorphism of arenas, which is defined in the natural way: this is a bijection between the moves, which is consistent with the owners, register operations and plays in the expected way.  
+In the above, $\equiv$ refers to isomorphism of arenas, which is defined in the natural way: this is a bijection between the moves, which is consistent with the owners, register operations and plays in the expected way.  Another property is that the library arena is isomorphic to a tensor product of itself: 
+\begin{align}\label{eq:library-arena-isomorphism}
+\text{library arena}
+\quad \equiv \quad
+\text{library arena} \otimes \text{library arena}.
+\end{align}
 
 
 We are now ready to give the final definition of arenas for functions between linear types, which take into account the structure of the atoms.
 
-\begin{definition} For linear types $X$ and $Y$, the arena of $X \to Y$ is defined to be 
+\begin{definition}[Arena for a function type] For linear types $X$ and $Y$, the arena of $X \to Y$ is 
     \begin{align*}
     \text{(library arena)} \otimes \text{(dual arena of $X$)} \otimes \text{(arena of $Y$)}.
     \end{align*}
 \end{definition}
 
-This completes the game semantics of linear types and functions between them. We do not intend to give game semantics for higher order types, such as functions on functions etc. As a result, we will only be using the dual once, namely for the arena of the input type. Also not that the read/write operations will be used in a restricted way, as announced in Footnote~\ref{footnote:read-write}, namely that the ``read'' moves will be owned by System and the ``write'' moves will be owned by Environment.  This is because the library arena has this property, the arena for $\atoms$ has this property, and all operations on arenas that we have defined preserve this property.
+This completes the game semantics of linear types and functions between them. We do not intend to give game semantics for higher order types, such as functions on functions etc. As a result, we will only be using the dual once, namely for the arena of the input type. Also, note that the read/write operations will be used in a restricted way, as announced in Footnote~\ref{footnote:read-write}, namely that the ``read'' moves will be owned by System and the ``write'' moves will be owned by Environment.  This is because the library arena has this property, the arena for $\atoms$ has this property, and all operations on arenas that we have defined preserve this property.
 
 \subsubsection{Composition of strategies}
 \label{sec:composition-of-strategies}
-One of the main points about strategies in game semantics is that they can be composed. The usual construction for the function type $X \to Y$ is to take the tensor product of the dual arena for $X$ and the arena for $Y$. Our construction is a bit more involed, since the arena that we use has a copy of the library arena. We now explain how to compose strategies in a way that accounts for the library arena. 
+One of the main points about strategies in game semantics is that they can be composed. The usual construction for the function type $X \to Y$ is to take the tensor product of the dual arena for $X$ and the arena for $Y$. Our construction is a bit more involved, since the arena that we use has a copy of the library arena. We now explain how to compose strategies in a way that accounts for the library arena. 
 
 We begin by describing the usual construction for composing strategies. 
 Let $A, B, C$ be arenas. Suppose that we have two strategies $\sigma$ and $\gamma$, in the arenas $A \otimes \bar B$ and $B \otimes C$ respectively. These can be composed as strategy copying construction to get a new strategy  in the arena $A \otimes C$ that is defined as follows. (...)
@@ -201,18 +209,19 @@ By unfolding the definitions, these are strategies in the arenas
 \qquad 
 \text{(library arena)} \otimes \overline{\text{arena for $Y$}} \otimes \text{arena for $Z$}.
 \end{align*}
-We using the strategy copying construction, we can combine them into a single  strategy in 
+We are using the strategy copying construction, we can combine them into a single  strategy in 
 \begin{align*}
 \text{(library arena)} \otimes  \text{(library arena)}\otimes \overline{\text{arena for $X$}} \otimes \text{arena for $Z$}.
 \end{align*}
-Since the libary arena is isomorphic to a tensor product of two copies of itself, the above strategy gives us a strategy in the arena 
+Since the library arena is isomorphic to a tensor product of two copies of itself, the above strategy gives us a strategy in the arena 
 \begin{align*}
     \text{(library arena)} \otimes   \overline{\text{arena for $X$}} \otimes \text{arena for $Z$},
     \end{align*}
 which is the arena for $X \to Y$. This strategy is defined to be the \emph{composition} of the original two  strategies. We write $\sigma; \tau$ for this composition. We do not claim that composition is associative, although it is likely associative up to automorphisms of the library arena. 
 
+
 \subsection{Strategies as single-use functions}
-In this section, we explain how a strategy in a function type $X \to Y$ can be interpreted as a single-use function of the same type. This is done by interpreting values in the sets $\sem X$ and $\sem Y$ as strategies in the arenas $1 \to X$ and $1 \to Y$, respectively, and then lifting the interpretation to the function type using strategy compositon. 
+In this section, we explain how a strategy in a function type $X \to Y$ can be interpreted as a single-use function of the same type. This is done by interpreting values in the sets $\sem X$ and $\sem Y$ as strategies in the arenas $1 \to X$ and $1 \to Y$, respectively, and then lifting the interpretation to the function type using strategy composition. 
 
 Observe that we are not using the arena for a linear type $X$ itself, but for the function type $1 \to X$. The reason is that the second arena contains the library, which will be used to produce individual atoms. 
 
@@ -236,32 +245,37 @@ We begin by showing how an element of the underlying set in a type $X$ can be re
 
     \begin{enumerate}
         \item The strategy corresponding to the unique element of $1$ is the empty strategy.
-        \item The strategy corresponding to an atom $a \in \atoms$ is defined as follows: player Enviroment requests and output, then System requests the constant $a$ in the constant choice arena, Environment grants the constant, and System grants the output;
+        \item The strategy corresponding to an atom $a \in \atoms$ is defined as follows: player Environment requests and output, then System requests the constant $a$ in the constant choice arena, Environment grants the constant, and System grants the output;
         \item The strategy corresponding to $x_1 \otimes x_2$ is defined by composing the strategies corresponding to $x_1$ and $x_2$ in the natural way. The only point that we need to care about is the immediate read condition, so System needs to respond immediately in the same of the two arenas $X_1$ and $X_2$ when a write operation is played. 
         \item The strategy corresponding to $x_1 \& x_2$ is defined as follows. In the first move, Environment chooses left or right, then System acknowledges this choice, and in the remaining game System plays according to the strategy for $x_1$ or $x_2$, depending on the first choice of player System.
-        \item Similarly we define the strategy corresponding to $x_1 + x_2$.
+        \item Similarly, we define the strategy corresponding to $x_1 + x_2$.
     \end{enumerate}
 
 \subsubsection{Strategies in $1 \to X$ as elements of $\sem X$}
 \label{sec:strategies-in-1-to-x-as-elements-of-sem-x}
 We now describe the converse of the above construction, i.e.~we show how every strategy in the arena for $1 \to X$ can be interpreted as representing some value in $\sem X$. 
-This interpretation is more interesting than the previous one, since we need to account for sub-optimal strategies of player System, in which the library arena is used to execute meaningless operations. For example, System might ask if atoms Mark and John are equal, and to make things worse, Envorionment might respond dishonestly that they are equal. 
+This interpretation is more interesting than the previous one, since we need to account for suboptimal strategies of player System, in which the library arena is used to execute meaningless operations. For example, System might ask if atoms Mark and John are equal, and to make things worse, Environment might respond dishonestly that they are equal.  
+
+% \begin{definition}
+%     A strategy in an arena of type $X \to Y$ is called \emph{$k$-bounded} if all plays have length at most $k$. It is called \emph{bounded} if it is $k$-bounded for some $k$. 
+% \end{definition}
+
 
 \begin{enumerate}
     \item For the type $1$ there is no difficulty, since the corresponding set has a unique element, which will be assigned to all strategies. Also, there is a unique play in the corresponding arena, which is $1 \to 1$. This unique play is  the empty play,  because player Environment cannot make a first move. Therefore, the assignment of values to strategies poses no difficulty, since there is one strategy and one value.  However, already at this stage there is a slightly subtle point, since the arena for $1 \to 1$ is not completely empty, because it  contains a copy of the library arena, however all moves in this arena are blocked, since they must begin with a move by player System, and player System cannot  move before Environment; this is similar to the ordre de préséance at Versailles.
-    \item Consider now the type  $\atoms$. We will assign to each strategy in the arena for $1 \to \atoms$ an element of the underlying set $\atoms$. To define this atom, we will simply follow the strategy according to an honest behaviour of player Environment, i.e.~where Envorionment gives correct answers to all equality tests. 
+    \item Consider now the type  $\atoms$. We will assign to each strategy in the arena for $1 \to \atoms$ an element of the underlying set $\atoms$. To define this atom, we will simply follow the strategy according to an honest behavior of player Environment, i.e.~where Environment gives correct answers to all equality tests. 
     
     \begin{definition}
-        A play in an arena of type $X \to Y$ is called \emph{honest} if all equality tests are answered corresctly by player Envorionment. More formally, (...)
+        A play in an arena of type $X \to Y$ is called \emph{honest} if all equality tests are answered correctly by player Environment. More formally, (...)
     \end{definition}
 
-    One can see that for every strategy in the arena for $1 \to \atoms$, there is a unique maximal honest play that is consistent with this strategy. In this play, eventually System must execute the read opoeration on the atom, and the preceding write move necessarily had to be an atom constant (since these are the only write moves in the arena). This cosntant is defined to be the value of the strategy. 
+    One can see that for every strategy in the arena for $1 \to \atoms$, there is a unique maximal honest play that is consistent with this strategy. In this play, eventually System must execute the read operation on the atom, and the preceding write move necessarily had to be an atom constant (since these are the only write moves in the arena). This constant is defined to be the value of the strategy. 
 
-    \item Consider now  a type of the form $X \& Y$. We will show that to every strategy in the arena for $1 \to X \& Y$ we can assign a pair of strategies in the arenas $1 \to X$ and $1 \to Y$. Then, the corresponding values will be defined inductively for those strategies. The assignement is simple: the strategy in $1 \to X$ is what follows when player Environment beings in $1 \to X \& Y$ by choosing left, and similarly for $1 \to Y$.
+    \item Consider now  a type of the form $X \& Y$. We will show that to every strategy in the arena for $1 \to X \& Y$ we can assign a pair of strategies in the arenas $1 \to X$ and $1 \to Y$. Then, the corresponding values will be defined inductively for those strategies. The assignment is simple: the strategy in $1 \to X$ is what follows when player Environment beings in $1 \to X \& Y$ by choosing left, and similarly for $1 \to Y$.
     
-    \item Consider now a type of the form $X + Y$. As before, to a strategy in the arena for $1 \to X+ Y$  we will assign one of two strategies, either in the arena $1 \to X$ or in the arena $1 + Y$, and then we will continue by induction. This is done as follows. We follow the strategy in $1 \to X+Y$ along an honest play. One can see that this play is unique up to the point where player System must choose left or right. We assign the strategy in $1 \to X$ to the play that follows when player System chooses left, and similarly for $1 \to Y$. 
+    \item Consider now a type of the form $X + Y$. As before, to a strategy in the arena for $1 \to X+ Y$  we will assign one of two strategies, either in the arena $1 \to X$ or in the arena $1 + Y$, and then we will continue by induction. This is done as follows. We follow the strategy in $1 \to X+Y$ along an honest play. One can see that this play is unique up to the point where player System must choose left or right. Such a point must eventually arrive, since by the assumption that strategies have bounded length, System cannot delay this decision forever.  We assign the strategy in $1 \to X$ to the play that follows when player System chooses left, and similarly for $1 \to Y$. 
 
-    \item The last case is for a type of the form $X \otimes Y$. As in the previous two cases, we wil map a strategy in the arena for $1 \to X \otimes Y$ to two strategies, one in the arena for $1 \to X$ and one in the arena for $1 \to Y$. The only subtle point is how to distribute the calls by player System to the library arena. (...)
+    \item The last case is for a type of the form $X \otimes Y$. As in the previous two cases, we will map a strategy in the arena for $1 \to X \otimes Y$ to two strategies, one in the arena for $1 \to X$ and one in the arena for $1 \to Y$. The only subtle point is how to distribute the calls by player System to the library arena. (...)
 \end{enumerate}
 
 
@@ -305,33 +319,34 @@ We now show that the construction in the above definition is sound and complete.
 \end{proof}
 
 \subsection{The set of strategies as a linear type}
-The purpose of this section is to show that the set of strategies in an arena for a function type $X \to Y$ can be described using some linear type, and furthermore the relevant operations on strategies, such as application and currying, can be perfored in a single-use way. 
+The purpose of this section is to show that the set of strategies in an arena for a function type $X \to Y$ can be described using some linear type, and furthermore the relevant operations on strategies, such as application and currying, can be performed in a single-use way. 
 
-We will not be interested in all possible strategies, but only certain ones in which the plays have bounded length (this bound will be used to define the corresponding linear type).  We say that a strategy is \emph{$k$-bounded} if all plays in this strategy have length at most $k$. As we will see, for every function type $X \to Y$ there is some $k$ such that all single-use functions of type $X \to Y$ are represented by $k$-bounded strategies. This bound will arise from a simple optimisation on strategies, namely disallowing System to ask useless questions. 
-\begin{definition}[Useless question] We say that a play in an arena for $X \to Y$ contains a \emph{useless question} if it contains an equality test on two constants. We say that this strategy \emph{does not ask useless questions} if none of none of its plays have useless questions.
+In the definition of the linear type, we will be only interested in certain strategies, which avoid behavior that is not relevant to the computation.
+
+\begin{definition}[Irrelevant question] We say that a play in an arena for $X \to Y$ contains an \emph{irrelevant question} if it contains an equality test on two constants. We say that this strategy \emph{does not ask irrelevant questions} if none of its plays have irrelevant questions.
 \end{definition}
   
-The following lemma shows that if useless questions are disallowed, then plays have bounded length.
+The following lemma shows that if irrelevant questions are disallowed, then plays have length bounded by some constant that depends only on the types involved. This will be one of the useful properties of such strategies, since it will allow us to represent them using a finite linear type.
 
-\begin{lemma}\label{lem:no-useless-questions-are-bounded}
-    For every linear types $X$ and $Y$ there is some $k$ such that if a strategy in the arena for $X \to Y$ does not ask useless questions, then it is $k$-bounded.
+\begin{lemma}\label{lem:no-irrelevant-questions-are-bounded}
+    For every linear types $X$ and $Y$ there is some $k$ such that if a strategy in the arena for $X \to Y$ does not ask irrelevant questions, then all plays in the strategy have length at most $k$.
 \end{lemma}
 
-When defining a function type, we will only be interested in strategies that do not ask useless questions. There is a subtle point: strategies that do not ask useless questions are not closed under composition.
+There is a subtle point, which is illustrated in the following example:  strategies that do not ask irrelevant questions are not closed under composition. 
 
-\begin{example}[Useless questions from composition]
+\begin{example}[irrelevant questions from composition]
     Consider the  following two functions: 
     \begin{enumerate}
-        \item the function of type  $1 \to \atoms \otimes \atoms$ that outputs the pair (Mark, Jonn) for its unique input;
+        \item the function of type  $1 \to \atoms \otimes \atoms$ that outputs the pair (Mark, John) for its unique input;
         \item the equality test of type $\atoms \otimes \atoms \to 1 + 1$.
     \end{enumerate}
-    Like all single-use functions, the above two functions can be represented using strategies that do not ask useless questions. However, if we apply the composition construction from Section~\ref{sec:composition-of-strategies} to these two strategies, we will get a strategy that asks the useless question of whether Mark and John are equal. \exampleend
+    Like all single-use functions, the above two functions can be represented using strategies that do not ask irrelevant questions. However, if we apply the composition construction from Section~\ref{sec:composition-of-strategies} to these two strategies, we will get a strategy that asks the irrelevant question of whether Mark and John are equal. \exampleend
 \end{example}
 
-In light of the above example, we will want to eliminate useless questions. 
+In light of the above example, we will want to eliminate irrelevant questions. 
 
-\begin{lemma}\label{lem:eliminate-useless-questions}
-    For every linear types $X$ and $Y$, every single-use function of type  $X \to Y$ is represented by  some strategy that does not ask useless questions.
+\begin{lemma}\label{lem:eliminate-irrelevant-questions}
+    For every linear types $X$ and $Y$, every single-use function of type  $X \to Y$ is represented by  some strategy that does not ask irrelevant questions.
 \end{lemma}
 
 
@@ -363,7 +378,7 @@ The following lemma shows that the set of $k$-bounded strategies can be describe
 
 \begin{proof}[Proof of Theorem~\ref{thm:single-use-closed}]
     Consider two types $X$ and $Y$.
- Take $k$ to be the number from Lemma~\ref{lem:no-useless-questions-are-bounded}. This ensures that the type $X \Rightarrow_k Y$is be rich enough to represented all strategies that do not ask useless questions. By Lemma~\ref{lem:eliminate-useless-questions} the type is be rich enough to represent all single-use functions. Define the  function space $X \Rightarrow Y$ to be this type.   Define the evaluation function 
+ Take $k$ to be the number from Lemma~\ref{lem:no-irrelevant-questions-are-bounded}. This ensures that the type $X \Rightarrow_k Y$ is rich enough to represent all strategies that do not ask irrelevant questions. By Lemma~\ref{lem:eliminate-irrelevant-questions} the type is  rich enough to represent all single-use functions. Define the  function space $X \Rightarrow Y$ to be this type.   Define the evaluation function 
     \begin{align*}
     \text{eval} : X \otimes (X \Rightarrow Y) \to Y 
     \end{align*}
