@@ -16,7 +16,7 @@ While it is intuitively clear which functions should be allowed as single-use fo
 One of the intuitions behind the setup is that if a type $X \& Y$ appears in the input of the function, then it is the System who can choose the coordinate, while if the type appears in the output, then it is the Environment who makes the choice. (In this paper, we consider functions of first-order types of the form $X \to Y$, where $X$ and $Y$ are linear types that do not use $\otimes$, and therefore there will be a clear distinction between input and output values.)
 Before giving a formal definition of game semantics, we give simple example of the interactions.
 
-\begin{example} 
+\begin{example}\label{ex:amp-otimes-distr}
     Consider the two types 
     \begin{align*}
         X \otimes (Y \& Z) 
@@ -172,6 +172,7 @@ In the Section~\ref{sec:arenas-without-constants-and-equality-tests}, we describ
         \item then player System plays a move with register operation ``read'';
         \item then player Environment plays one of two moves, called $=$ and $\neq$, with no register operation.
     \end{enumerate}
+    \todo{I think we should give names to all of the moves so that arena isoomorphism makes sense. }
     \item The \emph{library arena} is defined to be an arena that is obtained by applying $\otimes$ to infinitely many copies of the constant choice arena and infinitely many copies of the  equality test arena.
     \end{enumerate}
 \end{definition}
@@ -360,13 +361,14 @@ Here are the details:
 
 
     \item Finally, we show how to compupute a value $\sem{X \otimes Y} = \sem{X} \times \sem{Y}$ from 
-          the strategy $\sigma : 1 \to X \oplus Y$. Observe that we can compute a strategy 
-          $\sigma_X : 1 \to X$, by simply erasing all sequences of moves where the environment plays in $Y$. 
-          This is still a valid strategy in $1 \to X$, because if the environment never plays in $Y$, then 
+          the strategy $\sigma : 1 \to X \times Y$. We start by treating $\sigma$ as in strategy 
+          in $1 \to X$ and use the inductive assumption to compute the value $x$.
+          This is possible because if the environment never plays in $Y$, then 
           the system can never reply in $Y$ (due to the Versailles-like customs of the arenas).
-          Similarly, we can construct a strategy $\sigma_Y : 1 \to Y$.
-          Then using the induction assumption we can compute $x \in \sem{X}$
-          from $\sigma_X$ and $y \in \sem{Y}$ from $\sigma_Y$, and return $(x, y)$.
+          Then, we are left with a strategy that is effectively equivalent to a strategy
+          in $1 \to Y$ (beacuse the $X$-part of $\sigma$ is already entirely played out), 
+          so we can use the induction assumption to transform it into the valye $y \in Y$, 
+          and return $(x, y) \in \sem{X} \times \sem{Y}$. 
 \end{enumerate}
 
 
@@ -409,13 +411,101 @@ We now show that the construction in the above definition is complete.
 \end{lemma}
 \begin{proof}
     It suffices to show that all single-use prime functions can be represented as strategies,
-    and show how to raise combinators $\circ$, $\oplus$, $\times$, $\&$ from functions to 
+    and show how to raise combinators $\circ$, $\otimes$, $\times$, $\&$ from functions to 
     strategies in a way that preserves the semantics. Let us start with the combinators:
     \begin{description}
-        \item[$f \circ g$] TODO
-        \item[$f \otimes g$] TODO
-        \item[$f + g$] TODO 
-        \item[$f \& g$] TODO
+        \item[$f \circ g$] Here we use the construction for strategy composition from Section~\ref{sec:composition-of-strategies}.
+        This means that we need to show that for all strategies $\sigma : X \to Y$ and $\tau: X \to Z$, 
+        and for all functions $f : \sem{X} \to \sem{Y}$ and $g: \sem{Y} \to \sem{Z}$,
+        if $\sem{sigma} = f$ and $\sem{tau} =g$, then $\sem{\sigma; \tau} = g \circ f$. By \ref{def:strategy-as-single-use-function}, 
+        this means that we need to show that for all strategies $\nu : 1 \to X$, it holds that: 
+        \[ \mathtt{val}(\nu; (\sigma; \tau)) = g(f(\mathtt{val}(\nu))) \]
+        First, let us notice that (as explained in Section~\ref{sec:composition-of-strategies}) 
+        the strategy $\nu; (\sigma; \tau)$ is equal to $(\nu; \sigma); \tau$ up to arena isomorphism. 
+        Since area isomoprhisms preserve $\mathtt{val}$ (as they only rename library funcions), 
+        we obtain that:
+        \[ \mathtt{val}(\nu; (\sigma; \tau)) = \mathtt{val}((\nu; \sigma;) \tau) = g(\mathtt{val}(\nu; \sigma)) = g(f(\mathtt{val}(\nu))) \]
+
+        \item[$f + g$] First, let us show how to construct a strategy $\sigma_1 + \sigma_2 : (X_1 + X_2) \to (Y_1 + Y_2)$ 
+        from strategies $\sigma_1 : X_1 \to Y_1$ and $\sigma_2 : X_2 \to Y_2$. The strategies work as follows (remember that 
+        now we play as system): The first move of environment has to be ``ask' (in $Y_1 + Y_2$), 
+        we reply with ``ask'' in $X_1 + X_2$, then environment can only reply with either ``left'' or ``right''
+        in $X_1 + X_2$ -- if it replies ``left'', we reply with ``left'' in $Y_1 + Y_2$ and contiune playing according to $\sigma_1$, 
+        else we reply ``right'' and continue playing according to $\sigma_2$.
+        For $\sigma_1 + \sigma_2$ defined in this way, it is not hard to see that if $\sem{\sigma_1} = f_1$ and $\sem{\sigma_2} = f_2$, 
+        then $\sem{\sigma_1 + \sigma_2} = f + g$. This because by definition of strategy compsition, $\mathtt{val}$ and $+$, 
+        we know that $\nu; (\sigma_1 + \sigma_2)$ is either equal to (a) $\nu'; \sigma_1$ for some $\nu'$ 
+        such that $\mathtt{val}(\nu) = \mathtt{left}(\mathtt{val(\nu_1)})$, or
+        $\nu'; \sigma_2$ for some $\nu'$  such that $\mathtt{val}(\nu) = \mathtt{right}(\mathtt{val(\nu')})$. 
+
+        \item[$f \& g$] Here the construction is similar to the one for $+$: We strat by showing 
+        how to construct a strategy $\sigma_1 + \sigma_2 : (X_1 \& X_2) \to (Y_1 \& Y_2)$ 
+        $\sigma_1 : X_1 \to Y_1$ and $\sigma_2 : X_2 \to Y_2$: The first move of environment has to be either 
+        ``left'' or ``right'' in $Y_1 \& Y_2$. We respond with the same in $X_1 \& X_2$. The only move of 
+        the environment is now to ``acknowledge'' in $Y_1 \& Y_2$, after which we ``acknowledge'' in $X_1 \& X_2$. 
+        Then we play either according to $\sigma_1$ or $\sigma_2$ (depending on whether the first move of the environment
+        was ``left'' or ``right''). To see that if $\sem{\sigma_1} = f_1$ and $\sem{\sigma_2} = f_2$, then 
+        $\sem{\sigma_1 \& \sigma_2} = f_1 \& f_2$, we notice that by definition of composition and $\&$, 
+        we know that after environment plays ``left'' in $\nu; (\sigma_1 \& \sigma_2)$ the game proceeds 
+        to a state equivalent to $\nu_1 ; \sigma_1$, where $\pi_1(\mathtt{val}(\nu)) = \mathtt{val}(\nu_1)$. 
+        (and analogously for ``right'').
+
+        \item[$f \otimes g$] Again, let us start by showing how to constructed
+        $\sigma_1 \times \sigma_2 : (X_1 + X_2) \to (Y_1 + Y_2)$ from $\sigma_1 : X_1 \to Y_1$ and $\sigma_2 : X_2 \to Y_2$.
+        The first move is by environment. It can either play in $Y_1$ or in $Y_2$. Let us assume that
+        it plays in $Y_1$ (as the other case is summetrical). Then, we play according to 
+        $\sigma_1$. As $\sigma_1$ is bounded, this means that after some interaction with $X_1$ and the library\footnote{
+            It might be worth clarifying that during this time, if we play in $X_1$ the environment needs to respond
+            immediately in $X_1$ and if we play in the library, the environment needs to respond immediately in the library, 
+            as it has no other available moves. 
+        }
+        we will respond in $Y_1$. Then the environment can choose again if it wants to play in $Y_1$ or $Y_2$
+        if it plays in $Y_1$ we play according to $\sigma_1$, and if it plays in $Y_2$ we play according to $\sigma_2$. 
+        We continue in this fashion until the environment has no available moves in $Y_1$ or $Y_2$.
+        To see that if $\sem{\sigma_1} = f_1$ and $\sem{\sigma_2} = f_2$, then
+        $\sem{\sigma_1 \otimes \sigma_2} = f_1 \otimes f_2$. Let us observe that during the 
+        $Y_1$-part of computing $\mathtt{val}(\nu; (f_1 \otimes f_2))$ the game looks exactly the 
+        same as the game for computing $\mathtt{val}(\nu_{Y_1}; f_1)$, 
+        where $\nu_{Y_1}$ is define as the plays subset of plays from $\nu$, where 
+        environment never plays in $Y_2$. This is a strategy in $1 \to Y_1$, because if 
+        the environment never plays in $Y_1$ then system cannot respond in $Y_1$. 
+        It is not hard to see that $\mathtt{val}(\nu_{Y_1}) = \pi_1(\mathtt{val}(\nu))$. 
+        It follows that during the $Y_1$-part of the play for computing $\mathtt{val}(\nu; (\sigma_1 \otimes \sigma_2))$, 
+        we obtain $f_1(\pi_1(\mathtt{val}(\nu)))$. Similarly, one can show that during the $Y_2$ part of computing
+        $\mathtt{val}(\nu; (\sigma_1 \otimes \sigma_2))$, we obtain $f_2(\pi_2(\mathtt{val}(\nu)))$. It follows that: 
+        \[ \mathtt{val}(\nu; (\sigma_1 \otimes \sigma_2)) \quad = \quad \bigl( f_1(\pi_1(\mathtt{val}(\nu))),\ f_2(\pi_2(\mathtt{val}(\nu))) \bigr) \quad = \quad (f_1 \otimes f_2) (\mathtt{val}(\nu))\]
+    \end{description}
+    Let us now deal with prime functions. For the sake of brevity we only show how to implement them 
+    for the following representative set of examples (all of the prime functions not listed below, 
+    can be implemneted without ever playing the library, and are well known tautoligies of the affine logic):
+    \begin{description}
+        \item[$\textrm{eq} : \atoms \otimes \atoms \to 1 + 1$]:
+        For this funcion the system wants to call the library function for comparing atoms 
+        and return the result. Here is the exact strategy:    
+        First, the environment has to play ``ask'' in $1+1$. Then we play ``request'' in the left $\atoms$.
+        Environment replies with ``grant'' which is a write move. Then we play the read 
+        move in atoms equality library function. Environment acknowledges. We play ``request'' in the 
+        right $\atoms$. Environment plays ``grant''. We play the read move in the atoms equality function. 
+        The environment replies with either $=$ or $\neq$, to which we respond respectively with ``left''
+        or ``right'' in $1+1$.
+
+        \item[$\textrm{const}_a : 1 \to \atoms$] For this function we want to call the constant
+        functionality of the library. Here is the exact strategy: First, the environment has to play 
+        ``request'' in $\atoms$. We respond in the $a$-move in the constant library component. 
+        The environment has to respond with the write move, we respond with ``grant''. 
+
+        \item[$\textrm{proj}_1 : X \otimes Y \to X$] Here we play a restricted version of the copycat strategy:
+        whenever the environment plays in the right copy of $X$, we play the same move in he left copy of $X$, 
+        and whenever the environment responds in the left copy of $X$, we respond with the same move in the right 
+        copy of $X$. 
+
+        \item[$\textrm{distr}_{\&, \otimes} : X \otimes (Y \& Z) \to (X \otimes Y) \& (X \otimes Z)$]
+        Here we play according to the strategy from \ref{ex:amp-otimes-distr}: The environment 
+        starts by either playin ``left'' or ``right'' in $(X \otimes Y) \& (X \otimes Z)$, 
+        we respond with the same move in $(Y \& Z)$. The environment has to play ``acknowledge'' 
+        in $(Y \& Z)$, after which we play acknowledge. This leaves in a state that is either 
+        equivalent to $X \otimes Y \to X \times Y$ or  $X \otimes Z \to X \times Z$. 
+        In both cases we play according to the copycat strategy.  \todo{Define copycat?}
     \end{description}
 \end{proof}
 One can also show that the system is sound (i.e. that every function repersented by a strategy is single-use). \todo{reference 
