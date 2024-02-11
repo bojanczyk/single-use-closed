@@ -86,33 +86,131 @@ For the prime functions, we use some standard single-use operations known from l
 % for every atom $a \in \atoms$. 
 
 The prime functions can then be put together using combinators. The main combinator is function composition; this will ensure that the single-use functions form a category. The remaining combinators are functoriality of the three type constructors $+$, $\otimes$ and $\&$. More specifically, the combinator for $\otimes$ works as follows. It takes two single-use functions, $f_1$ and $f_2$, with types $X_1 \to Y_1$ and $X_2 \to Y_2$ respectively, and returns a new function $f_1 \otimes f_2$ of type $X_1 \otimes X_2 \to Y_1 \otimes Y_2$, which is defined in the natural way: $x_1 \otimes x_2 \mapsto f_1(x_1) \otimes f_2(x_2)$.  The combinators for $+$ and $\&$ are defined in an analagous way. This completes the definition of the single-use functions, which is  summarised below.
-
-
-\begin{figure}
-    \begin{align*}
-    \begin{array}{llll}
-        \text{Name} & \text{Type} & \text{Definition} \\
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{lll}
         \hline
-        \addlinespace
-        \text{identity} &  X \to X  & x \mapsto x\\
-    \addlinespace
-    \text{diagonal} &  X \to X \& X  & x \mapsto x \& x\\
-    \addlinespace
-    \text{swap} &  X \otimes Y \to Y \otimes X  & x \otimes y \mapsto y \otimes x\\
-    \addlinespace
-    \text{inl} &  X \to X + Y  & x \mapsto \text{left}(x)\\
-    \addlinespace
-    \text{inr} &  Y \to X + Y  & y \mapsto \text{right}(y)\\
-    \addlinespace
-    \text{proj}_1 &  X \otimes Y \to X & x \otimes y \mapsto x\\
-    \addlinespace
-    \text{proj}_2 &  X \otimes Y \to Y & x \otimes y \mapsto y \\
-    \addlinespace
-    \text{add 1} &  X  \to X \otimes 1 & x  \mapsto x \otimes 1 \\
-    \end{array}
-    \end{align*}
-    \caption{\label{fig:prime-morphisms} The above table shows an infinite family of morphisms, which is indexed by  types $X,Y,Z$.}
-\end{figure}
+        \textbf{Function} & \textbf{Type} & \textbf{Definition} \\
+        \hline
+        \multicolumn{3}{c}{\textit{Functions about Atoms}} \\
+        \hline
+        $\textrm{eq}$ & $\atoms \otimes \atoms \to 1 + 1$ & $a, b \mapsto \text{if } a = b \text{ then true else false}$ \\
+        $\textrm{const}_a$ & $1 \to \atoms$ & $x \mapsto a$ \\
+        $\textrm{id}$ & $\atoms \to \atoms$ & $x \mapsto x$ \\
+        \hline
+        \multicolumn{3}{c}{\textit{Functions about \(\otimes\)}} \\
+        \hline
+        $\textrm{swap}_{\otimes}$ & $X \otimes Y \to Y \otimes X$ & $x \otimes y \mapsto y \otimes x$ \\
+        $\textrm{proj}_{1, \otimes}$ & $X \otimes Y \to X$ & $x \otimes y \mapsto x$ \\
+        $\textrm{proj}_{2, \otimes}$ & $X \otimes Y \to Y$ & $x \otimes y \mapsto y$ \\
+        $\textrm{rightI}_{\otimes}$ & $ X \to X \otimes 1$ & $x \mapsto x \otimes ()$ \\
+        $\textrm{assoc}_{\otimes}$ & $(X \otimes Y) \otimes Z \to X \otimes (Y \otimes Z)$ & $(x \otimes y) \otimes z \mapsto x \otimes (y \otimes z)$ \\
+        \hline
+        \multicolumn{3}{c}{\textit{Functions about \(\&\)}} \\
+        \hline
+        $\textrm{diagonal}$ & $X \to X \& X$ & $x \mapsto x \& x$ \\
+        $\textrm{proj}_{1, \&}$ & $X \& Y \to X$ & $x \& y \mapsto x$ \\
+        $\textrm{proj}_{2, \&}$ & $X \& Y \to Y$ & $x \& y \mapsto y$ \\
+        \hline
+        \multicolumn{3}{c}{\textit{Functions about \(+\)}} \\
+        \hline
+        $\textrm{coswap}$ & $X + Y \to Y + X$ & \\
+        $\textrm{coproj}_1$ & $X \to X + Y$ & $x \mapsto \text{left}(x)$ \\
+        $\textrm{coproj}_2$ & $Y \to X + Y$ & $y \mapsto \text{right}(y)$ \\
+        $\textrm{coassoc}$ & $(X + Y) + Z \to X + (Y + Z)$ & \\
+        $\textrm{codiagonal}$ & $X + X \to X$ &  \\
+        \hline
+        \multicolumn{3}{c}{\textit{Distributivities}} \\
+        \hline
+        $\textrm{distr}_{\otimes, +}$ & $X \otimes (Y + Z) \to (X \otimes Y) + (X \otimes Z)$ & \\
+        $\textrm{distr}_{\otimes, \&}$ & $X \otimes (Y \& Z) \to (X \otimes Y) \& (X \otimes Z)$ & $x \otimes (y \& z) \mapsto (x \otimes y) \& (x \otimes z)$ \\
+        $\textrm{distr}_{+, \&}$ & $X + (Y \& Z) \to (X + Y) \& (X + Z)$ &  \\
+        \hline
+    \end{tabular}
+    \caption{The above table shows an infinite family of morphisms, which is indexed by types $X,Y,Z$.}
+    \label{fig:prime-morphisms}
+\end{table}
+
+% \begin{table}[h!]
+%     \centering
+%     \begin{tabular}{lll}
+%         \hline
+%         \textbf{Function} & \textbf{Type} & \textbf{Definition} \\
+%         \hline
+%         \multicolumn{3}{c}{\textit{Functions about Atoms}} \\
+%         \hline
+%         $\textrm{eq}$ & $\atoms \otimes \atoms \to 1 + 1$ & $a, b \mapsto \text{if } a = b \text{ then true else false}$ \\
+%         $\textrm{const}_a$ & $1 \to \atoms$ & $x \mapsto a$ \\
+%         $\textrm{id}$ & $\atoms \to \atoms$ & $x \mapsto x$ \\
+%         \hline
+%         \multicolumn{3}{c}{\textit{Functions about \(\otimes\)}} \\
+%         \hline
+%         $\textrm{swap}_{\otimes}$ & $X \otimes Y \to Y \otimes X$ & $x \otimes y \mapsto y \otimes x$ \\
+%         $\textrm{proj}_{1, \otimes}$ & &\\
+%         $\textrm{proj}_{2, \otimes}$ & &\\
+%         $\textrm{leftI}_{\otimes}$ & &\\
+%         $\textrm{assoc}_{\otimes}$ & $(X \otimes Y) \otimes Z \to X \otimes (Y \otimes Z)$ &\\
+%         \hline
+%         \multicolumn{3}{c}{\textit{Functions about \(\&\)}} \\
+%         \hline
+%         $\textrm{diagonal}$ & $X \to X \& X$ & $x \mapsto x \& x$ \\
+%         $\textrm{proj}_{1, \&}$ & $X \& Y \to X$ & $x \& y \mapsto x$ \\
+%         $\textrm{proj}_{2, \&}$ & $X \& Y \to Y$ & $x \& y \mapsto y$ \\
+%         \hline
+%         \multicolumn{3}{c}{\textit{Functions about \(+\)}} \\
+%         \hline
+%         $\textrm{coswap}$ & & \\
+%         $\textrm{coproj}_1$ & $X \to X + Y$ & $x \mapsto \text{left}(x)$ \\
+%         $\textrm{coproj}_2$ & $Y \to X + Y$ & $y \mapsto \text{right}(y)$ \\
+%         $\textrm{coassoc}$ & &\\
+%         $\textrm{codiagonal}$ & $X + X \to X$ & $x + x \mapsto x$ \\
+%         \hline
+%         \multicolumn{3}{c}{\textit{Distributivities}} \\
+%         \hline
+%         $\textrm{distr}_{\otimes, +}$ & $X \otimes (Y + Z) \to (X \otimes Y) + (X \otimes Z)$ & $x \otimes (y + z) \mapsto (x \otimes y) + (x \otimes z)$ \\
+%         $\textrm{distr}_{\otimes, \&}$ & &\\
+%         $\textrm{distr}_{+, \&}$ & & \\
+%         \hline
+%     \end{tabular}
+%     \caption{\label{fig:prime-morphisms} The above table shows an infinite family of morphisms, which is indexed by  types $X,Y,Z$.}
+%     \label{tab:organized-functions}
+% \end{table}
+
+% \begin{figure}
+%     \begin{align*}
+%         \begin{array}{lll}
+%             \textbf{Function} & \textbf{Type} & \textbf{Definition} \\
+%             \hline
+%             \multicolumn{3}{c}{\textit{Functions about Atoms}} \\
+%             \hline
+%             eq & Atom \to Atom \to Bool & a, b \mapsto \text{if } a = b \text{ then true else false} \\
+%             const\_a & X \to Atom & x \mapsto a \\
+%             \hline
+%             \multicolumn{3}{c}{\textit{Functions about } \oplus} \\
+%             \hline
+%             identity & X \to X & x \mapsto x \\
+%             swap\_\oplus & X \oplus Y \to Y \oplus X & x \oplus y \mapsto y \oplus x \\
+%             \hline
+%             \multicolumn{3}{c}{\textit{Functions about } \&} \\
+%             \hline
+%             diagonal & X \to X \& X & x \mapsto x \& x \\
+%             proj\_1 & X \& Y \to X & x \& y \mapsto x \\
+%             proj\_2 & X \& Y \to Y & x \& y \mapsto y \\
+%             \hline
+%             \multicolumn{3}{c}{\textit{Functions about } +} \\
+%             \hline
+%             inl & X \to X + Y & x \mapsto \text{left}(x) \\
+%             inr & Y \to X + Y & y \mapsto \text{right}(y) \\
+%             codiagonal & X + X \to X & x + x \mapsto x \\
+%             \hline
+%             \multicolumn{3}{c}{\textit{Distributivities}} \\
+%             \hline
+%             distribute & X \otimes (Y + Z) \to (X \otimes Y) + (X \otimes Z) & x \otimes (y + z) \mapsto (x \otimes y) + (x \otimes z) \\
+%             factor & (X + Y) \otimes Z \to (X \otimes Z) + (Y \otimes Z) & (x + y) \otimes z \mapsto (x \otimes z) + (y \otimes z) \\
+%         \end{array}
+%     \end{align*}
+%     \caption{\label{fig:prime-morphisms} The above table shows an infinite family of morphisms, which is indexed by  types $X,Y,Z$.}
+% \end{figure}
 
 
    
