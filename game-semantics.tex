@@ -526,6 +526,20 @@ For this reason we define $\atoms^{-1}A$ to be the arena $A$ partially applied w
 We are now ready the type for storing $k$-bounded strategies. 
 \begin{definition}
     For a (partially applied) arena $A$, we define the type $\Strat(A, k)$ of $k$-bounded strategies on $A$ using the following induction:
+\begin{itemize}
+    \item $k=0$. This type is $1$ if the Environment owns $A$ and has no moves to play. Otherwise, this type is $\emptyset$. 
+    \item $k + 1$. This type is defined differently, depending on whether Environment or System owns $A$.
+    \begin{itemize}
+        \item Environment owns $A$. Let $m_1,\ldots,m_n$ be the set of possible first moves. (This set is finite.) The type is defined to be 
+        \begin{align*}
+            \Strat(m_1^{-1}A, k) \& \ldots \& \Strat(m_n^{-1}A, k).
+        \end{align*}
+        \item System owns $A$. Let $m_1,\ldots,m_n$ be the set of possible first moves that are not first moves in the library.  (This set is finite.) The type is defined to be 
+        \begin{align*}
+            \Strat(m_1^{-1}A, k) + \ldots + \Strat(m_n^{-1}A, k) + \atoms \otimes \Strat(\atoms^{-1}A, k) + \Strat({eq}^{-1}A, k).
+        \end{align*}
+    \end{itemize}
+\end{itemize}
     \[ \Strat(A, 0 ) = \begin{cases}
             \varnothing & \textrm{if System owns $A$}\\
             \varnothing & \textrm{if Environment owns $A$ and still has moves to play}\\
@@ -578,6 +592,8 @@ We are now ready the type for storing $k$-bounded strategies.
 
 
 In the definition of the linear type, we will be only interested in certain strategies, which avoid behavior that is not relevant to the computation.
+
+
 
 \begin{definition}[Irrelevant question] We say that a play in an arena for $X \to Y$ contains an \emph{irrelevant question} if it contains an equality test on two constants. We say that this strategy \emph{does not ask irrelevant questions} if none of its plays have irrelevant questions.
 \end{definition}
