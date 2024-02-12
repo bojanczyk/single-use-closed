@@ -83,16 +83,15 @@ For the prime functions, we use some standard single-use operations known from l
 % \begin{align}\label{eq:const-functions}
 % \text{const}_a : \sem 1 \to \sem \atoms
 % \end{align}
-% for every atom $a \in \atoms$. 
+% for every atom $a \in \atoms$.
 
-The prime functions can then be put together using combinators. The main combinator is function composition; this will ensure that the single-use functions form a category. The remaining combinators are functoriality of the three type constructors $+$, $\otimes$ and $\&$. More specifically, the combinator for $\otimes$ works as follows. It takes two single-use functions, $f_1$ and $f_2$, with types $X_1 \to Y_1$ and $X_2 \to Y_2$ respectively, and returns a new function $f_1 \otimes f_2$ of type $X_1 \otimes X_2 \to Y_1 \otimes Y_2$, which is defined in the natural way: $x_1 \otimes x_2 \mapsto f_1(x_1) \otimes f_2(x_2)$.  The combinators for $+$ and $\&$ are defined in an analagous way. This completes the definition of the single-use functions, which is  summarised below.
 \begin{table}[h!]
     \centering
     \begin{tabular}{lll}
         \hline
         \textbf{Function} & \textbf{Type} & \textbf{Definition} \\
         \hline
-        \multicolumn{3}{c}{\textit{Functions about Atoms}} \\
+        \multicolumn{3}{c}{\textit{Functions about $\atoms$}} \\
         \hline
         $\textrm{eq}$ & $\atoms \otimes \atoms \to 1 + 1$ & $a, b \mapsto \text{if } a = b \text{ then true else false}$ \\
         $\textrm{const}_a$ & $1 \to \atoms$ & $x \mapsto a$ \\
@@ -103,7 +102,7 @@ The prime functions can then be put together using combinators. The main combina
         $\textrm{swap}_{\otimes}$ & $X \otimes Y \to Y \otimes X$ & $x \otimes y \mapsto y \otimes x$ \\
         $\textrm{proj}_{1, \otimes}$ & $X \otimes Y \to X$ & $x \otimes y \mapsto x$ \\
         $\textrm{proj}_{2, \otimes}$ & $X \otimes Y \to Y$ & $x \otimes y \mapsto y$ \\
-        $\textrm{rightI}_{\otimes}$ & $ X \to X \otimes 1$ & $x \mapsto x \otimes ()$ \\
+        $\textrm{rightI}_{\otimes}$ & $X \to X \otimes 1$ & $x \mapsto x \otimes ()$ \\
         $\textrm{assoc}_{\otimes}$ & $(X \otimes Y) \otimes Z \to X \otimes (Y \otimes Z)$ & $(x \otimes y) \otimes z \mapsto x \otimes (y \otimes z)$ \\
         \hline
         \multicolumn{3}{c}{\textit{Functions about \(\&\)}} \\
@@ -114,23 +113,42 @@ The prime functions can then be put together using combinators. The main combina
         \hline
         \multicolumn{3}{c}{\textit{Functions about \(+\)}} \\
         \hline
-        $\textrm{coswap}$ & $X + Y \to Y + X$ & \\
+        $\textrm{coswap}$ & $X + Y \to Y + X$ & $\left\{\begin{tabular}{l}
+        $\textrm{left}(x) \mapsto \textrm{right}(x)$\\
+        $\textrm{right}(y) \mapsto \textrm{left}(y)$
+        \end{tabular}\right.$ \\
         $\textrm{coproj}_1$ & $X \to X + Y$ & $x \mapsto \text{left}(x)$ \\
         $\textrm{coproj}_2$ & $Y \to X + Y$ & $y \mapsto \text{right}(y)$ \\
-        $\textrm{coassoc}$ & $(X + Y) + Z \to X + (Y + Z)$ & \\
-        $\textrm{codiagonal}$ & $X + X \to X$ &  \\
+        $\textrm{coassoc}$ & $(X + Y) + Z \to X + (Y + Z)$ & $\left\{
+        \begin{tabular}{l}
+        $\text{left}(\text{left}(x)) \mapsto \text{left}(x)$\\
+        $\text{left}(\text{right}(y)) \mapsto \text{right}(\text{left}(y))$\\
+        $\text{right}(z)\mapsto \text{right}(\text{right}(z))$
+        \end{tabular}\right.$ \\
+        $\textrm{codiagonal}$ & $X + X \to X$ & $\left\{\begin{tabular}{l}
+        $\text{left}(x) \mapsto x$\\
+        $\text{right}(x) \mapsto x$
+        \end{tabular}\right.$ \\
         \hline
         \multicolumn{3}{c}{\textit{Distributivities}} \\
         \hline
-        $\textrm{distr}_{\otimes, +}$ & $X \otimes (Y + Z) \to (X \otimes Y) + (X \otimes Z)$ & \\
+        $\textrm{distr}_{\otimes, +}$ & $X \otimes (Y + Z) \to (X \otimes Y) + (X \otimes Z)$ & $\left\{\begin{tabular}{l}
+            $x \otimes (\text{left}(y)) \mapsto \text{left}(x \otimes y)$\\
+            $x \otimes (\text{right}(z)) \mapsto \text{right}(x \otimes z)$
+        \end{tabular}\right.$\\
         $\textrm{distr}_{\otimes, \&}$ & $X \otimes (Y \& Z) \to (X \otimes Y) \& (X \otimes Z)$ & $x \otimes (y \& z) \mapsto (x \otimes y) \& (x \otimes z)$ \\
-        $\textrm{distr}_{+, \&}$ & $X + (Y \& Z) \to (X + Y) \& (X + Z)$ &  \\
+        $\textrm{distr}_{+, \&}$ & $X + (Y \& Z) \to (X \& Y) + (X \& Z)$ & $\left\{\begin{tabular}{l}
+        $x \& \text{left}(y) \mapsto \text{left}(x \& y)$\\
+        $x \& \text{right}(z) \mapsto \text{right}(x \& z)$
+        \end{tabular}\right.$ \\
         \hline
     \end{tabular}
     \caption{The above table shows an infinite family of morphisms, which is indexed by types $X,Y,Z$.}
     \label{fig:prime-morphisms}
 \end{table}
 
+
+% The prime functions can then be put together using combinators. The main combinator is function composition; this will ensure that the single-use functions form a category. The remaining combinators are functoriality of the three type constructors $+$, $\otimes$ and $\&$. More specifically, the combinator for $\otimes$ works as follows. It takes two single-use functions, $f_1$ and $f_2$, with types $X_1 \to Y_1$ and $X_2 \to Y_2$ respectively, and returns a new function $f_1 \otimes f_2$ of type $X_1 \otimes X_2 \to Y_1 \otimes Y_2$, which is defined in the natural way: $x_1 \otimes x_2 \mapsto f_1(x_1) \otimes f_2(x_2)$.  The combinators for $+$ and $\&$ are defined in an analagous way. This completes the definition of the single-use functions, which is  summarised below.
 % \begin{table}[h!]
 %     \centering
 %     \begin{tabular}{lll}
@@ -146,10 +164,10 @@ The prime functions can then be put together using combinators. The main combina
 %         \multicolumn{3}{c}{\textit{Functions about \(\otimes\)}} \\
 %         \hline
 %         $\textrm{swap}_{\otimes}$ & $X \otimes Y \to Y \otimes X$ & $x \otimes y \mapsto y \otimes x$ \\
-%         $\textrm{proj}_{1, \otimes}$ & &\\
-%         $\textrm{proj}_{2, \otimes}$ & &\\
-%         $\textrm{leftI}_{\otimes}$ & &\\
-%         $\textrm{assoc}_{\otimes}$ & $(X \otimes Y) \otimes Z \to X \otimes (Y \otimes Z)$ &\\
+%         $\textrm{proj}_{1, \otimes}$ & $X \otimes Y \to X$ & $x \otimes y \mapsto x$ \\
+%         $\textrm{proj}_{2, \otimes}$ & $X \otimes Y \to Y$ & $x \otimes y \mapsto y$ \\
+%         $\textrm{rightI}_{\otimes}$ & $ X \to X \otimes 1$ & $x \mapsto x \otimes ()$ \\
+%         $\textrm{assoc}_{\otimes}$ & $(X \otimes Y) \otimes Z \to X \otimes (Y \otimes Z)$ & $(x \otimes y) \otimes z \mapsto x \otimes (y \otimes z)$ \\
 %         \hline
 %         \multicolumn{3}{c}{\textit{Functions about \(\&\)}} \\
 %         \hline
@@ -159,22 +177,26 @@ The prime functions can then be put together using combinators. The main combina
 %         \hline
 %         \multicolumn{3}{c}{\textit{Functions about \(+\)}} \\
 %         \hline
-%         $\textrm{coswap}$ & & \\
+%         $\textrm{coswap}$ & $X + Y \to Y + X$ & $\left\{\substack{
+%         \textrm{left}(x) \mapsto \textrm{right}(x)\\
+%         \textrm{right}(y) \mapsto \textrm{left}(y)
+%         }\right.$\\
 %         $\textrm{coproj}_1$ & $X \to X + Y$ & $x \mapsto \text{left}(x)$ \\
 %         $\textrm{coproj}_2$ & $Y \to X + Y$ & $y \mapsto \text{right}(y)$ \\
-%         $\textrm{coassoc}$ & &\\
-%         $\textrm{codiagonal}$ & $X + X \to X$ & $x + x \mapsto x$ \\
+%         $\textrm{coassoc}$ & $(X + Y) + Z \to X + (Y + Z)$ & \\
+%         $\textrm{codiagonal}$ & $X + X \to X$ &  \\
 %         \hline
 %         \multicolumn{3}{c}{\textit{Distributivities}} \\
 %         \hline
-%         $\textrm{distr}_{\otimes, +}$ & $X \otimes (Y + Z) \to (X \otimes Y) + (X \otimes Z)$ & $x \otimes (y + z) \mapsto (x \otimes y) + (x \otimes z)$ \\
-%         $\textrm{distr}_{\otimes, \&}$ & &\\
-%         $\textrm{distr}_{+, \&}$ & & \\
+%         $\textrm{distr}_{\otimes, +}$ & $X \otimes (Y + Z) \to (X \otimes Y) + (X \otimes Z)$ & \\
+%         $\textrm{distr}_{\otimes, \&}$ & $X \otimes (Y \& Z) \to (X \otimes Y) \& (X \otimes Z)$ & $x \otimes (y \& z) \mapsto (x \otimes y) \& (x \otimes z)$ \\
+%         $\textrm{distr}_{+, \&}$ & $X + (Y \& Z) \to (X + Y) \& (X + Z)$ &  \\
 %         \hline
 %     \end{tabular}
-%     \caption{\label{fig:prime-morphisms} The above table shows an infinite family of morphisms, which is indexed by  types $X,Y,Z$.}
-%     \label{tab:organized-functions}
+%     \caption{The above table shows an infinite family of morphisms, which is indexed by types $X,Y,Z$.}
+%     \label{fig:prime-morphisms}
 % \end{table}
+
 
 % \begin{figure}
 %     \begin{align*}
