@@ -172,7 +172,7 @@ In the Section~\ref{sec:arenas-without-constants-and-equality-tests}, we describ
         \item then player System plays a move with register operation ``read'';
         \item then player Environment plays one of two moves, called $=$ and $\neq$, with no register operation.
     \end{enumerate}
-    \todo{I think we should give names to all of the moves so that arena isoomorphism makes sense. }
+    \rafal{I think we should give names to all of the moves so that arena isoomorphism makes sense. }
     \item The \emph{library arena} is defined to be an arena that is obtained by applying $\otimes$ to infinitely many copies of the constant choice arena and infinitely many copies of the  equality test arena.
     \end{enumerate}
 \end{definition}
@@ -505,14 +505,77 @@ We now show that game semantics is a complete representation for single-use func
         we respond with the same move in $(Y \& Z)$. The environment has to play ``acknowledge'' 
         in $(Y \& Z)$, after which we play acknowledge. This leaves in a state that is either 
         equivalent to $X \otimes Y \to X \times Y$ or  $X \otimes Z \to X \times Z$. 
-        In both cases we play according to the copycat strategy.  \todo{Define copycat?}
+        In both cases we play according to the copycat strategy.  \rafal{Define copycat?}
     \end{description}
 \end{proof}
-One can also show that the system is sound (i.e. that every function repersented by a strategy is single-use). \todo{reference 
+One can also show that the system is sound (i.e. that every function repersented by a strategy is single-use). \rafal{reference 
 to a claim, which follows from SMCC-ness. We don't defer the proof of completeness because the proof of SMCC-ness depends on it.}
 
 \subsection{The set of strategies as a linear type}
-The purpose of this section is to show that the set of strategies in an arena for a function type $X \to Y$ can be described using some linear type, and furthermore the relevant operations on strategies, such as application and currying, can be performed in a single-use way. 
+The purpose of this section is to show that the set of strategies in an arena for a function type $X \to Y$ can be described using some linear type, and furthermore the relevant operations on strategies, such as application and currying, can be performed in a single-use way.
+
+Before we do this we introudce the idea of a \emph{partially applied arena}.
+Let $A$ be an arena, and $m$ a move. We define the partially applied arena ${m^{-1}}A$ 
+to be set of sequences that follow $m$ in $A$, i.e:
+\[m^{-1}A = \{s \ | \ ms \in A \}\]
+The only difference between an arena and a partially applied arena, is that the first moves in $m^{-1}A$ will belong to the system (and not to environment).
+For this reason, we keep track of the \emph{owner} of the arena, if environment owns $A$, then the system owns $m^{-1}A$ (and vice versa).
+Observe, that in our case if moves $a, b$ belong to $\atoms$ (i.e. they are constant requests), then $a^{-1}A = b^{-1}A$. 
+For this reason we define $\atoms^{-1}A$ to be the arena $A$ partially applied with any one of the atomic moves. 
+
+We are now ready the type for storing $k$-bounded strategies. 
+\begin{definition}
+    For a (partially applied) arena $A$, we define the type $\Strat(A, k)$ of $k$-bounded strategies on $A$ using the following induction:
+    \[ \Strat(A, 0 ) = \begin{cases}
+            \varnothing & \textrm{if System owns $A$}\\
+            \varnothing & \textrm{if Environment owns $A$ and still has moves to play}\\
+            1 & \textrm{if Enviroment own $A$ and has no moves to play}
+    \end{cases}\] 
+    \[
+      \Strat(A, k+1) = \begin{cases}
+        \underset{\substack{
+            \textrm{for every}\\
+            \textrm{first move $m$}\\
+        }}{\mathlarger{\mathlarger{\mathlarger{\mathlarger{\&}}}}} \Strat(m^{-1}A, k) & \textrm{if environment owns $A$} \\ 
+        \left(\underset{\substack{
+            \textrm{for every first}\\
+            \textrm{move $m \not\in \atoms$}\\
+        }}{\mathlarger{\mathlarger{\mathlarger{\mathlarger{+}}}}} \Strat(m^{-1}A, k)\right) + 
+        \underbrace{\atoms \otimes \Strat(\atoms^{-1}A, k)}_{\textrm{if $a \in \atoms$ is a valid first move}} & 
+        \textrm{if system owns A}
+      \end{cases} 
+    \]
+    The intuition behind this is that if that the first move belongs to environment, then the strategy has to be prepared 
+    for all of them, because it does not know what the system will do. However, the environment will play only one of its moves,
+    so the strategy will only have to pick one of the future behaviours, which is the perfect use caase for $\&$. 
+    If the arena belongs to System, then the strategy already knows which move it is going to play. This is represented 
+    with $+$. The exact definitions of the big versions of $+$ and $\&$ are as follows:
+    \[ 
+    \begin{tabular}{cc}
+        $\underset{ m \in M
+        }{\mathlarger{\mathlarger{\mathlarger{\mathlarger{\&}}}}} S_m = \begin{cases}
+            \varnothing & \textrm{if some } S_m = \varnothing\\
+            1 & \textrm{if } M = \varnothing\\
+            S_{m_1} \& \ldots \& S_{m_k}  & \textrm{otherwise}
+        \end{cases}$ &
+        $\underset{ m \in M
+        }{\mathlarger{\mathlarger{\mathlarger{\mathlarger{+}}}}} S_m = \begin{cases}
+            \varnothing & M = \varnothing\\
+            1 & \textrm{if all } S_m = \varnothing\\
+            S_{m_1} + \ldots + S_{m_k}  & \substack{\textrm{for the non-empty } $m_i$'s\\
+                                                    \textrm{otherwise}}
+        \end{cases}$ 
+
+
+    \end{tabular}
+    \]
+\end{definition}
+
+
+
+
+
+
 
 In the definition of the linear type, we will be only interested in certain strategies, which avoid behavior that is not relevant to the computation.
 
