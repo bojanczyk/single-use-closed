@@ -401,7 +401,7 @@ We now show how to interpret a strategy in the arena for $X \to Y$ as a single-u
     % \]
 \end{definition}
 
-We now show that the construction in the above definition is complete.
+We now show that game semantics is a complete representation for single-use functions:
 \begin{lemma}
     Let $X$ and $Y$ be linear types, then every single-use function of type $X \to Y$ is represented by at least one strategy. 
     % \begin{itemize}
@@ -417,7 +417,7 @@ We now show that the construction in the above definition is complete.
         \item[$f \circ g$] Here we use the construction for strategy composition from Section~\ref{sec:composition-of-strategies}.
         This means that we need to show that for all strategies $\sigma : X \to Y$ and $\tau: X \to Z$, 
         and for all functions $f : \sem{X} \to \sem{Y}$ and $g: \sem{Y} \to \sem{Z}$,
-        if $\sem{sigma} = f$ and $\sem{tau} =g$, then $\sem{\sigma; \tau} = g \circ f$. By \ref{def:strategy-as-single-use-function}, 
+        if $\sem{\sigma} = f$ and $\sem{\tau} =g$, then $\sem{\sigma; \tau} = g \circ f$. By \ref{def:strategy-as-single-use-function}, 
         this means that we need to show that for all strategies $\nu : 1 \to X$, it holds that: 
         \[ \mathtt{val}(\nu; (\sigma; \tau)) = g(f(\mathtt{val}(\nu))) \]
         First, let us notice that (as explained in Section~\ref{sec:composition-of-strategies}) 
