@@ -518,10 +518,11 @@ Before we do this we introudce the idea of a \emph{partially applied arena}.
 Let $A$ be an arena, and $m$ a move. We define the partially applied arena ${m^{-1}}A$ 
 to be set of sequences that follow $m$ in $A$, i.e:
 \[m^{-1}A = \{s \ | \ ms \in A \}\]
-The only difference between an arena and a partially applied arena, is that the first moves in $m^{-1}A$ will belong to the system (and not to environment).
-For this reason, we keep track of the \emph{owner} of the arena, if environment owns $A$, then the system owns $m^{-1}A$ (and vice versa).
-Observe, that in our case if moves $a, b$ belong to $\atoms$ (i.e. they are constant requests), then $a^{-1}A = b^{-1}A$. 
-For this reason we define $\atoms^{-1}A$ to be the arena $A$ partially applied with any one of the atomic moves. 
+The partially applied arena also remembers two bits of information about its context: (a) wheather the current move belongs to the Environment or to the System
+(b) wheter the previous move was a write move (so that we know if the next move has to be a write move). We finish our discussion with the observation 
+that if moves $a, b$ belong to $\atoms$ (i.e. they are constant requests from the library), then $a^{-1}A = b^{-1}A$. 
+For this reason we define the notation $\atoms^{-1}A$ for partrially applying any of the atomic moves. 
+
 
 We are now ready the type for storing $k$-bounded strategies. 
 \begin{definition}
@@ -534,70 +535,42 @@ We are now ready the type for storing $k$-bounded strategies.
         \begin{align*}
             \Strat(m_1^{-1}A, k) \& \ldots \& \Strat(m_n^{-1}A, k).
         \end{align*}
-        \item System owns $A$. Let $m_1,\ldots,m_n$ be the set of possible first moves that are not first moves in the library.  (This set is finite.) The type is defined to be 
-        \begin{align*}
-            \Strat(m_1^{-1}A, k) + \ldots + \Strat(m_n^{-1}A, k) + \atoms \otimes \Strat(\atoms^{-1}A, k) + \Strat({eq}^{-1}A, k).
-        \end{align*}
+        Let us briefly mention how to handle edge cases: If at least one $\Strat(m_n^{-1}A, k)$ is equal to $\varnothing$, then 
+        the entire type is equal to $\varnothing$. If there are no valid moves $m_i$, then the entire type is equal to $1$. 
+        \item System owns $A$. Now we also consider two options, depending on whether the previous move by Environment was a write move. 
+               If it was, then let $m_1, \ldots, m_n$ be the current set of possible read moves that are not the first moves in any library 
+               component. (This set is finite). Then our type is defined as follows:
+               \begin{align*}
+                \Strat(m_1^{-1}A, k) + \ldots + \Strat(m_n^{-1}A, k) + \underbrace{\Strat({\text{eq}}^{-1}A, k)}_{\substack{\textrm{Start a new call to}\\
+                \textrm{atoms comparing}\\
+                \textrm{library function}}}.
+               \end{align*}
+               The other case is when the previous move was not write. Then let $m_1, \ldots, m_n$ be the set of avaliable moves that are not read moves. 
+               (This set is finite again.) The the strategy type is defined as: 
+               \begin{align*}
+                \Strat(m_1^{-1}A, k) + \ldots + \Strat(m_n^{-1}A, k) + \underbrace{\atoms \otimes \Strat(\atoms^{-1}A, k)}_{\substack{\textrm{Start a new call to}\\
+                \textrm{atomic constants}\\
+                \textrm{library function}}}.
+               \end{align*}
+               Again, let us mention the edge cases: If some $\Strat(m^{-1}A, k) = \varnothing$ (including the cases where $m$ is the new library move, i.e. $\atoms$ or $\text{eq}$)
+               then we simply skip it. If all $\Strat(m_i^{-1}A, k) = \varnothing$, then the entire type is equal to $\varnothing$. 
     \end{itemize}
 \end{itemize}
-    \[ \Strat(A, 0 ) = \begin{cases}
-            \varnothing & \textrm{if System owns $A$}\\
-            \varnothing & \textrm{if Environment owns $A$ and still has moves to play}\\
-            1 & \textrm{if Enviroment own $A$ and has no moves to play}
-    \end{cases}\] 
-    \[
-      \Strat(A, k+1) = \begin{cases}
-        \underset{\substack{
-            \textrm{for every}\\
-            \textrm{first move $m$}\\
-        }}{\mathlarger{\mathlarger{\mathlarger{\mathlarger{\&}}}}} \Strat(m^{-1}A, k) & \textrm{if environment owns $A$} \\ 
-        \left(\underset{\substack{
-            \textrm{for every first}\\
-            \textrm{move $m \not\in \atoms$}\\
-        }}{\mathlarger{\mathlarger{\mathlarger{\mathlarger{+}}}}} \Strat(m^{-1}A, k)\right) + 
-        \underbrace{\atoms \otimes \Strat(\atoms^{-1}A, k)}_{\textrm{if $a \in \atoms$ is a valid first move}} & 
-        \textrm{if system owns A}
-      \end{cases} 
-    \]
-    The intuition behind this is that if that the first move belongs to environment, then the strategy has to be prepared 
-    for all of them, because it does not know what the system will do. However, the environment will play only one of its moves,
-    so the strategy will only have to pick one of the future behaviours, which is the perfect use caase for $\&$. 
-    If the arena belongs to System, then the strategy already knows which move it is going to play. This is represented 
-    with $+$. The exact definitions of the big versions of $+$ and $\&$ are as follows:
-    \[ 
-    \begin{tabular}{cc}
-        $\underset{ m \in M
-        }{\mathlarger{\mathlarger{\mathlarger{\mathlarger{\&}}}}} S_m = \begin{cases}
-            \varnothing & \textrm{if some } S_m = \varnothing\\
-            1 & \textrm{if } M = \varnothing\\
-            S_{m_1} \& \ldots \& S_{m_k}  & \textrm{otherwise}
-        \end{cases}$ &
-        $\underset{ m \in M
-        }{\mathlarger{\mathlarger{\mathlarger{\mathlarger{+}}}}} S_m = \begin{cases}
-            \varnothing & M = \varnothing\\
-            1 & \textrm{if all } S_m = \varnothing\\
-            S_{m_1} + \ldots + S_{m_k}  & \substack{\textrm{for the non-empty } m_i\textrm{'s}\\
-                                                    \textrm{otherwise}}
-        \end{cases}$
-    \end{tabular}
-    \]
 \end{definition}
+The intuition behind this defintion is as foollows. If the current move belong to the environment, then the strategy 
+for the system needs to be prepared for every possible move by the environment. Hoewever, eventually the environment 
+will play only one move, so only one of those paths will materialize. This behaviour corresponds exactly to the connective $\&$. 
+(Actually this is the reason why introducing $\&$ makes our single-use categry symetric monoidal closed.) 
+When the system is about to move, then it needs to pick one of the possible moves. This corresponds to the behaviour of the connective $+$.
 
 
-
-
-
-
-
-In the definition of the linear type, we will be only interested in certain strategies, which avoid behavior that is not relevant to the computation.
-
-
-
+Next, let us show that for every $X$ and $Y$ there is a bound $k$, such that every single use function $f : X \to Y$ has can be represented 
+as a $k$-bounded strategy, i.e. as $\sigma \in \Strat(X \to Y, k)$. The main observation is that we can limit our focus to a certain 
+certain subset of strategies, which avoid behavior that is not relevant to the computation.
 \begin{definition}[Irrelevant question] We say that a play in an arena for $X \to Y$ contains an \emph{irrelevant question} if it contains an equality test on two constants. We say that this strategy \emph{does not ask irrelevant questions} if none of its plays have irrelevant questions.
 \end{definition}
   
 The following lemma shows that if irrelevant questions are disallowed, then plays have length bounded by some constant that depends only on the types involved. This will be one of the useful properties of such strategies, since it will allow us to represent them using a finite linear type.
-
 \begin{lemma}\label{lem:no-irrelevant-questions-are-bounded}
     For every linear types $X$ and $Y$ there is some $k$ such that if a strategy in the arena for $X \to Y$ does not ask irrelevant questions, then all plays in the strategy have length at most $k$.
 \end{lemma}
