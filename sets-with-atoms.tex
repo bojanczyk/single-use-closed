@@ -1,7 +1,7 @@
 \section{Sets with atoms}
-This section contains a brief introduction to orbit-finite sets. For a more detailed treatment, see~\cite{bojanczyk_slightly2018}.
+We begin  with  a brief introduction to orbit-finite sets. For a more detailed treatment, see~\cite{bojanczyk_slightly2018}.
 
-Fix for the rest of this paper a countably infinite set $\atoms$, whose elements will be called atoms. We adopt the convention that atoms are names, like  ``John'' or ``Eve''. The set of atoms has no other structure except for equality, and therefore an \emph{atom automorphism} is defined to be any bijection of $\atoms$ with itself, which may move infinitely many atoms\footnote{Pitts, see~\cite[Definition 1.13]{PittsAM:nomsns}, allows moving only finitely many atoms, but the resulting theory is the same.}. One could consider atoms with more structure, such as a linear order, but to keep things simple, we will not do so for the moment.
+Fix for the rest of this paper a countably infinite set $\atoms$, whose elements will be called atoms. The set of atoms has no other structure except for equality, and therefore an \emph{atom automorphism} is defined to be any bijection of $\atoms$ with itself, which may move infinitely many atoms\footnote{Pitts, see~\cite[Definition 1.13]{PittsAM:nomsns}, allows moving only finitely many atoms, but the resulting theory is the same.}. Later in the paper, we  consider atoms with more structure.
 
 This paper is about sets with atoms, which are sets whose elements are constructed using atoms. Typically, we use sets that are disjoint unions of powers of the atoms, e.g.~$\atoms^4 + \atoms^3$. A set with atoms comes equipped with a natural action of atom automorphisms. For example, if $\pi$ is an atom automorphism that swaps John and Eve, the set $X$ is $\atoms^4$, and the element is  $x=$ (John, Eve, John, Mark) then the result of applying $\pi$ to the element is $\pi(x)=$ (Eve, John, Eve, Mark).  A crucial part of the theory is that we only consider elements which use finitely many atoms, which is formalized using the finite support condition in the following definition.
 
@@ -37,6 +37,7 @@ For example,  $\atoms^2$ has two orbits, while   $\atoms^*$ has infinitely many 
 \end{example}
 
 \subsection{Finiteness of function spaces}
+\label{sec:orbit-finite-function-spaces}
 As mentioned above, orbit-finite sets can be seen as  a certain generalisation of finite sets. They support some, but not all, operations that can usually be done on finite sets. For example, orbit-finite sets are closed under disjoint unions $X + Y$ and products $X \times Y$.  Another good property is that an orbit-finite set has only finitely many equivariant subsets (an equivariant subset is one that is invariant under the action of atom permutations). This is because an equivariant subset is a union of some of the finitely many orbits. This accounts for some of the good computational properties of orbit-finite sets. For example, nonemptiness is decidable for orbit-finite automata (see below), because the state space can be searched orbit by orbit.
 
 However, orbit-finite sets do not have orbit-finite function spaces, as explained in the following example. 
