@@ -1,13 +1,14 @@
 \section{Orbit-finite vector spaces}
-Our first solution to the problem of orbit-finite function spaces is to add more sets and functions, so that function spaces are recovered. (The second solution will go the other way, and restrict the sets and functions.) 
-This generalization is the orbit-finitely spanned vector spaces that were introduced in~\cite{bojanczykKM21OrbitFiniteVector}. This section contains no new technical results beyond those from~\cite{bojanczykKM21OrbitFiniteVector}. If any, the only added value is a different perspective.
+As a complement to the single-use category described before, we present a second example of a symmetric monoidal closed category that  uses atoms. In this example, instead of restricting functions, we generalize them. This generalization is based on the  orbit-finitely spanned vector spaces that were introduced in~\cite{bojanczykKM21OrbitFiniteVector}. As mentioned in the introduction,  this section contains no new technical results beyond those from~\cite{bojanczykKM21OrbitFiniteVector}. 
+% Also, unlike the single-use setup, the construction in this section is rather delicate: it is only known to work for atoms that have equality and order, and it is known to fail for certain choices of atoms, such as the Rado graph, for which the single-use results hold.
 
 To explain the intuitive reason behind the usefulness of vector spaces, consider finite (and not orbit-finite) sets. The number of functions from set with $n$ elements to a set with $m$ elements is $m^n$. However, if we consider linear maps instead of functions without any structure, then we get an exponential improvement, namely instead of $m^n$ we will have $m \cdot n$. 
-This is because a linear map from a vector space of dimension $n$ to a vector space of dimension $m$ can be specified by giving an $m \times n$ matrix. As we will show in this section,  in the orbit-finite world, the improvement is more pronounced: instead of infinite, the space will be finite.
+This is because a linear map from a vector space of dimension $n$ to a vector space of dimension $m$ can be specified by giving an $m \times n$ matrix. As we show in this section,  in the orbit-finite world, the improvement is more pronounced: from infinite to finite.
 
-For the sake of concreteness, all  vector spaces will be over the field of rational numbers. However, the choice of field will not affect the results. The field has no atoms in it, and therefore it has a trivial action of atom automorphisms. In particular, when below we say that scalar multiplication is equivariant, we mean that for every scalar $\lambda$, the function $x \mapsto \lambda x$ is equivariant.
+For the sake of concreteness, all  vector spaces will be over the field of rational numbers. However, the choice of field will not affect the results. The general idea is that the field has no atoms in it, and therefore it has a trivial action of atom automorphisms. 
+% In particular, when below we say that scalar multiplication is equivariant, we mean that for every field element $c$, the function $v \mapsto c \cdot v$ is equivariant.
 \begin{definition}[Vector space with atoms]
-    A \emph{vector space with atoms} is a set with atoms, equipped with a vector space structure, such that the vector space structure is equivariant, i.e.~vector addition and scalar multiplication are equivariant operations.
+    A \emph{vector space with atoms} is a set with atoms, equipped with a vector space structure, such that the vector space structure is equivariant, i.e.~vector addition is equvariant, and  scalar multiplication $v \mapsto cv$ is equivariant for every field element $c$.
 \end{definition}
 
 
@@ -30,38 +31,39 @@ However, this spanning set is not a basis, since it contains linearly dependent 
 
 For the above category, we will use tensor product $\otimes$; this is the usual notion of tensor product for vector spaces. For example, if we take vector spaces $\Lin X$ and $\Lin Y$, i.e.~finite linear combinations of orbit-finite sets $X$ and $Y$ respectively, then the resulting tensor product is $\Lin (X \times Y)$. More generally, the tensor product of two orbit-finitely spanned vector spaces is also orbit-finitely spanned~\cite[Theorem VI.3]{bojanczykKM21OrbitFiniteVector}. 
 
-In the terminology of category theory, the following theorem says that the category of orbit-finite vector spaces with atoms is symmetric monoidal closed, with respect to the tensor product. However, since the readers might not be familiar with category theory, we unfold the definitions in the statement of the theorem. 
+% In the terminology of category theory, the following theorem says that the category of orbit-finite vector spaces with atoms is symmetric monoidal closed, with respect to the tensor product. However, since the readers might not be familiar with category theory, we unfold the definitions in the statement of the theorem. 
 
-\begin{theorem}\label{thm:orbit-finite-vector-space-closed}
-    Let $V$ and $W$ be orbit-finitely spanned vector spaces. There exists an orbit-finitely spanned  vector space, denoted by  $\funspace V W$, and an equivariant linear map
-    \begin{align*}
-    eval : (\funspace V W) \otimes V \to W
-    \end{align*}
-    with the following property. For every equivariant linear map
-    \begin{align*}
-    f : X \otimes V \to W
-    \end{align*}
-    there is a unique equivariant linear map
-    \begin{align*}
-    h : X \to (\funspace V W)
-    \end{align*}
-    such that the following diagram commutes:
-    \[
-    \begin{tikzcd}
-    X \otimes V 
-    \arrow[r,"h \otimes id"]
-    \arrow[dr,"f"']
-    &
-    (\funspace V W) \otimes V
-    \arrow[d,"eval"] \\
-    &
-    W
-    \end{tikzcd}
-    \]
+
+\begin{theorem}\label{thm:orbit-finite-vector-space-closed} The category of orbit-finitely spanned vector spaces is symmetric monoidal closed, with respect to the tensor product.
+    % Let $V$ and $W$ be orbit-finitely spanned vector spaces. There exists an orbit-finitely spanned  vector space, denoted by  $\funspace V W$, and an equivariant linear map
+    % \begin{align*}
+    % eval : (\funspace V W) \otimes V \to W
+    % \end{align*}
+    % with the following property. For every equivariant linear map
+    % \begin{align*}
+    % f : X \otimes V \to W
+    % \end{align*}
+    % there is a unique equivariant linear map
+    % \begin{align*}
+    % h : X \to (\funspace V W)
+    % \end{align*}
+    % such that the following diagram commutes:
+    % \[
+    % \begin{tikzcd}
+    % X \otimes V 
+    % \arrow[r,"h \otimes id"]
+    % \arrow[dr,"f"']
+    % &
+    % (\funspace V W) \otimes V
+    % \arrow[d,"eval"] \\
+    % &
+    % W
+    % \end{tikzcd}
+    % \]
 \end{theorem}
-\begin{proof} We apply the original proof that the category of vector spaces (without atoms and orbit-finiteness) is symmetric monoidal closed. We then observe that: (1) the evaluation morphism is equivariant; (2) the resulting space is orbit-finitely spanned. 
+\begin{proof} We apply the standard proof that the category of vector spaces (without atoms and orbit-finiteness) is symmetric monoidal closed. We then observe that: (1) both evaluation and currying are equivariant; (2) the resulting space is orbit-finitely spanned. 
     
-    For the first observation (1), we simply note that the construction of the function space and evaluation morphism are constructed using the language of set theory, and therefore they will necessarily be equivariant~\cite[Equivariance Principle]{bojanczyk_slightly2018}.
+    For the first observation (1), we simply note that the construction of the function space, as well as  the evaluation and currying morphisms, are constructed using the language of set theory, and therefore they will necessarily be equivariant~\cite[Equivariance Principle]{bojanczyk_slightly2018}.
 
     Let us now explain the second observation (2), about the function space being orbit-finitely spanned. This uses a non-trivial result from~\cite{bojanczykKM21OrbitFiniteVector} which says that orbit-finitely spanned spaces are closed under duals. 
     The space $\funspace V W$ is defined to be the space of finitely supported linear maps from $V$ to $W$, with the natural vecor space structure. This can be seen as a subspace of a larger space, call it $\funspacenonfs V W$, which contains all linear maps, not necessarily finitely supported. A standard result in linear algebra is that $\funspacenonfs V W$ is linearly isomorphic to $ \funspacenonfs {V \otimes W} 1$, where $1$ is the field. This isomorphism is equivariant, and it preserves the property of being finitely supported. Therefore, this gives us an equivariant linear isomorphism between $\funspace V W$ is isomorphic and $ \funspace {V \otimes W} 1$. The latter space is the dual of the orbit-finitely spanned space $V \otimes W$, and therefore it is orbit-finitely spanned by~\cite[Corollary VI.5]{bojanczykKM21OrbitFiniteVector}.
@@ -73,11 +75,5 @@ However, there are two limitations of the orbit-finitely spanned vector spaces.
 
 The first limitation is that the existence of function spaces is dependent on the choice of atoms. Theorem~\ref{thm:orbit-finite-vector-space-closed}  works when the atoms have equality only, and it also works when the atoms are equipped with a total order. This is because the dual spaces are orbit-finitely spanned in these cases, as proved in~\cite[Corollary VI.5]{bojanczykKM21OrbitFiniteVector}. However, the dual spaces are no longer orbit-finitely spanned for other choices of  atoms, such as atoms with a graph structure, see~\cite[Example 9]{bojanczykKM21OrbitFiniteVector}.
 
-A second limitation is the inability to simulate two-way automata with one-way automata. This limitation, and the corresponding properties of the underlying category, will be discussed in Section~\ref{sec:two-way-automata}. In the following section, we discuss an alternative category, called the category of single-use sets, which is also based on the category of orbit-finite sets, and which does not have these limitations. However, the alternative category is smaller, in the following sense: there are faithful functors 
-\[
-\begin{tikzcd}
-\text{single-use sets} \ar[r, ] & 
-\text{orbit-finite sets} \ar[r] &
-\text{orbit-finite vector spaces}
-\end{tikzcd}
-\]
+A second limitation is that it does not support two-way automata, unlike the single-use category (see Section~\ref{sec:two-way-automata}). This is because this category generalizes the orbit-finite category (i.e.~it admits a faithful functor from it), and in the orbit-finite category emptiness is undecidable for deterministic two-way automata~\cite[Theorem 5.3]{nevenFiniteStateMachines2004}. This precludes the kind of traced construction that we did in the single-use category. This issue appears already without atoms: the category of finite-dimensional vector spaces is not traced with respect to the sum $+$ of vector spaces. 
+

@@ -1,40 +1,49 @@
 \section{Beyond equality}
 \label{sec:beyond-equality}
 
-So far, we have only studied the case when the atoms are equipped with equality only. Consider now a more general case: let $\atoms$ be any relational structure, i.e.~any set equipped with relations (but not functions).
+So far, we have only studied the case when the atoms are equipped with equality only. Consider now a more general case: let $\atoms$ be any relational structure, i.e.~any set equipped with relations (but not functions). For example, we could use the rational numbers with their linear order. Another example would be Presburger arithmetic, i.e.~the intergers $\Nat$ together with addition $+$. Since we want to have relations only, we think of addition as a ternary relation $x + y =z$. 
 
-\begin{example} As examples of relational structures, consider the  rational numbers with their linear order $(\mathbb Q, \le)$ and  Presburger arithmetic $(\Nat, <, +)$. Since we do not allow functions, in the case of Presburger arithmetic, addition is viewed as a ternary relation $x + y = z$, and not as a binary function. Both of these structures have a decidable first-order theory, which means that there is an algorithm which checks if a first-order sentence is true in the structure. 
-\end{example}
+The construction of the single-use category from Section~\ref{sec:single-use-sets} is generic enough so that it be generalized to any relational structure, and not just atoms with equality. (In fact, there is also a suitable generalization for function symbols, but we do not prove anything about it, so we do not talk about it.)
 
-When defining the category of single-use functions, we viewed it as a restriction of larger category, in the morphisms were equivariant functions.  We begin by describing the generalisation of this larger category to the case where the parameter $\atoms$ is some relational structure. The idea is to use first-order definable functions as the general analogue of equivariant functions. 
-
-\begin{definition}[Category of first-order definable functions]
-    Let $\atoms$ be a relational structure. The \emph{category of first-order definable functions over $\atoms$} is defined as follows.
-    \begin{itemize}
-        \item The objects are polynomial sets over $\atoms$, i.e.~finite disjoint unions of powers of $\atoms$.
-        \item The morphisms are the  first-order definable functions. Here, a function 
-        \begin{align*}
-            f : \atoms^{n_1} + \cdots + \atoms^{n_k} \to \atoms^{m_1} + \cdots + \atoms^{m_\ell}
-            \end{align*}
-            is called  \emph{first-order definable} if for every $i \in \set{1,\ldots,k}$ and  $j \in \set{1,\ldots,\ell}$ the set 
-            \begin{align*}
-            \setbuild{ (x,y) \in \atoms^{n_i} \times \atoms^{m_j}}{f(\text{$x$ in the $i$-th component}) = \text{$y$ in the $j$-th component}}
-            \end{align*}
-            can be defined by a first-order formula over the vocabulary of $\atoms$.
-    \end{itemize}
+\begin{definition}[Single-use functions over a relational structure]\label{def:single-use-category-relational-structures}
+    Let $\atoms$ be a relational structure. The \emph{single-use category over $\atoms$} is defined in the same way as in Definition~\ref{def:single-use-category}, except that the list of prime functions is extended with one prime function 
+    \begin{align*}
+        \myunderbrace{\atoms \otimes \cdots \otimes \atoms}{$n$ times} \to 1+1
+        \end{align*}
+        for every $n$-ary relation in the vocabulary of $\atoms$. 
 \end{definition}
 
-If the underlying structure $\atoms$ has a decidable first-order theory, then the category described above is reasonably tame. For example, one can decide if two morphisms are equal. However, the category suffer from the same problems with function spaces as those that were described in Section~\ref{sec:orbit-finite-function-spaces}. 
-To recover function spaces, we can consider the single-use variant of the above category. This variant is defined in the same way as for atoms with equality only. The objects are the linear types, i.e.~expressions built from $1$ and $\atoms$ using the type constructors, and the morphisms are single-use functions, which are defined in the same way as for equality, except that instead of having only an equality test, we have a function of type $\atoms^n \to 1+1$ for every $n$-ary relation in the vocabulary (including equality, which is assumed to be built in). We call this category the \emph{single-use category over $\atoms$}. 
 
-The single-use functions can easily be seen to be first-order definable, and the single-use category can be seen as a subset of the category of first-order definable functions. (More formally, there is a faithful functor from one to the other, since the objects are not the same, because the single-use category makes a distinction between products that is not made in the first-order category). 
+Not only is the definition of the category generic, but the same is true for  the proof that function spaces exist. The generalized version of this theorem, stated below, makes only a relatively tame assumption, namely that the vocabulary has finitely many relations of each arity. For example, such vocabularies will arise if we start with some finite vocabulary, and then enrich it by creating a new relation symbol for every quantifier-free formula (modulo equivalence of quantifier-free formulas). In the following theorem, when speaking of a symmetric monoidal closed category, we mean that properties stated in the conclusion of Theorem~\ref{thm:single-use-closed}, in particular we do not require unique currying.
 
-The proof of Theorem~\ref{thm:single-use-closed} generalizes without any difficulty to case of relational structures. 
+
 
 \begin{theorem}\label{thm:single-use-closed-relational-structures}
     Consider a relational structure $\atoms$, in which for every $k \in \set{0,1,\ldots}$ there are finitely many relations of arity $k$. Then the single-use category over $\atoms$ is symmetric monoidal closed, with respect to the tensor product $\otimes$.
 \end{theorem}
-\begin{proof}
-    The finiteness condition on the vocabulary  ensures that strategies in game semantics will have bounded length if they do not ask irrelevant questions, which is the only property needed in Theorem~\ref{thm:single-use-closed} to guarantee that function spaces can be represented using types. 
-\end{proof}
+
+The theorem is proved in the same way as Theorem~\ref{thm:single-use-closed}.  The assumption on the vocabulary is used to ensure that in the corresponding game semantics, there are finitely available moves in any given moment, because the vocabulary can only be queried up to the maximal number of atoms in the input, due to the single-use restriction.
+
+Note that this  theorem can be applied to any relational structure, including undecidable ones. Clearly there must be some benefit from assuming that the structure has a decidable first-order theory, which means that there is an algorithm which checks if a first-order sentence is true in the structure. 
+The benefit is that we can check if two morphisms are equal, as expressed in the following theorem. 
+
+\begin{theorem}
+    Consider a relational structure $\atoms$, in which for every $k \in \set{0,1,\ldots}$ there are finitely many relations of arity $k$. If this structure has a decidable first-order theory, then there is an algorithm for the following problem:
+    \begin{itemize}
+        \item {\bf Input.} Two morphisms, described by expressions using prime functions and combinators.
+        \item {\bf Question.} Are they the same morphism?
+    \end{itemize}
+\end{theorem}
+
+
+
+
+The above theorem gives us a reasonable category of single-use functions over a relational structure with a decidable first-order theory. 
+However, a decidable first-order theory is not the only property needed to ensure that the category is appropriate to automata. If we want to model automata and their decision procedures, we will also need to execute fixpoint algorithms, as explained in~\cite{bojanczyk_slightly2018}. For this purpose, we will need a stronger assumption on the structure $\atoms$, namely that it is oligomorphic. This means that for every $k$, the set $\atoms^k$ has finitely many orbits under the action of the automorphism group of $\atoms$. Under this assumption,  the notion of orbit-finitness is well-defined. Also, since the morphisms of the single-use category from Definition~\ref{def:single-use-category-relational-structures} represent functions that can be defined in first-order logic, and such functions are finitely supported, we get a faithful functor into the category of orbit-finite sets over $\atoms$ with finitely supported functions. The latter category has decidable termination for fixpoint algorithms that operate on orbit-finite sets, and hence we get the following theorem. 
+
+\begin{theorem}\label{thm:single-use-automata-relational-structures}
+    Consider a relational structure $\atoms$ that is oligomorphic and has a decidable first-order theory. Then the emptiness problem is decidable for all single-use automata models: monoids, and deterministic automata in both the one-way and two-way variants.
+\end{theorem}
+
+In the case of two-way automata, the single-use restriction is crucial, since without it the emptiness problem becomes undecidable for all choices of $\atoms$ where the universe is infinite. The above theorem is the first known example of two-way model that has decidable emptiness and uses atoms that are not the equality atoms. 
 

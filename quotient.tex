@@ -1,0 +1,23 @@
+
+\section{A quotient construction}
+\label{sec:quotient-category}
+A drawback of Theorem~\ref{thm:single-use-closed} is that the function space $\funspace V W$ can contain different representations of the same function; this will mean that currying is not unique. To overcome this issue, we use a simple quotient construction. 
+Define a \emph{partial equivalence relation} to be a relation that is symmetric and transitive, but not necessarily reflexive.  This is the same as (complete) equivalence relation on some subset. We will use a partial equivalence on the function space $X \Rightarrow Y$ to: (1)
+ remove objects that do not represent any morphism; (2) identify two objects if they represent the same morphism. After such a quotient, the function space will have unique representations for functions. 
+
+
+
+
+\begin{definition}
+    The \emph{quotiented single-use category} is: 
+    \begin{itemize}
+    \item Objects are pairs (linear type $X$, equivariant partial equivalence relation on $\sem X$);
+    \item Morphisms between objects $(X,\sim_X)$ and $(Y,\sim_Y)$ are single-use functions from $\sem X$ to $\sem Y$ such that the domain of the function is contained in the domain of $\sim_X$, and equivalent inputs are mapped to equivalent outputs.
+    \end{itemize}
+\end{definition}
+
+The quotiented single-use category is also equipped with a tensor product $\otimes$ on its objects.
+\begin{theorem}
+    The quotiented single-use category, equipped with the tensor product $\otimes$, is a monoidal closed category, i.e.~it satisfies the conclusions of Theorem~\ref{thm:single-use-closed}, but futhermore the morphism $h$ is unique.
+\end{theorem}
+

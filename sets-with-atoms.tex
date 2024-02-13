@@ -1,79 +1,77 @@
 \section{Sets with atoms}
 We begin  with  a brief introduction to orbit-finite sets. For a more detailed treatment, see~\cite{bojanczyk_slightly2018}.
 
-Fix for the rest of this paper a countably infinite set $\atoms$, whose elements will be called atoms. The set of atoms has no other structure except for equality, and therefore an \emph{atom automorphism} is defined to be any bijection of $\atoms$ with itself, which may move infinitely many atoms\footnote{Pitts, see~\cite[Definition 1.13]{PittsAM:nomsns}, allows moving only finitely many atoms, but the resulting theory is the same.}. Later in the paper, we  consider atoms with more structure.
+Fix for the rest of this paper a countably infinite set $\atoms$, whose elements will be called atoms.  We assume that this set has no other structure except for equality, which will mean that we will only be interested in notions which \emph{equivariant}, i.e.~invariant under renaming atoms. For example, $\atoms$ has only two equivariant subsets, namely the empty and full subsets. On the other hand, the set $\atoms^2$ has four equivariant subsets; this is because any subset containing (Eve, Eve) must contain all pairs on the diagonal, and any subset containing (Eve, John) must contain all pairs outside the diagonal.  In order to meaningfully speak about equivariant subsets, we must be able to have an action of atom renamings on the set, as formalized in the following definition. The finite support condition is a technical condition that ensures that the action is well-behaved; this condition dates back to the work of Fraenkel and Mostowski, and can be explained in the survey texts~\cite{PittsAM:nomsns} and~\cite{bojanczyk_slightly2018}.
 
-This paper is about sets with atoms, which are sets whose elements are constructed using atoms. Typically, we use sets that are disjoint unions of powers of the atoms, e.g.~$\atoms^4 + \atoms^3$. A set with atoms comes equipped with a natural action of atom automorphisms. For example, if $\pi$ is an atom automorphism that swaps John and Eve, the set $X$ is $\atoms^4$, and the element is  $x=$ (John, Eve, John, Mark) then the result of applying $\pi$ to the element is $\pi(x)=$ (Eve, John, Eve, Mark).  A crucial part of the theory is that we only consider elements which use finitely many atoms, which is formalized using the finite support condition in the following definition.
+
+%  and therefore an \emph{atom renaming} is defined to be any bijection of $\atoms$ with itself, which may move infinitely many atoms\footnote{Pitts, see~\cite[Definition 1.13]{PittsAM:nomsns}, allows moving only finitely many atoms, but the resulting theory is the same.}. 
+%  Later in the paper, we  consider atoms with more structure.
+
+% This paper is about sets with atoms, which are sets whose elements are constructed using atoms. Typically, we use sets that are disjoint unions of powers of the atoms, e.g.~$\atoms^4 + \atoms^3$. A set with atoms comes equipped with a natural action of atom renamings. For example, if $\pi$ is an atom renaming that swaps John and Eve, the set $X$ is $\atoms^4$, and the element is  $x=$ (John, Eve, John, Mark) then the result of applying $\pi$ to the element is $\pi(x)=$ (Eve, John, Eve, Mark).  A crucial part of the theory is that we only consider elements which use finitely many atoms, which is formalized using the finite support condition  below.
 
 \begin{definition}[Set with atoms]
-    A \emph{set with atoms} is a set $X$, equipped with an action of the group of atom automorphisms, subject to the following \emph{finite support condition}: for every $x \in X$ there is a finite set of atoms, such that if an atom automorphism $\pi$ fixes all atoms in the set, then it also fixes $x$.
+    A \emph{set with atoms} is a set $X$, equipped with an action of the group of atom renamings, subject to the following \emph{finite support condition}: for every $x \in X$ there is a finite set of atoms, such that if an atom renaming $\pi$ fixes all atoms in the set, then it also fixes $x$.
 \end{definition}
-    
-This paper is about sets with atoms that are finite; here the suitable notion is having finitely many orbits, as described below.
-Define the \emph{orbit} of an element $x$ in a set with atoms to be the elements that can be obtained from $x$ by applying some atom automorphism. For example, in the set $\atoms^2$,  the orbit of (John, Eve)   contains  (Mark, John), but it does not contain (John, John). The orbits form a partition of a set with atoms. 
+
+The idea is that a set with atoms is any kind of object that deals with atoms, such as the set $\atoms^*$ of all words over the alphabet $\atoms$, or the family of finite subsets of $\atoms$. Among such objects, we will be interested in those which are ``finite''. This will be formalized by  saying that there are  finitely many orbits, as described below.
+Define the \emph{orbit} of an element $x$ in a set with atoms to be the elements that can be obtained from $x$ by applying some atom renaming. For example, in the set $\atoms^2$,  the orbit of (John, Eve)   contains  (Mark, John), but it does not contain (John, John). The orbits form a partition of a set with atoms. 
 
 
 \begin{definition}[Orbit-finite set]   A set with atoms is called \emph{orbit-finite} if it has finitely many orbits. 
 \end{definition}
 
-For example,  $\atoms^2$ has two orbits, while   $\atoms^*$ has infinitely many orbits, since sequences of different lengths are necessarily in different orbits. 
+A typical example of an orbit-finite set is $\atoms^4$, or more general any polynomial expression such as $\atoms^4 + \atoms^3 + \atoms^3 + 1$. Here, $1$ represents the set of zero-length sequences; this set has a unique element which is its own orbit.  For  example,  $\atoms^3$ has five orbits, because there are five possible ways of choosing a pattern of equalities in a sequence of three names. On the other hand,  $\atoms^*$ has infinitely many orbits, since sequences of different lengths are necessarily in different orbits.   The family of finite subsets of $\atoms$  is also  not orbit-finite, because subsets of different size are in different orbits. The full powerset $\powerset \atoms$ is not even a legitimate object in our setting, because some of its elements, i.e.~some subsets of $\atoms$, violate the finite support condition. 
 
-\begin{example}[Polynomial orbit-finite sets]\label{ex:polynomial-orbit-finite-sets} 
-  A \emph{polynomial orbit-finite set} is a finite disjoint unions of finite powers of the atoms, i.e.~a set of the form 
-    \begin{align*}
-    \atoms^{n_1} + \cdots + \atoms^{n_k} \qquad \text{for some }n_1,\ldots,n_k \in \set{0,1,\ldots}.
-    \end{align*}
-    When the power is zero, i.e.~in the set $\atoms^0$, there is only one element  that represents the empty tuple, and the action of atom automorphisms is trivial. We sometimes write $1$ for the set $\atoms^0$, and we write () for its unique element, since it represents the empty tuple. Some orbit-finite sets are not polynomial, here are two examples:
-    \begin{align*}
-    \myunderbrace{
-        \setbuild{(a,b)}{$a \neq b \in \atoms$}
-    }{ non-repeating pairs}
-    \qquad 
-    \myunderbrace{
-    \setbuild{\set{a,b}}{$a \neq b \in \atoms$}
-    }{ unordered pairs} 
-    \end{align*}  
+% \begin{example}[Polynomial orbit-finite sets]\label{ex:polynomial-orbit-finite-sets} 
+%   A \emph{polynomial orbit-finite set} is a finite disjoint unions of finite powers of the atoms, i.e.~a set of the form 
+%     \begin{align*}
+%     \atoms^{n_1} + \cdots + \atoms^{n_k} \qquad \text{for some }n_1,\ldots,n_k \in \set{0,1,\ldots}.
+%     \end{align*}
+%     When the power is zero, i.e.~in the set $\atoms^0$, there is only one element  that represents the empty tuple, and the action of atom renamings is trivial. We sometimes write $1$ for the set $\atoms^0$, and we write () for its unique element, since it represents the empty tuple. Some orbit-finite sets are not polynomial, here are two examples:
+%     \begin{align*}
+%     \myunderbrace{
+%         \setbuild{(a,b)}{$a \neq b \in \atoms$}
+%     }{ non-repeating pairs}
+%     \qquad 
+%     \myunderbrace{
+%     \setbuild{\set{a,b}}{$a \neq b \in \atoms$}
+%     }{ unordered pairs} 
+%     \end{align*}  
         
-\end{example}
+% \end{example}
 
 \subsection{Finiteness of function spaces}
 \label{sec:orbit-finite-function-spaces}
-As mentioned above, orbit-finite sets can be seen as  a certain generalisation of finite sets. They support some, but not all, operations that can usually be done on finite sets. For example, orbit-finite sets are closed under disjoint unions $X + Y$ and products $X \times Y$.  Another good property is that an orbit-finite set has only finitely many equivariant subsets (an equivariant subset is one that is invariant under the action of atom permutations). This is because an equivariant subset is a union of some of the finitely many orbits. This accounts for some of the good computational properties of orbit-finite sets. For example, nonemptiness is decidable for orbit-finite automata (see below), because the state space can be searched orbit by orbit.
-
+As mentioned above, orbit-finite sets can be seen as  a certain generalisation of finite sets. They allow some, but not all, operations that can usually be done on finite sets. For example, orbit-finite sets are closed under disjoint unions $X + Y$ and products $X \times Y$.  Another good property is that an orbit-finite set has only finitely many equivariant subsets (an equivariant subset is one that is invariant under the action of atom permutations). This is because an equivariant subset is a union of some of the finitely many orbits. This accounts for some of the good computational properties of orbit-finite sets. For example, nonemptiness is decidable for orbit-finite automata (see below), because the state space can be searched orbit by orbit.
 However, orbit-finite sets do not have orbit-finite function spaces, as explained in the following example. 
 
 \begin{example}
-    Consider the space of functions of type $\atoms \to \atoms$. If we want the function to be equivariant, i.e.~invariant under atom automorphism, then there is only one choice, namely the identity function. However, as we will explain below, the more appropriate choice is the class of finitely supported functions, i.e.~those that are invariant under all atom automorphism that fix some finite set of atoms that depends only on the function. For example,  the  function
+    Consider the space of functions of type $\atoms \to \atoms$. What are the legitimate functions? One choice is that we only allow the equivariant functions. Under this choice, there is only one possible function,  namely the identity function. However, as we will explain below, the more appropriate choice is the class of finitely supported functions, i.e.~those that are invariant under all atom renamings that fix some finite set of atoms that depends only on the function. For example,  the  function
     \begin{align*}
     f(a) = \begin{cases}
         \text{Mark} & \text{if $a \in \set{\text{John, Eve, Bill}}$} \\
         a & \text{otherwise}
     \end{cases}
     \end{align*}
-    is finitely supported, because invariant under all atom automorphisms that fix Mark, John, Eve and Bill. The space of finitely supported functions will be called the \emph{finitely supported function space}. This space is equipped with an action of atom automorphisms. For example if $\pi$ is the atom automorphism that swaps Mark with Adam, then applying it to the function $f$ defined above gives the function
-    \begin{align*}
-        (\pi(f))(a) = \begin{cases}
-            \text{Adam} & \text{if $a \in \set{\text{John, Eve, Bill}}$} \\
-            a & \text{otherwise}
-        \end{cases}
-        \end{align*}
-    In the case of $\atoms \to \atoms$, the finitely supported function space is not orbit-finite, because making the list of atoms longer in the conditional from the definition of $f$ will give us functions in different orbits. In fact, the finitely supported function space $X \to Y$ will never be orbit-finite, if the input type $X$ is infinite and the output type $Y$ has at least two elements. 
+    is finitely supported, because invariant under all atom renamings that fix Mark, John, Eve and Bill. The space of finitely supported functions will be called the \emph{finitely supported function space}. This space is equipped with an action of atom renamings. For example if $\pi$ is the atom renaming that swaps Mark with Adam, then applying it to the function $f$ defined above gives the function $\pi(f)$ that has the same definition (or source code, if a programming intuition is to be followed), except that Mark is used instead of Adam.
+    In the case of $\atoms \to \atoms$, the finitely supported function space is not orbit-finite. Indeed, the output Mark could be conditioned on the input belonging to some very long finite list of exceptional values, and extending the list of exceptional values will give us a function in a different orbit.
 \end{example}
 
-In the above example, we explained how the finitely supported function space will typically not be orbit-finite. On the other hand, the equivariant function space will always be literally finite, if the input and output types are orbit-finite, because it will be an equivariant subset of the product $X \times Y$. So why do we insist on the finitely supported function space? A more principled reason will appear later in the paper, where we discuss symmetric monoidal closed categories, and where the finitely supported function space will turn out to be the right one. However, we can already give a simple reason, which appeals to automata theory, namely converting an automaton into a monoid. 
+In the above example, we explained how the finitely supported function space might not be orbit-finite. On the other hand, the equivariant function space will always be literally finite, if the input and output types are orbit-finite, because it will be an equivariant subset of the product $X \times Y$. So why do we insist on the finitely supported function space? A more principled reason will appear later in the paper, where we discuss symmetric monoidal closed categories, and where the finitely supported function space will turn out to be the right one. However, we can already give a simple reason, which appeals to automata theory, namely converting an automaton into a monoid. As we have seen in Example~\ref{ex:first-letter-repeats-monoid}, when converting an automaton to a monoid, we will want to use partially applied transition functions, and such functions will be finitely supported but not equivariant. 
 
 
-\begin{example}[From automata to monoids]\label{ex:automata-to-monoids}
-    Consider the following two models for representing equivariant languages $L \subseteq \Sigma^*$ over some orbit-finite alphabet $\Sigma$.  The first model is deterministic orbit-finite automata~\cite[Section 3]{bojanczykAutomataTheoryNominal2014}. This model is defined as usual in language theory, except that the states and input alphabet are orbit-finite sets, and the remaining automaton structure (initial state, transition function, accepting set) is equivariant. The second model is orbit-finite monoids~\cite[Section 3]{bojanczykNominalMonoids2013}. This is defined as usual in language theory, except that the input alphabet and  the underlying set of the monoid are orbit-finite, and the remaining structure (the monoid homomorphism, the multiplication operation, and the accepting set) is equivariant.
+% \begin{example}[From automata to monoids]\label{ex:automata-to-monoids}
+%     Consider the following two models for representing equivariant languages $L \subseteq \Sigma^*$ over some orbit-finite alphabet $\Sigma$.  The first model is deterministic orbit-finite automata~\cite[Section 3]{bojanczykAutomataTheoryNominal2014}. This model is defined as usual in language theory, except that the states and input alphabet are orbit-finite sets, and the remaining automaton structure (initial state, transition function, accepting set) is equivariant. The second model is orbit-finite monoids~\cite[Section 3]{bojanczykNominalMonoids2013}. This is defined as usual in language theory, except that the input alphabet and  the underlying set of the monoid are orbit-finite, and the remaining structure (the monoid homomorphism, the multiplication operation, and the accepting set) is equivariant.
 
  
-In the usual setting of finite sets (not orbit-finite sets), the two models have the same expressive power. In the proof, from an automaton with states $Q$ one constructs a monoid that describes functions $Q \to Q$. This, however, does not work in the orbit-finite setting. Note that the appropriate space is the finitely supported one, since we the monoid should consist of state transformations $q \mapsto \delta(q,w)$ that arise from input words $w$, and such functions are no longer equivariant, but they are finitely supported (by whatever supports the input word).  In fact, not only the standard proof fails, but the result is simply false.  For example, the language 
-\begin{align*}
-\setbuild{ w \in \atoms^+}{the first letter in $w$ appears at least twice}
-\end{align*}
-is recognized by a deterministic orbit-finite automaton, but not by an orbit-finite monoid. 
-\end{example}
+% In the usual setting of finite sets (not orbit-finite sets), the two models have the same expressive power. In the proof, from an automaton with states $Q$ one constructs a monoid that describes functions $Q \to Q$. This, however, does not work in the orbit-finite setting. Note that the appropriate space is the finitely supported one, since we the monoid should consist of state transformations $q \mapsto \delta(q,w)$ that arise from input words $w$, and such functions are no longer equivariant, but they are finitely supported (by whatever supports the input word).  In fact, not only the standard proof fails, but the result is simply false.  For example, the language 
+% \begin{align*}
+% \setbuild{ w \in \atoms^+}{the first letter in $w$ appears at least twice}
+% \end{align*}
+% is recognized by a deterministic orbit-finite automaton, but not by an orbit-finite monoid. 
+% \end{example}
+
+The lack of function spaces is the problem that we address in this paper. The rest of this paper is devoted to two solutions of this problem. In each of the two solutions, we modify the notion of orbit-finite sets, by either restricting it or generalizing it, in a way that recovers function spaces. 
 
 
 
-In the following sections, we present two variants of orbit-finite sets that do have function spaces. One is a generalisation, and the other is a restriction.

@@ -1,0 +1,29 @@
+\section{Beyond equality}
+\label{sec:beyond-equality-appendix}
+\begin{proof}[Proof sketch]
+    The finiteness condition on the vocabulary  ensures that strategies in game semantics will have bounded length if they do not ask irrelevant questions, which is the only property needed in Theorem~\ref{thm:single-use-closed} to guarantee that function spaces can be represented using types. 
+\end{proof}
+
+
+When defining the category of single-use functions, we viewed it as a restriction of larger category, in the morphisms were equivariant functions.  We begin by describing the generalisation of this larger category to the case where the parameter $\atoms$ is some relational structure. The idea is to use first-order definable functions as the general analogue of equivariant functions. 
+
+\begin{definition}[Category of first-order definable functions]
+    Let $\atoms$ be a relational structure. The \emph{category of first-order definable functions over $\atoms$} is defined as follows.
+    \begin{itemize}
+        \item The objects are polynomial sets over $\atoms$, i.e.~finite disjoint unions of powers of $\atoms$.
+        \item The morphisms are the  first-order definable functions. Here, a function 
+        \begin{align*}
+            f : \atoms^{n_1} + \cdots + \atoms^{n_k} \to \atoms^{m_1} + \cdots + \atoms^{m_\ell}
+            \end{align*}
+            is called  \emph{first-order definable} if for every $i \in \set{1,\ldots,k}$ and  $j \in \set{1,\ldots,\ell}$ the set 
+            \begin{align*}
+            \setbuild{ (x,y) \in \atoms^{n_i} \times \atoms^{m_j}}{f(\text{$x$ in the $i$-th component}) = \text{$y$ in the $j$-th component}}
+            \end{align*}
+            can be defined by a first-order formula over the vocabulary of $\atoms$.
+    \end{itemize}
+\end{definition}
+
+If the underlying structure $\atoms$ has a decidable first-order theory, then the category described above is reasonably tame, in particular one can decide if two morphisms are equal. This will happen, for instance, if the underlying structure is Presburger arithmetic. However, the category will still suffer from the same problems with function spaces as those that were described in Section~\ref{sec:orbit-finite-function-spaces}. 
+To recover function spaces, we can consider the single-use variant of the above category. This variant is defined in the same way as for atoms with equality only. The objects are the linear types, i.e.~expressions built from $1$ and $\atoms$ using the type constructors, and the morphisms are single-use functions, which are defined in the same way as for equality, except that instead of having only an equality test, we have a function of type $\atoms^n \to 1+1$ for every $n$-ary relation in the vocabulary, with the power using tensor product. We call this category the \emph{single-use category over $\atoms$}. 
+
+The single-use functions can easily be seen to be first-order definable, and the single-use category can be seen as a subset of the category of first-order definable functions. (More formally, there is a faithful functor from one to the other, since the objects are not the same, because the single-use category makes a distinction between products that is not made in the first-order category).  The proof of Theorem~\ref{thm:single-use-closed} generalizes without any difficulty to case of relational structures. 
