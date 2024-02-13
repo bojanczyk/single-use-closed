@@ -1,20 +1,122 @@
-\section{Single-use sets}
+\section{Single-use sets and functions}
 \label{sec:single-use-sets}
-We now turn to our second solution for the problem of orbit-finite function spaces.  The general idea is that we only allow single-use functions. 
+We now turn to our first solution for the problem of orbit-finite function spaces.  Our solution builds on the idea from~\cite[Section 2.2]{stefanski-phd}, which is to consider only functions that are single-use. We describe this idea in Section~\ref{sec:single-use-functions-over-polynomial-orbit-finite-sets}, and we show how it almost, but not quite, achieves function spaces. Then, in the rest of this section, we show how function spaces can be recovered by using a more refined type system. 
+
+\subsection{Single-use functions over polynomial orbit-finite sets}
+\label{sec:single-use-functions-over-polynomial-orbit-finite-sets}
+
+In the introduction, we have already given an intuitive description behind the single-use functions; these are functions that destroy the argument after any use of it, such as comparing it to a constant. We now give a more formal definition.
+
+We do not define the single-use functions on all orbit-finite sets, but only a syntactically defined fragment, namely the \emph{polynomial orbit-finite sets}, which are sets that can be generated from $1$ and $\atoms$ using  
+ products $\times$ and disjoint unions $+$. Therefore, we will allow orbit-finite sets like $1 + \atoms^2$, but we will not allow orbit-finite sets like 
+the set of non-repeating pairs
+$\setbuild{(a,b)}{$a \neq b \in \atoms$}$ or the set of unordered pairs $\setbuild{\set{a,b}}{$a \neq b \in \atoms$}$. It is an open problem to find a satisfactory definition of single-use functions on all orbit-finite sets. A simple hack is to use a quotienting construction, similar to Section~\ref{sec:quotient-category}, but what we would really like to do is to identify some extra structure in a set, possibly an action of some yet unknown group or semigroup, which enables us to speak about single-use functions.
+
+Consider two polynomial orbit-finite sets $X$ and $Y$. To define which functions $X \to Y$ are single-use, we use an inductive definition. We begin with certain functions that are considered single-use, such as the equality test of type $\atoms \times \atoms \to 1 + 1$. These functions are called the \emph{prime functions}, and their full list is given in Figure~\ref{fig:prime-morphisms-without-with}. Next, we combine the prime functions into new ones using three combinators. The first, and most important, combinator is  function composition. Then, we have two combinators for the two type constructors: if two functions $f_1 : X_1 \to Y_1$ and $f_2 : X_2 \to Y_2$ are single-use, then the same is true for:
+\begin{align*}
+    f_1 \times f_2 : X_1 \times X_2 \to Y_1 \times Y_2
+    \qquad &
+    f_1 + f_2 : X_1 + X_2 \to Y_1 + Y_2 \\
+    \scriptstyle  (x_1,x_2) \mapsto (f_1(x_1),f_2(x_2)) 
+    \qquad &
+    {\scriptstyle \text{left}(x_1) \mapsto \text{left}(f_1(x_1)) 
+        \quad 
+        \text{right}(x_2) \mapsto \text{right}(f_2(x_2)) }.
+\end{align*}
+
+Crucially, the list of prime single-use function does not contain the copying function $a \in \atoms \mapsto (a,a) \in \atoms^2$. Therefore, an alternative name for the single-use functions is \emph{copyless}. If we added copying, then we would get all finitely supported functions~\cite[Lemma 23]{stefanski-phd}.
+
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{lll}
+        \textbf{Function} & \textbf{Type} & \textbf{Definition} \\ \\
+        \emph{Functions about $\atoms$} \\
+        equality test & $\atoms \times \atoms \to 1 + 1$ & $a, b \mapsto \text{if } a = b \text{ then true else false}$ \\
+        constant $a$ & $1 \to \atoms$ & $x \mapsto a$ \\
+        identity & $\atoms \to \atoms$ & $x \mapsto x$ \\
+        \\
+        \emph{Functions about \(\times\)} \\
+        commutativity of $\times$ & $X \times Y \to Y \times X$ & $x \times y \mapsto y \times x$ \\
+        first projection & $X \times Y \to X$ & $x \times y \mapsto x$ \\
+        second projection & $X \times Y \to Y$ & $x \times y \mapsto y$ \\
+        append 1 & $X \to X \times 1$ & $x \mapsto x \times ()$ \\
+        associativity of $\times$ & $(X \times Y) \times Z \to X \times (Y \times Z)$ & $(x \times y) \times z \mapsto x \times (y \times z)$ \\ \\
+        \emph{Functions about \(+\)} \\
+        first co-projection & $X \to X + Y$ & $x \mapsto \text{left}(x)$ \\
+        second co-projection & $Y \to X + Y$ & $y \mapsto \text{right}(y)$ \\
+        co-diagonal & $X + X \to X$ & $\left\{\begin{tabular}{l}
+            $\text{left}(x) \mapsto x$\\
+            $\text{right}(x) \mapsto x$
+            \end{tabular}\right.$ \\
+        commutativity of $+$ & $X + Y \to Y + X$ & $\left\{\begin{tabular}{l}
+        $\textrm{left}(x) \mapsto \textrm{right}(x)$\\
+        $\textrm{right}(y) \mapsto \textrm{left}(y)$
+        \end{tabular}\right.$ \\
+        associativity of $+$ & $(X + Y) + Z \to X + (Y + Z)$ & $\left\{
+        \begin{tabular}{l}
+        $\text{left}(\text{left}(x)) \mapsto \text{left}(x)$\\
+        $\text{left}(\text{right}(y)) \mapsto \text{right}(\text{left}(y))$\\
+        $\text{right}(z)\mapsto \text{right}(\text{right}(z))$
+        \end{tabular}\right.$ \\
+        \\
+        \emph{Distributivity}
+        \\
+        $+$ distributes over $\times$ & $X \times (Y + Z) \to (X \times Y) + (X \times Z)$ & $\left\{\begin{tabular}{l}
+            $x \times (\text{left}(y)) \mapsto \text{left}(x \times y)$\\
+            $x \times (\text{right}(z)) \mapsto \text{right}(x \times z)$
+        \end{tabular}\right.$ \\
+        \\
+    \end{tabular}
+    \caption{The prime single-use functions for polynomial orbit-finite sets $X, Y$ and $Z$.}
+    \label{fig:prime-morphisms-without-with}
+\end{table}
+
+
+
+
+
+\begin{example}\label{ex:six-compositions}
+    Consider function of type $\atoms^3 \to \atoms$ which inputs a triple $(a,b,c)$ of atoms and returns $a$ if $c$ is equal to Mark, and $b$ otherwise. This function is a single-use function. It is obtained by composing the six functions listed below:
+\begin{center}
+    \begin{tabular}{ll}
+        Function & Type after function \\
+        \hline
+        Append 1. & $ \atoms \times \atoms \times \atoms \times 1$ \\
+        Replace added $1$ with Mark using the constant function. & $\atoms \times \atoms \times \atoms \times \atoms$ \\
+        Apply the equality test to the last two components. & $ \atoms \times \atoms \times (1+1)$ \\
+        Distribute. & $ \atoms \times \atoms \times 1 +   \atoms \times \atoms \times 1$ \\
+        Project to first and second components, respectively. & $\atoms + \atoms$ \\
+        Co-diagonal & $\atoms$ 
+    \end{tabular}
+\end{center}
+To justify this description, one should also show that the six functions are single-use. Three of the functions, namely append 1, distributivity and co-diagonal are prime functions. The other three are obtained by combining prime functions using the combinators. For example, the equality test is paired, using the combinator for $\times$, with the identity on the remaining two atoms. 
+\end{example}
+
+The design goal of the single-use restriction is to have orbit-finite function spaces. The rough idea is that a single-use function can only use a bounded number of atoms in its source code, which guarantees orbit-finiteness of the function space. 
 
 \begin{example}\label{ex:first-single-use-function-space}
-    Let us describe the single-use functions of type $\atoms \to 1 + 1$. (We think of the output type as being the Booleans.) Being single-use means that such a function is constrained to using its argument only once, i.e.~the input can be tested for equality with at most one possible constant. For example, testing if the input atom is equal to John is allowed, but it is not allowed to test if it is equal to either John or Mark.  If the atom constant that we compare to is John, then there are four possibilities for the function:  aleays return true, always return false, check for equality with Mark, and check for disequality with Mark. Since John could be any atom,  the set of single-use functions of type $\atoms \to 1+1$ admits an equivariant bijection with the set 
-    \begin{align}\label{eq:bad-solution-for-function-space}
-        1 + 1 + \atoms + \atoms.
-    \end{align}
-This set is orbit-finite.  In contrast, the full space of finitely suported functions  of type $\atoms \to 1 + 1$ is not orbit-finite, because the input could be compared to any finite number of constants.
+    Consider function of type $\atoms \to 1 + 1$, which can be seen as subsets of the atoms, with $1+1$ representing the Booleans. We will consider two function spaces: the larger space of all finitely supported functions, and the smaller space of the single-use function.
+    
+    A function in the larger space is any finitely supported subset of the atoms; such subsets are the same as the finite and co-finite subsets. Therefore, the larger function space admits an equivariant bijection with a disjoint union of two copies of the finite powerset $\powerset_{\text{fin}} \atoms$, in particular it is not orbit-finite.
+    
+    Consider now the smaller single-use function space. There are four possible functions of this kind: (a) always return true; (b) always return false; (c) check for equality with some fixed atom $a$; (d) check for disequality with with some fixed atom $a$.  Therefore,  the set of single-use functions  admits an equivariant bijection with the orbit-finite set $1 + 1 + \atoms + \atoms$.
+    \exampleend
+
 \end{example}
 
 
-The original idea behind this section comes from~\cite[Section 3]{stefansk-msc}, where it was shown that orbit-finite monoids have exactly the same expressive power as deterministic automata in which the transition function is single-use.  The results from~\cite{stefansk-msc} and their extensions from~\cite{bojanczykstefanski2020} were oriented toward automata theory, and did not try to address the more general question: what is a single-use set/function in general, not necessarily in the context of automata?  This more general question was partially addressed in~\cite[Section 2.2]{stefanski-phd}, which contained the following proposal. As the sets we take polynomial orbit-finite sets, i.e.~those that can be constructed from the basic sets $1$ and $\atoms$ using products $\times$ and co-products $+$. As the functions, we take the single-use functions; these are defined in a syntactic way by giving certain prime functions (such as projection or distributivity of $+$ over $\times$) and combinators that combine existing single-use functions to create new ones (such as function composition). The point of the proposal is that the resulting function space is orbit-finite. 
+The above example shows that the space of single-use functions of a some type $X \to Y$ is orbit-finite, and in fact it can be described using a polynomial orbit-finite set. This is true for every choice of polynomial orbit-finite sets $X$ and $Y$, as proved in~\cite[Theorem 5]{stefanski-phd}. Let us give a brief explanation of why this is true. Using distributivity one reduce the problem of finding function spaces to the case when the input is some power of the atoms $X = \atoms^k$, and the output is disjoint union of powers of the atoms $Y = \atoms^{n_1} + \cdots + \atoms^{n_\ell}$. 
 
+In some case, the same function is represented in several different ways. For example, the two function of type $\atoms^2 \to 1 + 1$ that returns true if the input pair is (Mark, John) and false otherwise can be represented by two programs, which do the comparisons in the different orders. 
 
-Unfortunately, the proposal from~\cite{stefanski-phd} does not constitute a satisfactory solution to the problem of function spaces. The issue is that although the function space  is orbit-finite, the operations on it are not single-use. More specifically, evaluation is single-use, but currying is not single-use. In other words, taking the function spaces takes us out of the category, i.e.~the category is not closed.
+\paragraph*{Problem with currying}
+Unfortunately, the proposal from~\cite{stefanski-phd} does not constitute a satisfactory solution to the problem of function spaces. Suppose that we have polynomial orbit-finite sets $X$ and $Y$, and we have some new polynomial orbit-finite set, call it $X \Rightarrow Y$, which represents the single-use functions from $X$ to $Y$. We would like this set to not only exist, but it should also support operations on functions, such as: 
+\begin{enumerate}
+    \item evaluation: a single-use function from $(X \Rightarrow Y) \times X$ to $Y$ which inputs a representation of a function and applies it to an argument;
+    \item composition: a function from $(X \Rightarrow Y) \times (Y \Rightarrow Z)$ to $(X \Rightarrow Z)$ which inputs the representations of two functions and returns a representation of their composition.
+    \item currying: for each single-use function from  $ X \times Y $ to $Z$, there should be a single-use function from $X$ to $Y \Rightarrow Z$ which inputs a first argument and returns a representation of the  partially applied function;
+\end{enumerate}
+Only in the presence of all of these operations can we speak of a function space, and the corresponding category can be called closed. (Composition can be obtained through evaluation and currying, so the essential operations are evaluation and currying.) The following example shows that the currying operation is not single-use, and therefore the space of single-use functions as defined in this section is not closed. 
 
 
 \begin{example}
@@ -34,8 +136,10 @@ The currying of this function, is a new function which  maps a first argument $a
         b \mapsto \text{false} & \text{otherwise}
         \end{cases}
 \end{align*}
-If we use the representation from~\eqref{eq:bad-solution-for-function-space} to represent the partially applied functions in type $\atoms \to 1+1$, then the currying above  is not single-use, because we need to compare the input atom $a$ to two constants, Mark and John. 
+Recall that in Example~\ref{ex:first-single-use-function-space} we showed that the space of single-use functions of type $\atoms \to 1 + 1$ can be represented as $1 + 1 + \atoms + \atoms$. If we use this representation,  then the currying of the function $f$  is not single-use, because we need to compare the input atom $a$ to two constants, Mark and John. 
 \end{example}
+
+Another problem with the single-use functions as described in this section is that although they are closed under composition, the operation that inputs two representations of single-use functions and outputs a composition of their representation is also not single-use. This problem means that we cannot convert automata into single-use monoids, as we would like to do, since the resulting monoid would need to use function composition as its monoid operation. (This problem is solved in~\cite{bojanczykstefanski2020} and~\cite{stefanski-phd} in a different way, namely there is a )
 
 To solve the issue from the above example, we will  extend the category using a more refined type system, in which we distinguish two different kinds of products, called $\&$ and $\otimes$, as in linear logic. For the  benefit of the impatient reader,   the appropriate type for the function space $\atoms \Rightarrow 1+1$ will turn out to be 
 \begin{align*}
@@ -248,30 +352,7 @@ For the prime functions, we use some standard single-use operations known from l
 By definition, for every types $X$ and $Y$, every single-use function of type $X \to Y$ is a certain function from set $\sem X$ to the set $\sem Y$. One can easily see that this function is  finitely supported, since the prime functions are finitely supported and the combinators preserve this property.  Therefore, one can think of the single-use functions of type $X \to Y$ as being a subset of the set of all finitely supported functions from $\sem X$ to $\sem Y$. This subset is strict: as we will see, the space of single-use functions will be orbit-finite, unlike the space of all finitely supported functions. If we think of the single-use functions as a category, as we will be, then this category admits a faithful functor to the category of polynomial orbit-finite sets with finitely suported functions as morphisms.
 
 
-\begin{example}[A single-use function]\label{ex:six-compositions}
-    Consider the function 
-    \begin{align*}
-    \sem{\atoms \otimes \atoms \otimes \atoms} \to \sem \atoms  \qquad a \otimes b \otimes c \mapsto \begin{cases}
-        b & \text{if } a = \text{Mark} \\
-        c & \text{otherwise}.
-    \end{cases}
-    \end{align*}
-    This is a single-use function. It is obtained by composing the six functions listed below:
 
-\begin{center}
-    \begin{tabular}{ll}
-        Function & Type after function \\
-        \hline
-        Add a copy of $1$ using $\text{add 1}$. & $1 \otimes \atoms \otimes \atoms \otimes \atoms$ \\
-        Replace added $1$ with Mark using the constant function. & $\atoms \otimes \atoms \otimes \atoms \otimes \atoms$ \\
-        Apply the equality test to the first two components. & $(1+1) \otimes \atoms \otimes \atoms$ \\
-        Distribute. & $1 \otimes \atoms \otimes \atoms +  1 \otimes \atoms \otimes \atoms$ \\
-        Project to second and third components, respectively. & $\atoms + \atoms$ \\
-        Co-diagonal & $\atoms$ 
-    \end{tabular}
-\end{center}
-To justify this description, one should also show that the six functions are single-use. The distribute and co-diagonal are prime functions. The other four are obtained by combining prime functions using the combinators. For example, the equality test is paired, using the combinator for $\otimes$, with the identity on the remaining two atoms. 
-\end{example}
 
 % As this example shows, the definition of single-use functions in terms of prime functions and combinators can be a bit cumbersome from the point of view of a programmer. Also, 
 

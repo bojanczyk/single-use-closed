@@ -1,13 +1,14 @@
 \section{Orbit-finite vector spaces}
 Our first solution to the problem of orbit-finite function spaces is to add more sets and functions, so that function spaces are recovered. (The second solution will go the other way, and restrict the sets and functions.) 
-This generalization is the orbit-finitely spanned vector spaces that were introduced in~\cite{bojanczykKM21OrbitFiniteVector}. This section contains no new technical results beyond those from~\cite{bojanczykKM21OrbitFiniteVector}. If any, the only added value is a different perspective.
+This generalization is the orbit-finitely spanned vector spaces that were introduced in~\cite{bojanczykKM21OrbitFiniteVector}. As mentioned in the introduction,  this section contains no new technical results beyond those from~\cite{bojanczykKM21OrbitFiniteVector}. 
 
 To explain the intuitive reason behind the usefulness of vector spaces, consider finite (and not orbit-finite) sets. The number of functions from set with $n$ elements to a set with $m$ elements is $m^n$. However, if we consider linear maps instead of functions without any structure, then we get an exponential improvement, namely instead of $m^n$ we will have $m \cdot n$. 
-This is because a linear map from a vector space of dimension $n$ to a vector space of dimension $m$ can be specified by giving an $m \times n$ matrix. As we will show in this section,  in the orbit-finite world, the improvement is more pronounced: instead of infinite, the space will be finite.
+This is because a linear map from a vector space of dimension $n$ to a vector space of dimension $m$ can be specified by giving an $m \times n$ matrix. As we show in this section,  in the orbit-finite world, the improvement is more pronounced: from infinite to finite.
 
-For the sake of concreteness, all  vector spaces will be over the field of rational numbers. However, the choice of field will not affect the results. The field has no atoms in it, and therefore it has a trivial action of atom automorphisms. In particular, when below we say that scalar multiplication is equivariant, we mean that for every scalar $\lambda$, the function $x \mapsto \lambda x$ is equivariant.
+For the sake of concreteness, all  vector spaces will be over the field of rational numbers. However, the choice of field will not affect the results. The general idea is that the field has no atoms in it, and therefore it has a trivial action of atom automorphisms. 
+% In particular, when below we say that scalar multiplication is equivariant, we mean that for every field element $c$, the function $v \mapsto c \cdot v$ is equivariant.
 \begin{definition}[Vector space with atoms]
-    A \emph{vector space with atoms} is a set with atoms, equipped with a vector space structure, such that the vector space structure is equivariant, i.e.~vector addition and scalar multiplication are equivariant operations.
+    A \emph{vector space with atoms} is a set with atoms, equipped with a vector space structure, such that the vector space structure is equivariant, i.e.~vector addition is equvariant, and  scalar multiplication $v \mapsto cv$ is equivariant for every field element $c$.
 \end{definition}
 
 
@@ -31,6 +32,7 @@ However, this spanning set is not a basis, since it contains linearly dependent 
 For the above category, we will use tensor product $\otimes$; this is the usual notion of tensor product for vector spaces. For example, if we take vector spaces $\Lin X$ and $\Lin Y$, i.e.~finite linear combinations of orbit-finite sets $X$ and $Y$ respectively, then the resulting tensor product is $\Lin (X \times Y)$. More generally, the tensor product of two orbit-finitely spanned vector spaces is also orbit-finitely spanned~\cite[Theorem VI.3]{bojanczykKM21OrbitFiniteVector}. 
 
 In the terminology of category theory, the following theorem says that the category of orbit-finite vector spaces with atoms is symmetric monoidal closed, with respect to the tensor product. However, since the readers might not be familiar with category theory, we unfold the definitions in the statement of the theorem. 
+
 
 \begin{theorem}\label{thm:orbit-finite-vector-space-closed}
     Let $V$ and $W$ be orbit-finitely spanned vector spaces. There exists an orbit-finitely spanned  vector space, denoted by  $\funspace V W$, and an equivariant linear map

@@ -24,17 +24,18 @@ When defining the category of single-use functions, we viewed it as a restrictio
     \end{itemize}
 \end{definition}
 
-If the underlying structure $\atoms$ has a decidable first-order theory, then the category described above is reasonably tame. For example, one can decide if two morphisms are equal. However, the category suffer from the same problems with function spaces as those that were described in Section~\ref{sec:orbit-finite-function-spaces}. 
-To recover function spaces, we can consider the single-use variant of the above category. This variant is defined in the same way as for atoms with equality only. The objects are the linear types, i.e.~expressions built from $1$ and $\atoms$ using the type constructors, and the morphisms are single-use functions, which are defined in the same way as for equality, except that instead of having only an equality test, we have a function of type $\atoms^n \to 1+1$ for every $n$-ary relation in the vocabulary (including equality, which is assumed to be built in). We call this category the \emph{single-use category over $\atoms$}. 
+If the underlying structure $\atoms$ has a decidable first-order theory, then the category described above is reasonably tame, in particular one can decide if two morphisms are equal. This will happen, for instance, if the underlying structure is Presburger arithmetic. However, the category will still suffer from the same problems with function spaces as those that were described in Section~\ref{sec:orbit-finite-function-spaces}. 
+To recover function spaces, we can consider the single-use variant of the above category. This variant is defined in the same way as for atoms with equality only. The objects are the linear types, i.e.~expressions built from $1$ and $\atoms$ using the type constructors, and the morphisms are single-use functions, which are defined in the same way as for equality, except that instead of having only an equality test, we have a function of type $\atoms^n \to 1+1$ for every $n$-ary relation in the vocabulary, with the power using tensor product. We call this category the \emph{single-use category over $\atoms$}. 
 
-The single-use functions can easily be seen to be first-order definable, and the single-use category can be seen as a subset of the category of first-order definable functions. (More formally, there is a faithful functor from one to the other, since the objects are not the same, because the single-use category makes a distinction between products that is not made in the first-order category). 
-
-The proof of Theorem~\ref{thm:single-use-closed} generalizes without any difficulty to case of relational structures. 
+The single-use functions can easily be seen to be first-order definable, and the single-use category can be seen as a subset of the category of first-order definable functions. (More formally, there is a faithful functor from one to the other, since the objects are not the same, because the single-use category makes a distinction between products that is not made in the first-order category).  The proof of Theorem~\ref{thm:single-use-closed} generalizes without any difficulty to case of relational structures. 
 
 \begin{theorem}\label{thm:single-use-closed-relational-structures}
     Consider a relational structure $\atoms$, in which for every $k \in \set{0,1,\ldots}$ there are finitely many relations of arity $k$. Then the single-use category over $\atoms$ is symmetric monoidal closed, with respect to the tensor product $\otimes$.
 \end{theorem}
-\begin{proof}
+\begin{proof}[Proof sketch]
     The finiteness condition on the vocabulary  ensures that strategies in game semantics will have bounded length if they do not ask irrelevant questions, which is the only property needed in Theorem~\ref{thm:single-use-closed} to guarantee that function spaces can be represented using types. 
 \end{proof}
 
+The above theorem gives us a reasonable category of single-use functions over a relational structure. For example, if the underlying structure has a decidable theory, then we will be able to check if some first-order definable function $f$  of type $X \to Y$  is single-use. Indeed, we can write a formula which checks if there exist some element  $f' \in X \Rightarrow Y$ such that for every element $x \in X$, the value returned by $f$ is equal to the value returned by $eval f'$. 
+
+However, a decidable first-order theory is not the only property needed to ensure that the category is appropriate to automata. As explained in .., we will also need to run certain fixpoint algorithms,  
