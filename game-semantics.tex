@@ -349,19 +349,26 @@ We begin by using the notation from Section~\ref{sec:some-notation-for-describin
 
 
 
-\begin{definition}[Value consistent strategy]\label{def:consistency}
-    Let $X$ be a linear type. A strategy in  the arena for $1 \to X$   is  called \emph{value consistent} if: 
+\begin{definition}[Strategy that represents a value]\label{def:consistency}
+    Let $X$ be a linear type. We say that a  strategy in  the arena for $1 \to X$   \emph{represents a value} if it satisfies the following conditions: 
     \begin{enumerate}
-        \item Let $x$ be a node in  the syntax tree of $X$ that is labelled by co-product $+$. Then at most one child of $x$ is  used by the strategy. 
-        \item Let $x$ be a node in the syntax tree of $X$ that  is labelled by $\atoms$. Then there is some atom $a$ such that for every play in the strategy, if the play contains a read move that originates from $x$, then the read value of this move is $a$. 
+        \item Consider a node in  the syntax tree of $X$ that is labelled by co-product $+$. Then at most one child of this node is  used by the strategy. 
+        \item Consider a node  in the syntax tree of $X$ that  is labelled by $\atoms$. Then there is some atom $a$ such that for every play in the strategy, if the play contains a read move that originates from the node, then the read value of this move is $a$. 
     \end{enumerate}
 \end{definition}
 
-To a consistent strategy in the arena for $1 \to X$ we can now assign a value in $\sem X$, which will be called \emph{the value represented by the strategy}. This is done as follows.  For every node $x$ in the syntax tree (whose subtree represents some linear type) that is used by the strategy,  we define a value in the corresponding type. This value is defined by induction on the size of type. Consider a node that is used by the strategy. If the node is a leaf labelled by $1$, then the value is the unique element of the underlying set of the type $1$. If the node is a leaf labelled by $\atoms$, then the value is the atom from the consistency requirement. If the node is labelled by co-product, then the value is inductively defined by using the child from the consistency requirement. Finally, if the node is labelled by $\otimes$ or $\&$, then both of its children must also be used by the strategy, and therefore, we can define the value by pairing the two values from the induction assumption. 
+For a strategy that satisfies the two conditions in the above definition, we can also define the value $x \in \sem X$ that it represents.  This is done as follows.  For every node  in the syntax tree  of $X$ which is used by the strategy, we assign a value, which is called the value of the strategy at the node. This value at a node is in the set $\sem Y$, where $Y$ is the linear type that corresponds to the subtree of the node.  The definition of this value at a given node  is defined by induction on the size of its subtree: 
+\begin{enumerate}
+    \item the value at a leaf labelled by $1$ is the unique element of $\sem 1$;
+    \item the value at a leaf labelled by $\atoms$ is the atom from the second item in Definition~\ref{def:consistency};
+    \item the value at a node labelled by $\otimes$ or $\&$ is the pair of values at the children;
+    \item the value at a node labelled by $+$ is the value at  the unique child in the first item in Definition~\ref{def:consistency}.
+\end{enumerate}
+The above definition is well-formed, since one can easily see from the definition of strategies that if a node labelled by $+$ is used by the strategy, then at least one of its children is used, and if a node labelled by $\otimes$ or $\&$ is used, then both of its children are used. Finally, the value represented by a strategy is defined to be the value that is represented at the root node of the syntax tree. 
 
 
 \subsubsection{Strategies in $X \to Y$ as single-use functions}
-We now move to the main point of this section, which is to show how to interpret a strategy in the arena for $X \to Y$ as a single-use function of type $X \to Y$. This is done by using the definition from for values in the previous section, and then lifting it to functions by using composition of strategies from Section~\ref{sec:composition-of-strategies}.
+We now move to the main point of this section, which is to show how to interpret a strategy in the arena for $X \to Y$ as a single-use function of type $X \to Y$. This is done by using the definition from for values in the previous section, and then lifting it to functions by using composition of strategies that was defined in Section~\ref{sec:composition-of-strategies}.
 
 
 \begin{definition}\label{def:strategy-as-single-use-function}
@@ -369,42 +376,23 @@ We now move to the main point of this section, which is to show how to interpret
     \begin{align*}
     f : \sem{X} \to \sem{Y}
     \end{align*}
-    such that for every value $x \in \sem X$, if  $x$ is represented by some value consistent strategy $\tau$ in the arena for $1 \to X$, then the composition strategy $\tau;\sigma$ in the arena for $1 \to Y$ is value consistent and represents the value $\sem \sigma (x)$. This is illustrated in the following diagram:
-    \[
-\begin{tikzcd}
-    [column sep=4cm]
-\text{value consistent strategies in the arena for $1 \to X$}
- \arrow[r, "\text{represented value}"] \arrow[d, "\tau \mapsto \sigma;\tau"' ]  &
- \sem X 
- \ar[d,"f"]\\
-\text{value consistent strategies in the arena for $1 \to Y$"} 
-\ar[r,"\text{represented value}"'] & 
-\sem Y
-\end{tikzcd}
-\]
+    if for every $x \in \sem X$, if  $x$ is the value  represented by some strategy $\tau$ in the arena for $1 \to X$, then the composition strategy $\tau;\sigma$ in the arena for $1 \to Y$ represents a value, and this value is equal to $f(x)$.
+%     This is illustrated in the following diagram:
+%     \[
+% \begin{tikzcd}
+%     [column sep=4cm]
+% \text{value consistent strategies in the arena for $1 \to X$}
+%  \arrow[r, "\text{represented value}"] \arrow[d, "\tau \mapsto \sigma;\tau"' ]  &
+%  \sem X 
+%  \ar[d,"f"]\\
+% \text{value consistent strategies in the arena for $1 \to Y$"} 
+% \ar[r,"\text{represented value}"'] & 
+% \sem Y
+% \end{tikzcd}
+% \]
 \end{definition}
 
-The function represented by a strategy, if it exists, is unique, and will be called \emph{the function represented by the strategy} and denoted by $\sem \sigma$. The following lemma shows that the composition of strategies is consistent with the composition of functions.
-
-\begin{lemma}    Let $X, Y, Z$ be linear types.  Consider two strategies as follows: 
-    \[
-    \begin{tikzcd}
-    X \ar[r, "\sigma_1"] & Y \ar[r, "\sigma_2"] & Z.
-    \end{tikzcd}
-    \]
-If $\sem {\sigma_1}$ and $\sem {\sigma_2}$ are  both defined, then $\sem{\sigma_1;\sigma_2}$ is also defined and equal to $\sem {\sigma_1} ; \sem {\sigma_2}$.
-\end{lemma}
-\begin{proof}
-    Let $\tau$ be some value consistent strategy in the arena for $1 \to X$. By associativity of strategy composition, we know that the strategies 
-    \begin{align*}
-    \tau;(\sigma_1;\sigma_2) \quad \text{and} \quad (\tau;\sigma_1);\sigma_2
-    \end{align*}
-    are equal, up to an isomorphism of the library arena. Since such an isomorphism does not affect value consistency or the represented value, either both or none are value consistent, and if they are value consistent, then they represent the same value. The right strategy is value consistent by the assumption of the lemma, and therefore the same is true for the left strategy, and the represented values are equal.
-\end{proof}
-
-
-
-
+Since each strategy in $1 \to X$ or $1 \to Y$ represents at most one value, it follows that a strategy can represent at most one function. This function is called the \emph{function represented by the strategy}.  We are now ready to state the main result of this section, which is that every single-use function is represented by at least one strategy.
 \begin{lemma}
     Let $X$ and $Y$ be linear types, then every single-use function of type $X \to Y$ is represented by at least one strategy. 
     % \begin{itemize}
@@ -417,92 +405,50 @@ If $\sem {\sigma_1}$ and $\sem {\sigma_2}$ are  both defined, then $\sem{\sigma_
     and  to lift the combinators $\circ$, $\otimes$, $\times$, $\&$ from functions to 
     strategies in a way that preserves the semantics. Let us start with the combinators:
     \begin{description}
-        \item[$f \circ g$] Here we use the construction for strategy composition from Section~\ref{sec:composition-of-strategies}.
-        This means that we need to show that for all strategies $\sigma : X \to Y$ and $\tau: X \to Z$, 
-        and for all functions $f : \sem{X} \to \sem{Y}$ and $g: \sem{Y} \to \sem{Z}$,
-        if $\sem{\sigma} = f$ and $\sem{\tau} =g$, then $\sem{\sigma; \tau} = g \circ f$. By \ref{def:strategy-as-single-use-function}, 
-        this means that we need to show that for all strategies $\nu : 1 \to X$, it holds that: 
-        \[ \mathtt{val}(\nu; (\sigma; \tau)) = g(f(\mathtt{val}(\nu))) \]
-        First, let us notice that (as explained in Section~\ref{sec:composition-of-strategies}) 
-        the strategy $\nu; (\sigma; \tau)$ is equal to $(\nu; \sigma); \tau$ up to arena isomorphism. 
-        Since area isomoprhisms preserve $\mathtt{val}$ (as they only rename library funcions), 
-        we obtain that:
-        \[ \mathtt{val}(\nu; (\sigma; \tau)) = \mathtt{val}((\nu; \sigma;) \tau) = g(\mathtt{val}(\nu; \sigma)) = g(f(\mathtt{val}(\nu))) \]
+        \item[$f; g$] We compose the corresponding strategies. The correctness of this construction is witnessed by the following claim. 
+\begin{claim}\label{claim:composition-of-strategies-and-functions}    Let $X, Y, Z$ be linear types, and 
+    let $\sigma_1$ and $\sigma_2$ be strategies in the arenas for $X \to Y$ and $Y \to Z$, respectively. If both of these strategies represent functions, then  $\sigma_1;\sigma_2$ also represents a function, and this function is equal to the composition of the functions represented by $\sigma_1$ and $\sigma_2$.
+\end{claim}
+\begin{proof}
+    Let $\tau$ be some value consistent strategy in the arena for $1 \to X$. By associativity of strategy composition, we know that the strategies 
+    \begin{align*}
+    \tau;(\sigma_1;\sigma_2) \quad \text{and} \quad (\tau;\sigma_1);\sigma_2
+    \end{align*}
+    are equal, up to an isomorphism of the library arena. Since such an isomorphism does not affect value consistency or the represented value, either both or none are value consistent, and if they are value consistent, then they represent the same value. The right strategy is value consistent by the assumption of the lemma, and therefore the same is true for the left strategy, and the represented values are equal.
+\end{proof}
 
-        \item[$f + g$] First, let us show how to construct a strategy $\sigma_1 + \sigma_2 : (X_1 + X_2) \to (Y_1 + Y_2)$ 
-        from strategies $\sigma_1 : X_1 \to Y_1$ and $\sigma_2 : X_2 \to Y_2$. The strategies work as follows (remember that 
-        now we play as system): The first move of environment has to be ``ask' (in $Y_1 + Y_2$), 
-        we reply with ``ask'' in $X_1 + X_2$, then environment can only reply with either ``left'' or ``right''
-        in $X_1 + X_2$ -- if it replies ``left'', we reply with ``left'' in $Y_1 + Y_2$ and contiune playing according to $\sigma_1$, 
-        else we reply ``right'' and continue playing according to $\sigma_2$.
-        For $\sigma_1 + \sigma_2$ defined in this way, it is not hard to see that if $\sem{\sigma_1} = f_1$ and $\sem{\sigma_2} = f_2$, 
-        then $\sem{\sigma_1 + \sigma_2} = f + g$. This because by definition of strategy compsition, $\mathtt{val}$ and $+$, 
-        we know that $\nu; (\sigma_1 + \sigma_2)$ is either equal to (a) $\nu'; \sigma_1$ for some $\nu'$ 
-        such that $\mathtt{val}(\nu) = \mathtt{left}(\mathtt{val(\nu_1)})$, or
-        $\nu'; \sigma_2$ for some $\nu'$  such that $\mathtt{val}(\nu) = \mathtt{right}(\mathtt{val(\nu')})$. 
 
-        \item[$f \& g$] Here the construction is similar to the one for $+$: We strat by showing 
-        how to construct a strategy $\sigma_1 + \sigma_2 : (X_1 \& X_2) \to (Y_1 \& Y_2)$ 
-        $\sigma_1 : X_1 \to Y_1$ and $\sigma_2 : X_2 \to Y_2$: The first move of environment has to be either 
-        ``left'' or ``right'' in $Y_1 \& Y_2$. We respond with the same in $X_1 \& X_2$. The only move of 
-        the environment is now to ``acknowledge'' in $Y_1 \& Y_2$, after which we ``acknowledge'' in $X_1 \& X_2$. 
-        Then we play either according to $\sigma_1$ or $\sigma_2$ (depending on whether the first move of the environment
-        was ``left'' or ``right''). To see that if $\sem{\sigma_1} = f_1$ and $\sem{\sigma_2} = f_2$, then 
-        $\sem{\sigma_1 \& \sigma_2} = f_1 \& f_2$, we notice that by definition of composition and $\&$, 
-        we know that after environment plays ``left'' in $\nu; (\sigma_1 \& \sigma_2)$ the game proceeds 
-        to a state equivalent to $\nu_1 ; \sigma_1$, where $\pi_1(\mathtt{val}(\nu)) = \mathtt{val}(\nu_1)$. 
-        (and analogously for ``right'').
-
-        \item[$f \otimes g$] Again, let us start by showing how to constructed
-        $\sigma_1 \times \sigma_2 : (X_1 + X_2) \to (Y_1 + Y_2)$ from $\sigma_1 : X_1 \to Y_1$ and $\sigma_2 : X_2 \to Y_2$.
-        The first move is by environment. It can either play in $Y_1$ or in $Y_2$. Let us assume that
-        it plays in $Y_1$ (as the other case is summetrical). Then, we play according to 
-        $\sigma_1$. As $\sigma_1$ is bounded, this means that after some interaction with $X_1$ and the library\footnote{
-            It might be worth clarifying that during this time, if we play in $X_1$ the environment needs to respond
-            immediately in $X_1$ and if we play in the library, the environment needs to respond immediately in the library, 
-            as it has no other available moves. 
-        }
-        we will respond in $Y_1$. Then the environment can choose again if it wants to play in $Y_1$ or $Y_2$
-        if it plays in $Y_1$ we play according to $\sigma_1$, and if it plays in $Y_2$ we play according to $\sigma_2$. 
-        We continue in this fashion until the environment has no available moves in $Y_1$ or $Y_2$.
-        To see that if $\sem{\sigma_1} = f_1$ and $\sem{\sigma_2} = f_2$, then
-        $\sem{\sigma_1 \otimes \sigma_2} = f_1 \otimes f_2$. Let us observe that during the 
-        $Y_1$-part of computing $\mathtt{val}(\nu; (f_1 \otimes f_2))$ the game looks exactly the 
-        same as the game for computing $\mathtt{val}(\nu_{Y_1}; f_1)$, 
-        where $\nu_{Y_1}$ is define as the plays subset of plays from $\nu$, where 
-        environment never plays in $Y_2$. This is a strategy in $1 \to Y_1$, because if 
-        the environment never plays in $Y_1$ then system cannot respond in $Y_1$. 
-        It is not hard to see that $\mathtt{val}(\nu_{Y_1}) = \pi_1(\mathtt{val}(\nu))$. 
-        It follows that during the $Y_1$-part of the play for computing $\mathtt{val}(\nu; (\sigma_1 \otimes \sigma_2))$, 
-        we obtain $f_1(\pi_1(\mathtt{val}(\nu)))$. Similarly, one can show that during the $Y_2$ part of computing
-        $\mathtt{val}(\nu; (\sigma_1 \otimes \sigma_2))$, we obtain $f_2(\pi_2(\mathtt{val}(\nu)))$. It follows that: 
-        \[ \mathtt{val}(\nu; (\sigma_1 \otimes \sigma_2)) \quad = \quad \bigl( f_1(\pi_1(\mathtt{val}(\nu))),\ f_2(\pi_2(\mathtt{val}(\nu))) \bigr) \quad = \quad (f_1 \otimes f_2) (\mathtt{val}(\nu))\]
+        \item[$f_1 + f_2$] Suppose that functions $f_1$ and $f_2$ are represented by strategies $\sigma_1$ and $\sigma_2$. We join these two strategies into a new strategy $\sigma$ as follows.  Player Environment begins, and the only move available is to ``ask'' for one of the two disjuncts of the output type, which is the co-product of the output types of $f_1$ and $f_2$. Player System responds with a corresponding question on the input type. The only choice for player Environment is to select either ``left'' or ``right'' in the input type. Player System forwards this choice to the output type, and then uses the corresponding strategy.  Every play in this strategy has the following form: it begins with four moves that select a disjunct, and then it continues with a play in the strategy $\sigma_1$ or $\sigma_2$, depending on  the appropriate disjunct. From this property, one can show that the strategy represents the function $f_1 + f_2$.
+        \item[$f_1 \& f_2$]  The construction is defined analogously to the one for $f_1 + f_2$.
+        \item[$f_1 \otimes f_2$] Again, we use an analogous construction, in which player System plays in parallel the two strategies representing the functions $f_1$ and $f_2$. The corresponding property, which ensures that the strategy represents the function $f_1 \otimes f_2$, is that each play can be split into a shuffle of two plays, one for the strategy representing $f_1$ and one for the strategy representing $f_2$.
     \end{description}
-    Let us now deal with prime functions. For the sake of brevity we only show how to implement them 
-    for the following representative set of examples (all of the prime functions not listed below, 
-    can be implemneted without ever playing the library, and are well known tautoligies of the affine logic):
+    Let us now deal with prime functions. For the sake of brevity we only show the strategies for selected prime functions. The remaining prime functions can be implemented without using  the library, and are well known strategies corresponding to tautologies of affine logic:
     \begin{description}
-        \item[$\textrm{eq} : \atoms \otimes \atoms \to 1 + 1$]:
-        For this funcion the system wants to call the library function for comparing atoms 
-        and return the result. Here is the exact strategy:    
-        First, the environment has to play ``ask'' in $1+1$. Then we play ``request'' in the left $\atoms$.
-        Environment replies with ``grant'' which is a write move. Then we play the read 
-        move in atoms equality library function. Environment acknowledges. We play ``request'' in the 
-        right $\atoms$. Environment plays ``grant''. We play the read move in the atoms equality function. 
-        The environment replies with either $=$ or $\neq$, to which we respond respectively with ``left''
-        or ``right'' in $1+1$.
+        \item[Equality test of type $\atoms \otimes \atoms \to 1 + 1$]:
+        For this function, System uses the library function for comparing atoms 
+        and returns the result. The library is designed to implement this function, so the construction is straightforward, but we describe it here for the convenience of the reader:
+\begin{itemize}
+    \item Environment begins by  playing ``ask'' in $1+1$, this is the only choice
+    \item System  plays  ``request'' in the left $\atoms$.
+    \item Environment replies with ``grant'' which is a write move, this is the only choice.
+    \item System plays the read move in atoms equality library function.
+    \item Environment acknowledges, this is the only choice.
+    \item System plays  ``request'' in the right $\atoms$.
+    \item Environment plays ``grant'', this is the only choice.
+    \item System plays the read move in the atoms equality function.
+    \item Environment replies with either $=$ or $\neq$ in the library, these are the only choices.
+    \item System forwards this choice to the output type.
+\end{itemize}
+        
 
-        \item[$\textrm{const}_a : 1 \to \atoms$] For this function we want to call the constant
-        functionality of the library. Here is the exact strategy: First, the environment has to play 
-        ``request'' in $\atoms$. We respond in the $a$-move in the constant library component. 
-        The environment has to respond with the write move, we respond with ``grant''. 
+        \item[Constant function of type $1 \to \atoms$] As in the previous item, this function is implemented by using the library, in this case the constant choice part of the library. 
 
-        \item[$\textrm{proj}_1 : X \otimes Y \to X$] Here we play a restricted version of the copycat strategy:
-        whenever the environment plays in the right copy of $X$, we play the same move in he left copy of $X$, 
+        \item[Projection of type $ X \otimes Y \to X$] System plays with a restricted version of the shuffling and hiding strategy:
+        whenever Environment plays in the right copy of $X$, then System responds with the same move in he left copy of $X$, 
         and whenever the environment responds in the left copy of $X$, we respond with the same move in the right 
         copy of $X$. 
 
-        \item[$\textrm{distr}_{\&, \otimes} : X \otimes (Y \& Z) \to (X \otimes Y) \& (X \otimes Z)$]
+        \item[Projection of type $\textrm{distr}_{\&, \otimes} : X \otimes (Y \& Z) \to (X \otimes Y) \& (X \otimes Z)$]
         Here we play according to the strategy from \ref{ex:amp-otimes-distr}: The environment 
         starts by either playin ``left'' or ``right'' in $(X \otimes Y) \& (X \otimes Z)$, 
         we respond with the same move in $(Y \& Z)$. The environment has to play ``acknowledge'' 
