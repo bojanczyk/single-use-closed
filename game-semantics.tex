@@ -570,20 +570,20 @@ of the input:
     to consume this value in all of the branches. This request can be made either through a move in the constant
     library component or a "request" move in an $\atoms$ on the input. Here is a visual representation:
     \picc{read-consistant-ex} 
-    (The squiggly lines represent more than one move). Here the system requests the atom John from the environment. 
-    Enviroment might respond immediately with write (as in the bottom branch) or it might wait some time 
-    (as in the middle or top branch). The read-consistency propery requires that the system uses the same move to read 
+    (The squiggly lines represent more than one move). Here System requests the atom John from the environment. 
+    Environment might respond immediately with write (as in the bottom branch) or it might wait some time 
+    (as in the middle or top branch). The read-consistency property requires that the system uses the same move to read 
     the value John in all of those branches (i.e. $M_1 = M_2 = M_3$). 
 \end{definition}
 
 The advantage of read-consistency over well-formedness is that it is preserved under compositions of strategies. 
 (One can show this directly from \ref{def:shuffling-and-hiding} -- the key idea is to compare the system's response to the immediate write,
-with the system's response to every other possible write). Using this observation, we can show that read-consitent strategies are complete:
+with the system's response to every other possible write). Using this observation, we can show that read-consistent strategies are complete:
 \begin{lemma}\label{lem:all-read-consistent}
     For every single use function $f : X \to Y$, there is a read-consistent strategy in the arena $X \to Y$ that represents it. 
 \end{lemma}
-\begin{proof}
-    The proof is analogous to the proof of Lemma~\ref{lem:su-strategies-complete}. As well-formedness is preserved
+\begin{proof}Ū
+    The proof is analogous to the proof of Lemma~\ref{lem:all-functions-represented}. As well-formedness is preserved
     under the combinators $\circ$, $\otimes$, $\&$, $+$. (The proof for $\otimes$, $\&$, and $+$ is immediate.)
     Moreover it is not hard to see that all prime functions can be realized by read-consisten strategies. 
 \end{proof}
