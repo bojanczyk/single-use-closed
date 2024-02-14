@@ -307,140 +307,105 @@ up to isomoprhism.
 
 
 \subsection{Strategies as single-use functions}
-In this section, we explain how a strategy in a function type $X \to Y$ can be interpreted as a single-use function from $\sem X$ to $\sem Y$.
-% This is done by interpreting values in the sets $\sem X$ and $\sem Y$ as strategies in the arenas $1 \to X$ and $1 \to Y$, respectively, and then lifting the interpretation to the function type using strategy composition. 
+In this section, we explain how a strategy in a function type $X \to Y$ can be interpreted as a single-use function from $\sem X$ to $\sem Y$. This interpretation is partial, since some strategies will be considered inconsistent, and will not represent any function. We begin with an example which presents the intuition of why a strategy might be inconsistent. 
+
+\begin{example}[Inconsistent strategy] \label{ex:inconsistent-strategy} Consider a strategy in the arena for  $1 \to \atoms \otimes \atoms$. We would like to think of this strategy of producing a pair of atoms, possibly using the constants from the library. Indeed, if player Environment requests an output, then player System will ultimately need to produce a corresponding read move, which will necessarily need to be fed by a write move that is in the constant choice arena (the appropriate formalizations of these notions will be given in Section~\ref{sec:some-notation-for-describing-plays}). However, an inconsistent strategy for player System could use different constants depending on the order in which Environment requests the two output atoms in $\atoms \otimes \atoms$.  For example, the output could be (John, Mark) for one order, and (Eve, Mary) for some other order.  \exampleend
+\end{example}
+
+Below, we will formalize the intuition from the above example. We begin by developing some notation for describing plays.
 
 
 
 
-% \subsubsection{Elements of $\sem X$ as strategies in $1 \to X$}
-% \label{sec:elements-of-sem-x-as-strategies-in-1-to-x}
-% % We begin by interpreting the strategies in a linear type $1 \to X$ as elements of the underlying set $\sem X$.   
-% % This will be done in two directions, as depicted in the following diagram.
-% % \[
-% % \begin{tikzcd}
-% %     [column sep=6cm]
-% % \text{strategies in the arena for $1 \to X$} 
-% % \arrow[r, "{\text{to each strategy $\sigma$ we can associate an element $\sem \sigma \in \sem X$}}", from=1-1, to=1-2, start anchor=east, end anchor=west, bend left=10, shift right=-1ex, twoheadrightarrow]
-% % &
-% % \sem X
-% % \arrow[l, "{\text{to each element $x \in \sem X$ we can associate a strategy $\sigma_x$}}", from=1-2, to=1-1, start anchor=west, end anchor=east, bend left=10, shift right=-1ex, rightarrowtail]
-% % \end{tikzcd}
-% % \]
-% We begin by showing how an element of the underlying set in a type $X$ can be represented by some strategy in the arena for $1 \to X$. This is done by a straightforward induction on the structure of $X$, as described below. 
 
-%     \begin{enumerate}
-%         \item The strategy corresponding to the unique element of $1$ is the empty strategy.
-%         \item The strategy corresponding to an atom $a \in \atoms$ is defined as follows: player Environment requests and output, then System requests the constant $a$ in the constant choice arena, Environment grants the constant, and System grants the output;
-%         \item The strategy corresponding to $x_1 \otimes x_2$ is defined by composing the strategies corresponding to $x_1$ and $x_2$ in the natural way. The only point that we need to care about is the immediate read condition, so System needs to respond immediately in the same of the two arenas $X_1$ and $X_2$ when a write operation is played. 
-%         \item The strategy corresponding to $x_1 \& x_2$ is defined as follows. In the first move, Environment chooses left or right, then System acknowledges this choice, and in the remaining game System plays according to the strategy for $x_1$ or $x_2$, depending on the first choice of player System.
-%         \item Similarly, we define the strategy corresponding to $x_1 + x_2$.
-%     \end{enumerate}
+\subsubsection{Some notation for describing plays}
+\label{sec:some-notation-for-describing-plays}
+Consider a move in the arena associated to a function type $X \to Y$. There are three kinds of moves here: moves from the library, moves from $X$, and moves from $Y$. Depending on where the moves come from, we will associate to this move an \emph{origin} as follows. 
+\begin{itemize}
+    \item In the case of moves which come from the library, define the  {origin} to be the copy of the constant choice arena or the equality test arena from which the move is taken.
+    \item   In the case of moves which come from either $X$ or $Y$, define the origin to be the corresponding node in the syntax tree of $X$ or $Y$. Here, the syntax tree of a type is defined in the obvious way, see Figure~\ref{fig:syntax-tree}.
+\end{itemize}
+
+
+\begin{figure}
+    \mypic{12}
+    \caption{\label{fig:syntax-tree} The syntax tree of the type $((\atoms +1) + 1) \otimes ((\atoms + \atoms) \& \atoms)$.}
+\end{figure}
+
+
+Consider a play in the arena for $X \to Y$. Define a \emph{library call} to be a subsequence of the play that is obtained by choosing some copy of the constant choice arena or the equality test arena, and then returning all moves in the play that originate from this copy. A library call will have at most two moves if it originates from some copy of the constant choice arena (we use the name \emph{constant call} for such library calls), and at most four moves if it originates from some copy of the equality test arena (we use the name \emph{equality call} for such library calls). For each constant call, there is an associated at atom, which is the first move in the call. 
+
+Consider a read move in the play. By the immediate read condition, this move is directly preceded by a write move. The write move will either originate from a leaf labelled by $\atoms$ in  the syntax tree of the input type $X$, or it will originate from some constant call. In the latter case, it will have a corresponding atom. Therefore, to each read move in a play we can associate either some leaf labelled by $\atoms$ in the syntax tree of the input type, or some individual atom constant. The associated object will be called the \emph{read value} of the read move.
+
+
 
 \subsubsection{Strategies in $1 \to X$ as values in $\sem X$}
 \label{sec:strategies-in-1-to-x-as-elements-of-sem-x}
-We start by showing how to interpret strategies in the arena for  $1 \to X$ as values in $\sem{X}$. Later, we will lift  this interpretation to functions  using strategy composition. This interpretation is a partial function, i.e.~some strategies in the arena for $1 \to X$ will be considered invalid, and will not represent any value in $\sem X$. 
-
-We now describe the converse of the above construction, i.e.~we show how every strategy in the arena for $1 \to X$ can be interpreted as representing some value in $\sem X$. (For now we do not require that the transformation from strategies to values be single-use.)
-Observe that we are not using the arena for a linear type $X$ itself, but for the function type $1 \to X$. The reason is that the second arena contains the library, which will be used to produce individual atoms. 
-% This interpretation is more interesting than the previous one, since we need to account for suboptimal strategies of player System, in which the library arena is used to execute meaningless operations. For example, System might ask if atoms Mark and John are equal, and to make things worse, Environment might respond dishonestly that they are equal.  
-% \begin{definition}
-%     A strategy in an arena of type $X \to Y$ is called \emph{$k$-bounded} if all plays have length at most $k$. It is called \emph{bounded} if it is $k$-bounded for some $k$. 
-% \end{definition}
-% Formally, for every type $X$, we would like to define a function: 
-% \[ \mathtt{val} : \textrm{(strategies in $1 \to X$)} \to X \]
-% For this we are going to define inductively the following function: 
-% \[ \mathtt{val'} :  \textrm{(strategies in $1 \to X_1 \otimes \ldots X_n$)} \times (\atoms + \bot)  \]
-
-The general idea for the construction is that, given a strategy of system, we play an the environment to extract the value. 
-Here are the details:
-\begin{enumerate}
-    \item For the type $1$ there is no difficulty, since the corresponding set has a unique element, which will be assigned to all strategies. Also, there is a unique play in the corresponding arena, which is $1 \to 1$. This unique play is  the empty play,  because player Environment cannot make a first move. Therefore, the assignment of values to strategies poses no difficulty, since there is one strategy and one value.  However, already at this stage there is a slightly subtle point, since the arena for $1 \to 1$ is not completely empty, because it  contains a copy of the library arena, however all moves in this arena are blocked, since they must begin with a move by player System, and player System cannot  move before Environment; this is similar to the ordre de préséance at Versailles.
-    \item Consider now the type $\atoms$.  We will assign to each strategy in the arena for
-    $1 \to \atoms$ an element of the underlying set $\atoms$.
-    As we play as the environment, the first move belongs to us. 
-    We use it to play ``request'' in $\atoms$ (this is the only move 
-    available to the enviroment). Then we look at the response of the system according to the strategy.
-    It has to be an atom move in the constant choice arena (the only other two moves 
-    avaliable to the system are ``grant'' in in $\atoms$ and ``read'' in equality test, 
-    however both of those are read moves, and they can only be played immediately after a 
-    write move). We (i.e. the environment) respond with the write move in the constant choice arena. 
-    At this point the system might decide to spend some time in the library requesting 
-    for constants and comparing them to each other (this is a non-standard 
-    behaviour, because the system should already know the results of constants comparisons). 
-    While the system does this, we (i.e. the environment) simulate the library, granting the contants, and replying 
-    to equality queries according to the equality of the requested constants.    
-    Since the strategy of the system is bounded, it has to finish the game in $k$ moves, 
-    so it will eventually have to play ``grant'' in $\atoms$ (beacuse only then enviroment will be left with no moves). 
-    At this point we assign to the strategy, the most recent atomic constant requested by the system.
-
-    % To define this atom, we will simply follow the strategy according to an honest behavior of player Environment, i.e.~where Environment gives correct answers to all equality tests. 
-    
-    % \begin{definition}
-    %     A play in an arena of type $X \to Y$ is called \emph{honest} if all equality tests are answered correctly by player Environment. More formally, (...)
-    % \end{definition}
-
-    % One can see that for every strategy in the arena for $1 \to \atoms$, there is a unique maximal honest play that is consistent with this strategy. In this play, eventually System must execute the read operation on the atom, and the preceding write move necessarily had to be an atom constant (since these are the only write moves in the arena). This constant is defined to be the value of the strategy. 
-
-    \item Now we show how to assign a value $\sem{X + Y} = \sem{X} + \sem{Y}$ to a strategy of type $1 \to X+Y$. We start by playing 
-    ``ask''. The system can now, again, spend some time in the library requesting for constants and comparing them to 
-    each other -- we simulate this by replying to equality tests according to the equality of constants. 
-    Since the system is bounded it will eventually have to play either ``left'' or ``right''.
-    If it plays ``left'', we obtain a strategy for $1 \to X$. We use induction to
-    compute its value $v \in \sem{X}$ and we return $\text{left}(v)$. 
-    If the system plays ``right'', the construciton is analogous. 
-
-    \item Now we show how to compute $\sem{X \& Y} = \sem{X} \times \sem{Y}$ from the strategy $1 \to X \& Y$.
-          This means that we need to construct two values: $x \in \sem{X}$ and $y \in \sem{Y}$.
-          To compute $x \in X$, we start by playing ``left''. Then system might spend some time in the library -- 
-          we deal with this as in the previous cases, but eventually it will have to play ``acknowledge''. 
-          At this point we obtain a system's strategy for $1 \to X$, and again we use induction to comptue $x \in \sem{X}$.
-          In order to compute $y \in Y$, we take the original strategy and play ``right'' instead. 
+Equipped with the above notation, we are ready to define which strategies will be considered consistent, and how they can  be interpreted as values or functions.  We begin by describing strategies which represents values in the underlying set $\sem X$ of a linear type $X$, and then we lift this interpretation to functions.  To represent such values, we will use strategies not in the arena for $X$, but in the arena for $1 \to X$. This is because the second arena contains the library, which is needed to  produce  atom constants.
 
 
-    \item Finally, we show how to compupute a value $\sem{X \otimes Y} = \sem{X} \times \sem{Y}$ from 
-          the strategy $\sigma : 1 \to X \times Y$. We start by treating $\sigma$ as in strategy 
-          in $1 \to X$ and use the inductive assumption to compute the value $x$.
-          This is possible because if the environment never plays in $Y$, then 
-          the system can never reply in $Y$ (due to the Versailles-like customs of the arenas).
-          Then, we are left with a strategy that is effectively equivalent to a strategy
-          in $1 \to Y$ (beacuse the $X$-part of $\sigma$ is already entirely played out), 
-          so we can use the induction assumption to transform it into the valye $y \in Y$, 
-          and return $(x, y) \in \sem{X} \times \sem{Y}$. 
-\end{enumerate}
 
+We begin by using the notation from Section~\ref{sec:some-notation-for-describing-plays} to define a notion of consistency that disallows the behaviour from Example~\ref{ex:inconsistent-strategy}.     Let $X$ be a linear type, and consider a strategy $\sigma$ in the arena for $1 \to X$. We say that a node of the syntax tree of $X$ is used by the strategy if at least one play in the strategy contains a move that originates from this node. It is not hard to see that if the strategy uses  a node of the syntax tree that is  labelled by $\otimes$ or $\&$, then it must also use both of its children. This is because player System must be able to respond to moves of player Environment that correspond to both children. On the other hand, if a node is labelled by $+$, then System should consistently choose only one of the child, namely the one that corresponds to the output value. This requirement, together with a similar one for the leaves of the syntax tree that are labelled by $\atoms$, is presented in the following definition.
+
+
+
+\begin{definition}[Value consistent strategy]\label{def:consistency}
+    Let $X$ be a linear type. A strategy in  the arena for $1 \to X$   is  called \emph{value consistent} if: 
+    \begin{enumerate}
+        \item Let $x$ be a node in  the syntax tree of $X$ that is labelled by co-product $+$. Then at most one child of $x$ is  used by the strategy. 
+        \item Let $x$ be a node in the syntax tree of $X$ that  is labelled by $\atoms$. Then there is some atom $a$ such that for every play in the strategy, if the play contains a read move that originates from $x$, then the read value of this move is $a$. 
+    \end{enumerate}
+\end{definition}
+
+To a consistent strategy in the arena for $1 \to X$ we can now assign a value in $\sem X$, which will be called \emph{the value represented by the strategy}. This is done as follows.  For every node $x$ in the syntax tree (whose subtree represents some linear type) that is used by the strategy,  we define a value in the corresponding type. This value is defined by induction on the size of type. Consider a node that is used by the strategy. If the node is a leaf labelled by $1$, then the value is the unique element of the underlying set of the type $1$. If the node is a leaf labelled by $\atoms$, then the value is the atom from the consistency requirement. If the node is labelled by co-product, then the value is inductively defined by using the child from the consistency requirement. Finally, if the node is labelled by $\otimes$ or $\&$, then both of its children must also be used by the strategy, and therefore, we can define the value by pairing the two values from the induction assumption. 
 
 
 \subsubsection{Strategies in $X \to Y$ as single-use functions}
-We now show how to interpret a strategy in the arena for $X \to Y$ as a single-use function of type $X \to Y$:
-%This is done by putting together the operations that have been defined previously. 
+We now move to the main point of this section, which is to show how to interpret a strategy in the arena for $X \to Y$ as a single-use function of type $X \to Y$. This is done by using the definition from for values in the previous section, and then lifting it to functions by using composition of strategies from Section~\ref{sec:composition-of-strategies}.
+
 
 \begin{definition}\label{def:strategy-as-single-use-function}
-    Let $X$ and $Y$ be linear types. For a strategy $\sigma$ in the arena $X \to Y$,
-    and a function $f : \sem{X} \to \sem{Y}$, we say that $\sem{\sigma} = f$ if for every strategy 
-    $\nu_x : 1 \to X$, it holds that: 
-    \[ \mathtt{val}_Y(\nu_x ; \sigma) = f(\mathtt{val}_X(\nu_x)) \textrm{,} \]
-    where $\mathtt{val}_X$ is the mapping from strategies of type $1 \to X$ to elements of $\sem{X}$ 
-    defined in Section~\ref{sec:strategies-in-1-to-x-as-elements-of-sem-x}.
-    % the represented function  $\sem \sigma$ is defined to be the composition of the following three transformations:
-    % \[
-    % \begin{tikzcd}
-    % \sem X  
-    % \ar[d,"{\text{transformation defined in Section~\ref{sec:elements-of-sem-x-as-strategies-in-1-to-x}}}"] 
-    %  \\ 
-    % \text{strategies in arena for $1 \to X$}
-    % \ar[d,"{\tau \mapsto \text{$\tau;\sigma$ as defined in Section~\ref{sec:composition-of-strategies}}}"] 
-    % \\
-    % \text{strategies in arena for $1 \to Y$}
-    % \ar[d,"{\text{transformation defined in Section~\ref{sec:strategies-in-1-to-x-as-elements-of-sem-x}}}"] 
-    % \\ 
-    % \sem Y
-    % \end{tikzcd}
-    % \]
+    Let $X$ and $Y$ be linear types, and let $\sigma$ be a strategy in the arena $X \to Y$. We say that $\sigma$ \emph{represents} a function  
+    \begin{align*}
+    f : \sem{X} \to \sem{Y}
+    \end{align*}
+    such that for every value $x \in \sem X$, if  $x$ is represented by some value consistent strategy $\tau$ in the arena for $1 \to X$, then the composition strategy $\tau;\sigma$ in the arena for $1 \to Y$ is value consistent and represents the value $\sem \sigma (x)$. This is illustrated in the following diagram:
+    \[
+\begin{tikzcd}
+    [column sep=4cm]
+\text{value consistent strategies in the arena for $1 \to X$}
+ \arrow[r, "\text{represented value}"] \arrow[d, "\tau \mapsto \sigma;\tau"' ]  &
+ \sem X 
+ \ar[d,"f"]\\
+\text{value consistent strategies in the arena for $1 \to Y$"} 
+\ar[r,"\text{represented value}"'] & 
+\sem Y
+\end{tikzcd}
+\]
 \end{definition}
 
-We now show that game semantics is a complete representation for single-use functions:
-\begin{lemma}\label{lem:su-strategies-complete}
+The function represented by a strategy, if it exists, is unique, and will be called \emph{the function represented by the strategy} and denoted by $\sem \sigma$. The following lemma shows that the composition of strategies is consistent with the composition of functions.
+
+\begin{lemma}    Let $X, Y, Z$ be linear types.  Consider two strategies as follows: 
+    \[
+    \begin{tikzcd}
+    X \ar[r, "\sigma_1"] & Y \ar[r, "\sigma_2"] & Z.
+    \end{tikzcd}
+    \]
+If $\sem {\sigma_1}$ and $\sem {\sigma_2}$ are  both defined, then $\sem{\sigma_1;\sigma_2}$ is also defined and equal to $\sem {\sigma_1} ; \sem {\sigma_2}$.
+\end{lemma}
+\begin{proof}
+    Let $\tau$ be some value consistent strategy in the arena for $1 \to X$. By associativity of strategy composition, we know that the strategies 
+    \begin{align*}
+    \tau;(\sigma_1;\sigma_2) \quad \text{and} \quad (\tau;\sigma_1);\sigma_2
+    \end{align*}
+    are equal, up to an isomorphism of the library arena. Since such an isomorphism does not affect value consistency or the represented value, either both or none are value consistent, and if they are value consistent, then they represent the same value. The right strategy is value consistent by the assumption of the lemma, and therefore the same is true for the left strategy, and the represented values are equal.
+\end{proof}
+
+
+
+
+\begin{lemma}
     Let $X$ and $Y$ be linear types, then every single-use function of type $X \to Y$ is represented by at least one strategy. 
     % \begin{itemize}
     %     \item \emph{Soundness.} Every function represented by a strategy in the arena for $X \to Y$ is single-use.
@@ -449,7 +414,7 @@ We now show that game semantics is a complete representation for single-use func
 \end{lemma}
 \begin{proof}
     It suffices to show that all single-use prime functions can be represented as strategies,
-    and show how to raise combinators $\circ$, $\otimes$, $\times$, $\&$ from functions to 
+    and  to lift the combinators $\circ$, $\otimes$, $\times$, $\&$ from functions to 
     strategies in a way that preserves the semantics. Let us start with the combinators:
     \begin{description}
         \item[$f \circ g$] Here we use the construction for strategy composition from Section~\ref{sec:composition-of-strategies}.
@@ -669,6 +634,15 @@ of the input:
     the value John in all of those branches (i.e. $M_1 = M_2 = M_3$). 
 \end{definition}
 
+
+
+
+
+
+
+
+
+
 The advantage of read-consistency over well-formedness is that it is preserverd under compositions of strategies. 
 (One can show directly from \ref{def:shuffling-and-hiding} -- the key idea is to compare the system's response to the immediate write,
 with the system's response to every other possible write). Using this observation, we can show that read-consitent strategies are complete:
@@ -693,29 +667,16 @@ Next, let us show that every read-consistent strategy can be made well-formed in
     the constant to start a new call to the equality test library function.
     Let us now show how to remove an offending request from a strategy in a way that preserves the strategy's semantics
     (without introducing any new offending requests). This is enough to finish the proof of the lemma,
-    because we can repeat this construction for all offending moves. 
-    as we can r
-    This is enough to finish the proof of the lemma, 
-    because we can repeat the construction for all of the offending requests
+    because we can repeat this construction for all offending moves. (And thanks to read-consistency, we know that 
+    if a strategy contains no offending moves, then it is well-formed.)
 
-    If we repeat the construction for all of the offending moves, we obtain a well-formed strategy that represents the same function as the original one.
 
-    Thanks to read-consistency, we know that 
-    a strategy is well-formed if it contains no \emph{offending} r
-
-    Consider a system's request for atom $m$ in some branch of $\sigma$. (It can be either a move in the constant compoment of the library, or a request move in $\atoms$ on the input).
-    We say that the move is \emph{offending} if the system's intention (according to read-consistenty) is to use 
-    Let $M$ be a system's request for an atom. (It can be either a move in the constant compoment of the library, or a request move in $\atoms$ on the input).
+    
     
 
 
 \end{proof}
 
-
-
-\begin{lemma}\label{lem:eliminate-irrelevant-questions}
-    For every linear types $X$ and $Y$, every single-use function of type  $X \to Y$ is represented by  some strategy that does not ask irrelevant questions.
-\end{lemma}
 
 
 The following lemma shows that the set of $k$-bounded strategies can be described using a linear type.
