@@ -567,7 +567,7 @@ show that this can be done in a single-use way). Before we do this, we would lik
 of the input:
 \begin{definition}[Read-consistent strategy]
     A strategy is called \emph{read-consistent} if, after requesting an atomic value from the environment, it uses the same move 
-    to consume this value in all of the branches. This request can be made either through a move in the constant
+    to consume this value in all the branches. This request can be made either through a move in the constant
     library component or a "request" move in an $\atoms$ on the input. Here is a visual representation:
     \picc{read-consistant-ex} 
     (The squiggly lines represent more than one move). Here System requests the atom John from the environment. 
@@ -582,81 +582,86 @@ with the system's response to every other possible write). Using this observatio
 \begin{lemma}\label{lem:all-read-consistent}
     For every single use function $f : X \to Y$, there is a read-consistent strategy in the arena $X \to Y$ that represents it. 
 \end{lemma}
-\begin{proof}Ū
+\begin{proof}
     The proof is analogous to the proof of Lemma~\ref{lem:all-functions-represented}. As well-formedness is preserved
     under the combinators $\circ$, $\otimes$, $\&$, $+$. (The proof for $\otimes$, $\&$, and $+$ is immediate.)
-    Moreover it is not hard to see that all prime functions can be realized by read-consisten strategies. 
+    Moreover, it is not hard to see that all prime functions can be realized by read-consistent strategies. 
 \end{proof}
 
 Next, let us show that every read-consistent strategy can be made well-formed in a way that preserves its semantics
 (thus proving completeness of well-formed strategies). 
 \begin{lemma}\label{lem:all-well-formed}
-    For every read-consistent strategy $\sigma$ in the arena for $X \to Y$,
-    there is a well-formed strategy $\sigma'$ in the same arena that represents the same function as $\sigma$.
+    For every read-consistent strategy in the arena for $X \to Y$,
+    there is a well-formed strategy in the same arena that represents the same function.
 \end{lemma}
 \begin{proof}
-    Consider a system's request for a constant, in some branche of $\sigma$. 
-    We say that this request is \emph{offending} if the system's intention (according to read-consistenty) is to use
+    Consider a system's request for a constant, in some branch of $\sigma$. 
+    We say that this request is \emph{offending} if System's intention (according to read-consistenty) is to use
     the constant to start a new call to the equality test library function.
-    Let us now show how to remove an offending request from a strategy in a way that preserves the strategy's semantics
-    (without introducing any new offending requests). This is enough to finish the proof of the lemma,
+    Let us now show how to remove an offending request from a strategy in a way that does not change the represented function
+    (without introducing any new offending requests). This is enough to prove the lemma,
     because we can repeat this construction for all offending moves. (And thanks to read-consistency, we know that 
     if a strategy contains no offending moves, then it is well-formed.)
 
     Let ``request Alice'' be the offending move. Here is how we remove it:
     \custompicc{offending-elim-1}{0.4}
-    Where $T'$ is the strategy obtained by inlining the atom Alice in $T$. 
+    In the above picture,  $T'$ represents  the strategy obtained by inlining the atom Alice in $T$. 
     Specifically we need to remove all moves that are used to complete the 
     equality test library function that was initiated with the atom Alice.
     In order to do this, we identify all atom requests by the system, 
     whose value the system intends to compare with Alice.
     (In each of $T$ there can be at most one such move.)
-    There could be of two types, the first one is a request for another 
+    These could be of two kinds.
+    \begin{enumerate}
+        \item 
+    The first kind is a request for another 
     constant. We deal with it in the following way:
-    We ask what would happen if the environment immedately returned a write move. 
-    In this case, we know that the system would respond with the completion of the equality test. 
-    Then, we conider the case when the environment immedately returns the result of the comparision -- 
+    We ask what would happen if the Environment immediately returned a write move. 
+    In this case, we know that System would respond with the completion of the equality test. 
+    Then, we consider what would happen  when Environment immediately returns the result of the comparison -- 
     either $=$ or $\neq$ and replace the entire subtree with the appropriate move. 
     For example, we replace the following subtree with $T_{\neq}$:
     \custompicc{atom-inline}{0.55}
+    \item We now consider the second kind of offending move, when System requests an atom from the input.
     In this case, we look at the entire subtree and replace each completion to equality call 
     with a single-move ``read and compare with Alice'', which represents a new fast-track 
     call to the equality test library function, that reads an atom and compares it with a constant
     (we will show how to get rid of this in the next paragraph).
     \custompicc{input-constant-inline}{0.55}
+
+
     This leaves us with showing how to get rid of the ``read and compare with Alice'' move. 
-    We replace each such move with a usual eqality test initialization (a read move). 
-    Then, as long as the enviroment does not play the `acknowledge' move from the equality test, 
-    we play as in the original stategy. As soon as the enviroment plays `acknowledge', 
+    We replace each such move with a usual equality test initialization (a read move). 
+    Then, as long as Environment does not play the `acknowledge' move from the equality test, 
+    we play as in the original strategy. As soon as the Environment plays `acknowledge', 
     we play ``request Alice'' to the constant library component. Then, until the environment 
     plays ``write Alice'', we continue to play as in the original strategy. Once the environment
     plays ``write Alice'', we play the ``complete equality test'' move, and then we continue 
-    to play according to the original strategy. (This is possible, because the responses to 
+    to play according to the original strategy. (This is possible, because the responses 
     to ``complete equality test'', are the same as the responses to ``read and compare with Alice''). 
     Here is a picture:
     \picc{elimnate-fast-track}
+    \end{enumerate}
+    This completes the proof of Lemma~\ref{lem:all-well-formed}. 
 \end{proof}
 By Lemmas~\ref{lem:all-well-formed}~and~\ref{lem:well-formed-bounded} we know that every function $X \to Y$ 
-can be represented by a srategy bounded by $k$ that depends only on $X$ and $Y$. Thanks to this observation 
-we can define the exponent type. 
-\begin{definition}
-    We define $X \Rightarrow Y$ to be equal to $\Strat(X \to Y, k)$, where $k$ is the bound from Lemma~\ref{lem:well-formed-bounded}.
+can be represented by a strategy bounded by $k$ that depends only on $X$ and $Y$. Thanks to this observation 
+we are finally ready to define the linear type for function spaces, which is the main subject of Theorem~\ref{thm:single-use-closed}.
+\begin{definition}[The function space type] Let $X$ and $Y$ be linear types. 
+    We define $X \Rightarrow Y$ to be equal to be the type  $\Strat(X \to Y, k)$ of $k$-bounded strategies, where $k$ is the bound from Lemma~\ref{lem:well-formed-bounded}.
 \end{definition}
 
-Before we show, how to implement $\text{eval}$ and $\Lambda(f)$ functions, 
-let us introduce first, a couple of auxiliary functions.
-Let us fist show how to evaluate values:
-\begin{lemma}
-    For every linear $X$, there is a single-use function that 
-    computes the value of a (see Section~\ref{sec:strategies-in-1-to-x-as-elements-of-sem-x}):
-    \[\text{val}: (1 \Rightarrow X) \to X\]
+It remains to define evaluation and Currying as single-use functions. To do this, 
+let us introduce first a couple of auxiliary functions.
+The following lemma, whose straightforward proof we omit, shows that we can transform a strategy into a value. 
+\begin{lemma}\label{lem:evaluate-to-values}
+    For every linear $X$, there is a single-use function of type $(1 \Rightarrow X) \to X$ that returns the value represented by a strategy (see  Section~\ref{sec:strategies-in-1-to-x-as-elements-of-sem-x}) if it exists, and otherwise returns some unspecified  value.
 \end{lemma}
-\begin{proof}
-    The function is straightforward.
-\end{proof}
 
-Next, we show that we can compose strategies in a single-use way:
-\begin{lemma}
+The unspecified value in the above lemma is used to ensure that the function is total, since our single-use functions are total. We can simply fix some value $x \in \sem X$, which is constructed using constants, and return this value for all strategies that do not represent any value. We will use this approach to representing partial functions later in this section as well.
+
+Next, we show that we can compose strategies in a single-use way. 
+\begin{lemma}\label{lem:compose-single-use-linear-type}
     Let $X \Rightarrow Y$ and $Y \Rightarrow Z$ be linear types, then there is a single use function:
     \[\text{compose} : (X \Rightarrow Y) \otimes (Y \Rightarrow Z) \to (X \Rightarrow Z)\]
     such that if $\sigma_1$ and $\sigma_2$ are strategies that represent functions $f_1$ and $f_2$ respectively,
@@ -669,7 +674,7 @@ Next, we show that we can compose strategies in a single-use way:
               $\Strat(X \to Y, k) \otimes \Strat(Y \to Z, k) \to \Strat(X \to Z, k + l)$, 
               that computes the composition of the strategies (according to the \ref{def:shuffling-and-hiding}). 
               This function can be implemented (by induction on $k + l$) by simulating the two strategies 
-              and passing arround the moves in $Y$. The construction will turn out to be single-use 
+              and passing around the moves in $Y$. The construction will turn out to be single-use 
               thanks to that the hiding operation is an injection on 
               the shuffled strings see \cite[Covering Lemma]{abramsky2013semantics}.
         \item Next we show that for every $l$ there is a single-use function 
