@@ -21,7 +21,7 @@ Not only is the definition of the category generic, but the same is true for  th
 
 The theorem is proved in the same way as Theorem~\ref{thm:single-use-closed}.  The assumption on the vocabulary is used to ensure that in the corresponding game semantics, there are finitely available moves in any given moment, because the vocabulary can only be queried up to the maximal number of atoms in the input, due to the single-use restriction.
 
-Note that this  theorem can be applied to any relational structure, including undecidable ones. Clearly there must be some benefit from assuming that the structure has a decidable first-order theory, which means that there is an algorithm which checks if a first-order sentence is true in the structure. 
+Note that this  theorem can be applied to any relational structure, including undecidable ones. Clearly, there must be some benefit from assuming that the structure has a decidable first-order theory, which means that there is an algorithm which checks if a first-order sentence is true in the structure. 
 The benefit is that we can check if two morphisms are equal, as expressed in the following theorem. 
 
 \begin{theorem}\label{thm:first-order-decidable}
@@ -36,7 +36,7 @@ The benefit is that we can check if two morphisms are equal, as expressed in the
 
 
 The above theorem gives us a reasonable category of single-use functions over a relational structure with a decidable first-order theory. This applies to structures such as Presburger arithmetic, or the real field $(\mathbb R, +, \cdot, \leq)$ with the field operations viewed as ternary relations. 
-However, a decidable first-order theory is not the only property needed to ensure that the category is appropriate to automata. If we want to model automata and their decision procedures, we will also need to execute certain fix-point algorithms, as explained in~\cite{bojanczyk_slightly2018}. This will be illustrated in the next section, where we prove that emptiness for automata, including two-way automata, is decidable under an additional assumption on the structure called \emph{oligomorphism}. This assumption is the standard assumption used to ensure that orbit-finiteness is meaningful. 
+However, a decidable first-order theory is not the only property needed to ensure that the category is appropriate to automata. If we want to model automata and their decision procedures, we will also need to execute certain fixpoint algorithms, as explained in~\cite{bojanczyk_slightly2018}. This will be illustrated in the next section, where we prove that emptiness for automata, including two-way automata, is decidable under an additional assumption on the structure called \emph{oligomorphism}. This assumption is the standard assumption used to ensure that orbit-finiteness is meaningful. 
 
 % Preseburger arithmetic and the real field do not satisfy this assumption, and also emptines for automata is undecidable for them.
 
