@@ -54,7 +54,7 @@ However, orbit-finite sets do not have orbit-finite function spaces, as explaine
     \end{cases}
     \end{align*}
     is finitely supported, because invariant under all atom renamings that fix Mark, John, Eve and Bill. The space of finitely supported functions will be called the \emph{finitely supported function space}. This space is equipped with an action of atom renamings. For example if $\pi$ is the atom renaming that swaps Mark with Adam, then applying it to the function $f$ defined above gives the function $\pi(f)$ that has the same definition (or source code, if a programming intuition is to be followed), except that Mark is used instead of Adam.
-    In the case of $\atoms \to \atoms$, the finitely supported function space is not orbit-finite. Indeed, the output Mark could be conditioned on the input belonging to some very long finite list of exceptional values, and extending the list of exceptional values will give us a function in a different orbit.
+    In the case of $\atoms \to \atoms$, the finitely supported function space is not orbit-finite. Indeed, the output Mark could be conditioned on the input belonging to some very long finite list of exceptional values, and extending the list of exceptional values will give us a function in a different orbit. \exampleend
 \end{example}
 
 In the above example, we explained how the finitely supported function space might not be orbit-finite. On the other hand, the equivariant function space will always be literally finite, if the input and output types are orbit-finite, because it will be an equivariant subset of the product $X \times Y$. So why do we insist on the finitely supported function space? A more principled reason will appear later in the paper, where we discuss symmetric monoidal closed categories, and where the finitely supported function space will turn out to be the right one. However, we can already give a simple reason, which appeals to automata theory, namely converting an automaton into a monoid. As we have seen in Example~\ref{ex:first-letter-repeats-monoid}, when converting an automaton to a monoid, we will want to use partially applied transition functions, and such functions will be finitely supported but not equivariant. 
@@ -71,7 +71,7 @@ In the above example, we explained how the finitely supported function space mig
 % is recognized by a deterministic orbit-finite automaton, but not by an orbit-finite monoid. 
 % \end{example}
 
-The lack of function spaces is the problem that we address in this paper. The rest of this paper is devoted to two solutions of this problem. In each of the two solutions, we modify the notion of orbit-finite sets, by either restricting it or generalizing it, in a way that recovers function spaces. 
+The lack of function spaces is the problem  addressed in this paper. We present two solutions of this problem. In each of the two solutions, we modify the notion of orbit-finite sets, by either restricting it or generalizing it, in a way that recovers function spaces. 
 
 
 

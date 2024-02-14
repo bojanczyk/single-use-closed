@@ -124,7 +124,7 @@ Note that the above representation of the function space is not necessarily uniq
 \end{example}
 
 
-\paragraph*{Problem with currying}
+\textbf{Problem with currying.}
 Unfortunately, the proposal illustrated in Example~\ref{ex:decision-tree-types} and described in more detail in~\cite{stefanski-phd}  does not give a satisfactory solution to the problem of function spaces. The problem is that the set of representations $X \Rightarrow Y$ should  also support operations on functions. More specifically, we should be able to indicate single-use operations which do the following:
 \begin{enumerate}
     \item evaluation: a single-use function from $(X \Rightarrow Y) \times X$ to $Y$ which inputs a representation of a function and applies it to an argument;
