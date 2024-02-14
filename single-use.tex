@@ -124,17 +124,17 @@ Note that the above representation of the function space is not necessarily uniq
 \end{example}
 
 
-\textbf{Problem with currying.}
+\textbf{Problem with Currying.}
 Unfortunately, the proposal illustrated in Example~\ref{ex:decision-tree-types} and described in more detail in~\cite{stefanski-phd}  does not give a satisfactory solution to the problem of function spaces. The problem is that the set of representations $X \Rightarrow Y$ should  also support operations on functions. More specifically, we should be able to indicate single-use operations which do the following:
 \begin{enumerate}
     \item evaluation: a single-use function from $(X \Rightarrow Y) \times X$ to $Y$ which inputs a representation of a function and applies it to an argument;
     \item composition: a function from $(X \Rightarrow Y) \times (Y \Rightarrow Z)$ to $(X \Rightarrow Z)$ which inputs the representations of two functions and returns a representation of their composition.
-    \item currying: for each single-use function from  $ X \times Y $ to $Z$, there should be a single-use function from $X$ to $Y \Rightarrow Z$ which inputs a first argument and returns a representation of the  partially applied function;
+    \item Currying: for each single-use function from  $ X \times Y $ to $Z$, there should be a single-use function from $X$ to $Y \Rightarrow Z$ which inputs a first argument and returns a representation of the  partially applied function;
 \end{enumerate}
-Only in the presence of all of these operations can we speak of a function space, and the corresponding category can be called closed. (Composition can be obtained through evaluation and currying, so the essential operations are evaluation and currying.) The following example shows that the currying operation is not single-use, and therefore the space of single-use functions as defined in this section is not closed. 
+Only in the presence of all of these operations can we speak of a function space, and the corresponding category can be called closed. (Composition can be obtained through evaluation and Currying, so the essential operations are evaluation and Currying.) The following example shows that the Currying operation is not single-use, and therefore the space of single-use functions as defined in this section is not closed. 
 
 
-\begin{example}\label{ex:currying-not-single-use}
+\begin{example}\label{ex:Currying-not-single-use}
     Consider  the single-use function
     \begin{align*}
     f : \atoms \times \atoms \to 1 + 1 \qquad (a,b)  
@@ -143,7 +143,7 @@ Only in the presence of all of these operations can we speak of a function space
         \text{result of test $a = $ John} & \text{otherwise}.
         \end{cases}
     \end{align*}
-The currying of this function, is a new function which  maps a first argument $a \in \atoms$ to the partially applied function $f(a,\_)$. This currying is
+The Currying of this function, is a new function which  maps a first argument $a \in \atoms$ to the partially applied function $f(a,\_)$. This Currying is
 \begin{align*}
     a \mapsto \begin{cases}
         b \mapsto b = \text{Eve} & \text{if } a = \text{Mark} \\
@@ -151,7 +151,7 @@ The currying of this function, is a new function which  maps a first argument $a
         b \mapsto \text{false} & \text{otherwise}
         \end{cases}
 \end{align*}
-Recall that in Example~\ref{ex:first-single-use-function-space} we showed that the space of single-use functions of type $\atoms \to 1 + 1$ can be represented as $1 + 1 + \atoms + \atoms$. If we use this representation,  then the currying of the function $f$  is not single-use, because we need to compare the input atom $a$ to two constants, Mark and John. If we use the representation from Example~\ref{ex:decision-tree-types}, then the corresponding type will be $\atoms \otimes (1 + 1)^2$, but the problems with currying will persist. \exampleend
+Recall that in Example~\ref{ex:first-single-use-function-space} we showed that the space of single-use functions of type $\atoms \to 1 + 1$ can be represented as $1 + 1 + \atoms + \atoms$. If we use this representation,  then the Currying of the function $f$  is not single-use, because we need to compare the input atom $a$ to two constants, Mark and John. If we use the representation from Example~\ref{ex:decision-tree-types}, then the corresponding type will be $\atoms \otimes (1 + 1)^2$, but the problems with Currying will persist. \exampleend
 \end{example}
 
 For similar reasons, 
@@ -164,7 +164,7 @@ To solve the problems above, we will introduce a more refined type system, which
           \quad + \quad 
     \coprod_{i, j \in \set{1,\ldots,k}} (\atoms^{k-2} \to Y) \& (\atoms^{k-2} \to Y).
     \end{align*}
-Under this definition, the problems from Example~\ref{ex:currying-not-single-use} will be solved, at least for the particular type considered in that example. However, by introducing a new type constructor, we will have to redefine the single-use functions, and then we will have to give a representation of functions that allow this new type constructor, without incurring the need to add any other new type constructors. This is the subject of the next section.
+Under this definition, the problems from Example~\ref{ex:Currying-not-single-use} will be solved, at least for the particular type considered in that example. However, by introducing a new type constructor, we will have to redefine the single-use functions, and then we will have to give a representation of functions that allow this new type constructor, without incurring the need to add any other new type constructors. This is the subject of the next section.
 
 \subsection{Linear types and single-use functions on them}
 \label{sec:linear-types-and-single-use-functions}

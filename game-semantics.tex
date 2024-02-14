@@ -37,7 +37,7 @@ As illustrated in the above example, we will use a game to describe the possible
     \item For every two linear types $X$ and $Y$, we  define an arena, which is a data structure that describes all possible interactions between players Environment and System that can arise when running a  single-use  functions of type $X \to Y$;
     \item In each arena, we will be interested in the strategies of player System, i.e.~the ways in which System reacts to moves of Environment. We will show how such strategies can be interpreted as single-use functions: to a strategy we will assign a single-use function of type $X \to Y$ that is represented by this strategy. This mapping will be partial, i.e.~some ill-behaved strategies will not represent any functions. 
     \item We will show that the  set of strategies in an arena is  large enough to represent all single-use functions, but small enough to be orbit-finite. 
-    \item We will then strengthen this: not only is the set of strategies orbit-finite, but it can be equipped with the structure of a linear type, such that both evaluation and currying will be single-use functions.
+    \item We will then strengthen this: not only is the set of strategies orbit-finite, but it can be equipped with the structure of a linear type, such that both evaluation and Currying will be single-use functions.
 \end{enumerate}
 
 The arenas from the first step of the plan will  be defined in two sub-steps. We begin by defining arenas and strategies for functions that do not use the structure of the atoms, i.e. constants and equality tests. This will be a fairly generic definition, almost identical to the classical game semantics for linear logic. Then we will extend the definition to cover the extra structure. 
@@ -459,19 +459,19 @@ Since each strategy in $1 \to X$ or $1 \to Y$ represents at most one value, it f
 One could also show that all represented functions are single-use. We omit this proof, since we will prove a stronger result in the next section. 
 
 \subsection{The set of strategies as a linear type}
-The purpose of this section is to show that the set of strategies in an arena for a function type $X \to Y$ can be described using some linear type, and furthermore the relevant operations on strategies, such as application and currying, can be performed in a single-use way.
+The purpose of this section is to show that the set of strategies in an arena for a function type $X \to Y$ can be described using some linear type, and furthermore the relevant operations on strategies, such as application and Currying, can be performed in a single-use way.
 
 Before we do this we introudce the idea of a \emph{partially applied arena}.
 Let $A$ be an arena, and $m$ a move. We define the partially applied arena ${m^{-1}}A$ 
 to be set of sequences that follow $m$ in $A$, i.e:
-\[m^{-1}A = \{s \ | \ ms \in A \}\]
+\[m^{-1}A = \{s \ | \ ms \in A \}.\]
 The partially applied arena also remembers two bits of information about its context: (a) wheather the current move belongs to the Environment or to the System
 (b) wheter the previous move was a write move (so that we know if the next move has to be a write move). We finish our discussion with the observation 
 that if moves $a, b$ belong to $\atoms$ (i.e. they are constant requests from the library), then $a^{-1}A = b^{-1}A$. 
-For this reason we define the notation $\atoms^{-1}A$ for partrially applying any of the atomic moves. 
+For this reason we define the notation $\atoms^{-1}A$ for partially applying any of the atomic moves. 
 
 
-We are now ready the type for storing $k$-bounded strategies. 
+We are now ready the type for storing $k$-bounded strategies.  The following definition inputs an explicit bound $k$ for the length of the plays, but later on in this section will show that such a bound can be derived from the types by using an analysis of strategies.
 \begin{definition}
     For a (partially applied) arena $A$, we define the type $\Strat(A, k)$ of $k$-bounded strategies on $A$ using the following induction:
 \begin{itemize}
@@ -483,49 +483,48 @@ We are now ready the type for storing $k$-bounded strategies.
     \begin{itemize}
         \item Environment owns $A$. Let $m_1,\ldots,m_n$ be the set of possible first moves. (This set is finite.) The type is defined to be 
         \begin{align*}
-            \Strat(m_1^{-1}A, k) \& \ldots \& \Strat(m_n^{-1}A, k).
+            \Strat(m_1^{-1}A, k) \quad \&\  \cdots\  \& \quad  \Strat(m_n^{-1}A, k).
         \end{align*}
         Let us briefly mention how to handle edge cases: If at least one $\Strat(m_n^{-1}A, k)$ is equal to $\varnothing$, then 
         the entire type is equal to $\varnothing$. If there are no valid moves $m_i$, then the entire type is equal to $1$. 
         \item System owns $A$. Now we also consider two options, depending on whether the previous move by Environment was a write move. 
-               If it was, then let $m_1, \ldots, m_n$ be the current set of possible read moves that are not the first moves in any library 
+               If it was a write move, then let $m_1, \ldots, m_n$ be the current set of possible read moves that are not the first moves in any library 
                component. (This set is finite). Then our type is defined as follows:
                \begin{align*}
-                \Strat(m_1^{-1}A, k) + \ldots + \Strat(m_n^{-1}A, k) + \underbrace{\Strat({\text{eq}}^{-1}A, k)}_{\substack{\textrm{Start a new call to}\\
+                \Strat(m_1^{-1}A, k) + \cdots + \Strat(m_n^{-1}A, k) + \underbrace{\Strat({\text{eq}}^{-1}A, k)}_{\substack{\textrm{Start a new call to}\\
                 \textrm{atoms comparing}\\
                 \textrm{library function}}}.
                \end{align*}
-               The other case is when the previous move was not write. Then let $m_1, \ldots, m_n$ be the set of avaliable moves that are not read moves. 
-               (This set is finite again.) The the strategy type is defined as: 
+               The other case is when the previous move was not write. Then let $m_1, \ldots, m_n$ be the set of available moves that are not read moves. 
+               (This set is finite again.) The strategy type is defined as: 
                \begin{align*}
                 \Strat(m_1^{-1}A, k) + \ldots + \Strat(m_n^{-1}A, k) + \underbrace{\atoms \otimes \Strat(\atoms^{-1}A, k)}_{\substack{\textrm{Start a new call to}\\
                 \textrm{atomic constants}\\
                 \textrm{library function}}}.
                \end{align*}
-               Again, let us mention the edge cases: If some $\Strat(m^{-1}A, k) = \varnothing$ (including the cases where $m$ is the new library move, i.e. $\atoms$ or $\text{eq}$)
-               then we simply skip it. If all $\Strat(m_i^{-1}A, k) = \varnothing$, then the entire type is equal to $\varnothing$. 
+               Again, let us mention the edge cases: If some $\Strat(m^{-1}A, k)$ is empty (including the cases where $m$ is the new library move, i.e. $\atoms$ or $\text{eq}$)
+               then we simply skip it. If all $\Strat(m_i^{-1}A, k)$ are empty, then the entire type is empty.
     \end{itemize}
 \end{itemize}
 \end{definition}
-The intuition behind this defintion is as foollows. If the current move belong to the environment, then the strategy 
-for the system needs to be prepared for every possible move by the environment. Hoewever, eventually the environment 
-will play only one move, so only one of those paths will materialize. This behaviour corresponds exactly to the connective $\&$. 
-(Actually this is the reason why introducing $\&$ makes our single-use categry symetric monoidal closed.) 
+The intuition behind this definition, which was already discussed in the main body of the paper, is as follows. If the current move belongs to Environment, then the strategy 
+for System needs to be prepared for every possible move by the environment. However, eventually Environment 
+will play only one move, so only one of those paths will materialize. This behaviour corresponds exactly to the connective $\&$, and is the reason why  it is used to make our single-use category symmetric monoidal closed.
 When the system is about to move, then it needs to pick one of the possible moves. This corresponds to the behaviour of the connective $+$.
 
-In order to find a linear type that could represent all fuctions in $X \to Y$, we are going to show 
-that every $X$ and $Y$ there is a bound $k$, such that every single use function $f : X \to Y$
+In order to find a linear type that could represent all functions in $X \to Y$, we are going to show 
+that for every linear types $X$ and $Y$ there is a bound $k$, such that every single use function $f : X \to Y$
 can be represented as a $k$-bounded strategy, i.e. as $\sigma \in \Strat(X \to Y, k)$. Before we do this, 
-let us point out potential problems. 
+let us point out some potential problems. 
 
 The main problem is that (as long as $Y \not \approx 1$), there is no universal bound $k$ for strategies in the arena for $X \to Y$
-(even though each strategy is bounded by some $k$). The main reason for this is that the system might ask an arbitary number of irrelevant questions, 
+(even though each strategy is bounded by some $k$). The  reason is that System might ask an arbitrary number of irrelevant questions, 
 i.e. questions that use the equality test on two constants. Interestingly, the irrelevant questions might appear as a result of compositions of strategies:
 % The following lemma shows that if irrelevant questions are disallowed, then plays have length bounded by some constant that depends only on the types involved. This will be one of the useful properties of such strategies, since it will allow us to represent them using a finite linear type.
 % \begin{lemma}\label{lem:no-irrelevant-questions-are-bounded}
 %     For every linear types $X$ and $Y$ there is some $k$ such that if a strategy in the arena for $X \to Y$ does not ask irrelevant questions, then all plays in the strategy have length at most $k$.
 % \end{lemma}
-\begin{example}[irrelevant questions from composition]\label{ex:irrelevant-questions-from-composition}
+\begin{example}[Irrelevant questions from composition]\label{ex:irrelevant-questions-from-composition}
     Consider the  following two functions: 
     \begin{enumerate}
         \item the function of type  $1 \to \atoms \otimes \atoms$ that outputs the pair (Mark, John) for its unique input;
@@ -535,17 +534,16 @@ i.e. questions that use the equality test on two constants. Interestingly, the i
     However, if we apply the composition construction from Section~\ref{sec:composition-of-strategies} to these two strategies, we will get a strategy that asks the irrelevant question of whether Mark and John are equal. \exampleend
 \end{example}
 
-The idea of irrelavent questions captures the intuition of why strategies migh be arbitrarily long, but it is not the only reason for this.
-This is beacuse the system might use constants to start an arbitary number of parallel calls to the equality test library function, 
-never completing any of them. This is why we need to introduce the following definition:
-\begin{definition}
-    We say that a strategy is \emph{well-formed} if it never starts a new call to the equality test library function, using a constant. 
+The idea of irrelevant questions captures the intuition of why strategies might be arbitrarily long, but it is not the only reason for this. Another reason is that System might use constants to start an arbitrary number of parallel calls to the equality test library function, 
+never completing any of them. This is why we introduce the following definition:
+\begin{definition}[Well-formed strategy]
+    We say that a strategy is \emph{well-formed} if it never starts a new call to the equality test library function, by passing a constant as its first argument.
 \end{definition}
 
 \noindent
 Well-formed strategies are bounded, as shown by the following lemma:
 \begin{lemma}\label{lem:well-formed-bounded}
-    For every linear types $X$ and $Y$ there is a univeral bound $k$, such that all well-formed strategies in $X \to Y$ are bounded by $k$. 
+    For every linear types $X$ and $Y$ there is a universal bound $k$, such that all well-formed strategies in $X \to Y$ are bounded by $k$. 
 \end{lemma}
 \begin{proof}
     We start by defining the dimension of a type to be the maximal number of $\atoms$ that the type can store at the same time. This is defined inductively, 
@@ -563,23 +561,23 @@ Well-formed strategies are bounded, as shown by the following lemma:
     in $X \to Y$ are bounded by some $k$ that depends only on the types $X$ and $Y$.
 \end{proof}
 
-Since, as illustrated by Example~\ref{ex:irrelevant-questions-from-composition}, well-formedness is not preserved under composition of strategies. 
-For this reason we need that every non-well-formed strategy can be made-well formed in a way that preserves its semantics (later we will also 
+As illustrated by Example~\ref{ex:irrelevant-questions-from-composition}, well-formedness is not preserved under composition of strategies. 
+For this reason, we need that every  strategy that is not well-formed  can be turned into a well-formed one in a way that preserves its semantics (later we will also 
 show that this can be done in a single-use way). Before we do this, we would like to assume a weaker property of the possibly non-well-formed strategy 
 of the input:
-\begin{definition}
+\begin{definition}[Read-consistent strategy]
     A strategy is called \emph{read-consistent} if, after requesting an atomic value from the environment, it uses the same move 
     to consume this value in all of the branches. This request can be made either through a move in the constant
     library component or a "request" move in an $\atoms$ on the input. Here is a visual representation:
     \picc{read-consistant-ex} 
-    (The squigly lines represent more than one move). Here the system requests the atom John from the environment. 
-    The enviroment might respond immediately with write (as in the bottom branch) or it might wait some time 
+    (The squiggly lines represent more than one move). Here the system requests the atom John from the environment. 
+    Enviroment might respond immediately with write (as in the bottom branch) or it might wait some time 
     (as in the middle or top branch). The read-consistency propery requires that the system uses the same move to read 
     the value John in all of those branches (i.e. $M_1 = M_2 = M_3$). 
 \end{definition}
 
-The advantage of read-consistency over well-formedness is that it is preserverd under compositions of strategies. 
-(One can show directly from \ref{def:shuffling-and-hiding} -- the key idea is to compare the system's response to the immediate write,
+The advantage of read-consistency over well-formedness is that it is preserved under compositions of strategies. 
+(One can show this directly from \ref{def:shuffling-and-hiding} -- the key idea is to compare the system's response to the immediate write,
 with the system's response to every other possible write). Using this observation, we can show that read-consitent strategies are complete:
 \begin{lemma}\label{lem:all-read-consistent}
     For every single use function $f : X \to Y$, there is a read-consistent strategy in the arena $X \to Y$ that represents it. 
@@ -649,7 +647,7 @@ Before we show, how to implement $\text{eval}$ and $\Lambda(f)$ functions,
 let us introduce first, a couple of auxiliary functions.
 Let us fist show how to evaluate values:
 \begin{lemma}
-    Let $X$ be linear type, there is a following single use function, that 
+    For every linear $X$, there is a single-use function that 
     computes the value of a (see Section~\ref{sec:strategies-in-1-to-x-as-elements-of-sem-x}):
     \[\text{val}: (1 \Rightarrow X) \to X\]
 \end{lemma}
@@ -661,7 +659,7 @@ Next, we show that we can compose strategies in a single-use way:
 \begin{lemma}
     Let $X \Rightarrow Y$ and $Y \Rightarrow Z$ be linear types, then there is a single use function:
     \[\text{compose} : (X \Rightarrow Y) \otimes (Y \Rightarrow Z) \to (X \Rightarrow Z)\]
-    Such that if $\sigma_1$ and $\sigma_2$ are strategies that represent functions $f_1$ and $f_2$ respectively,
+    such that if $\sigma_1$ and $\sigma_2$ are strategies that represent functions $f_1$ and $f_2$ respectively,
     then $\text{compose}(\sigma_1, \sigma_2)$ represents the composition of $f_1$ and $f_2$.
 \end{lemma}
 \begin{proof}
@@ -696,50 +694,38 @@ The final component is the function that transforms values to strategies:
     that returns a strategy whose semantics is equal to its input.
  \end{lemma}
 \begin{proof}
-    The functin returns a straightforward strategy of the system. 
+    The function returns a straightforward strategy of the system. 
 \end{proof}
 
-We are now ready to define $\Lambda(f)$ and $\text{eval}$:
+We are now ready to define Currying and evaluation, and thus  complete the proof of Theorem~\ref{thm:single-use-closed}. 
+Consider 
+\begin{align*}
+\text{eval} : X \otimes (X \Rightarrow Y) \to Y
+\end{align*}
+works as follows. We first transform the input into the type
+\begin{align*}
+(1 \Rightarrow X) \otimes (X \Rightarrow Y) 
+\end{align*}
+using the function $\text{toStrategy}$. Then we apply the function $\text{compose}$, and finally we use the function $\text{val}$ to get the result.
+
+Now we define Currying. Consider a single-use function
+\begin{align*}
+f : Z \otimes X \to Y.
+\end{align*}
+Its Currying is defined as follows. First, we add a representation of $f$ to the input, giving a value in 
+\begin{align*}
+Z \otimes (Z \otimes X \Rightarrow Y).
+\end{align*}
+Then we transform the $Z$ into type $1 \Rightarrow Z$ using toStrategy, giving a result in type 
+\begin{align*}
+(1 \Rightarrow Z) \otimes (Z \otimes X \Rightarrow Y).
+\end{align*}
+We now transform, using a copying strategy, the first argument into type $X \otimes (X \Rightarrow Z)$, giving a result in type
+\begin{align*}
+(X \otimes (X \Rightarrow Z))  \otimes (Z \otimes X \Rightarrow Y).
+\end{align*}
+Finally, we use the function $\text{compose}$ to get the desired result.  The properties of the underlying functions ensures that Currying is consistent with evaluation, as required in Theorem~\ref{thm:single-use-closed}.
 
 
-Thanks to Lemmas~\ref{lem:all-well-formed}~and~\ref{lem:well-formed-bounded}, we can define the exponent object 
-as 
 
 
-
-
-\begin{proof}[Proof of Theorem~\ref{thm:single-use-closed}]
-    Consider two types $X$ and $Y$.
- Take $k$ to be the number from Lemma~\ref{lem:no-irrelevant-questions-are-bounded}. This ensures that the type $X \Rightarrow_k Y$ is rich enough to represent all strategies that do not ask irrelevant questions. By Lemma~\ref{lem:eliminate-irrelevant-questions} the type is  rich enough to represent all single-use functions. Define the  function space $X \Rightarrow Y$ to be this type.   Define the evaluation function 
-    \begin{align*}
-    \text{eval} : X \otimes (X \Rightarrow Y) \to Y 
-    \end{align*}
-    to be the evaluation function in item~\ref{it:k-bounded-eval} in Lemma~\ref{lem:linear-type-of-k-bounded-strategies}. We will now prove that this type admits currying. Consider then some single use function 
-    \begin{align*}
-    f : Z \otimes X \to Y.
-    \end{align*}
-    By Lemma~\ref{lem:bounded-k}, there is some $\ell$ such that $f$ is represented by some  $\ell$-bounded strategy $\sigma$ in the game of type $Z \otimes X \to Y$. For strategies, there is a straightforward notion of currying, which is single-use, as given in the following claim.
-
-    \begin{claim}
-        Let $X$, $Y$, and $Z$ be linear types, and let $\ell \in \set{0,1,\ldots}$. For every $\ell$-bounded strategy $\sigma$ in the game  of type $Z \otimes X \to Y$  there is a single-use function $\Lambda : Z \to (X \Rightarrow_\ell Y)$, such that the following diagram commutes:
-        \[
-        \begin{tikzcd}
-            [column sep=3.5cm]
-        X
-        \ar[r, "{x \mapsto z \otimes x}"]
-        \ar[dr, "\text{strategy represented by $\Lambda(z)$}"']
-        &
-        Z \otimes X 
-        \ar[d, "{\text{strategy represented by $\sigma$}}"] \\
-        &
-        Y
-        \end{tikzcd}
-        \]
-        \end{claim}
-        The currying operation from the above claim gives us almost the currying that is required in Theorem~\ref{thm:single-use-closed}.
-        The only issue is that the output is in $X \Rightarrow_\ell Y$, where the number $\ell$ depends also on the extra set $Z$, instead of $X \Rightarrow_k Y$.
-        To fix this, we post-compose it with the single-use function from $X \Rightarrow_\ell Y$ to $X \Rightarrow_k Y$  that was described in the remarks after Lemma~\ref{lem:bounded-k}.
-
-    
-
-\end{proof}
