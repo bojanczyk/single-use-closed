@@ -100,16 +100,6 @@
 \input{two-way-automata}
 \input{vector}
 
-% [Tito] TODO: you might want to move this into its own file
-\section{Conclusion}
-\label{sec:conclusion}
-
-\subparagraph{Related work.}
-
-In addition to studying automata over arbitrary (symmetric) monoidal closed categories, the work of Nguy{\~{ê}}n and Pradic mentioned in the introduction~\cite{IATLC2,titoPhD} builds a monoidal closed category of single-use assignments on string-valued registers, and uses it to relate a register-based string transducer model to a $\lambda$-calculus with linear types -- indeed, these categories are famous for providing denotational semantics for the linear $\lambda$-calculus. In that work, the fact that ``register contents do not influence the control flow'' leads to a much simpler construction than here, similar to Dialectica categories~\cite{PaivaDialectica} (which can be seen as a form of game semantics with very short plays), where no quotient is needed.
-
-Similarly, our results here could serve to characterize the languages of words with atoms from~\cite{bojanczykstefanski2020} via some typed $\lambda$-calculus. Conversely, \Cref{thm:single-use-closed} might be provable by representing single-use functions as $\lambda$-terms (or programs in some richly structured syntactic formalism) instead of strategies over games. Indeed, it is a classical fact that a simple type is inhabited by finitely many linear $\lambda$-terms up to $\beta$-conversion, and variations on this fact have been used in the literature to relate automata and $\lambda$-calculus~\cite{IATLC,LambdaTransducer}.
-
 
 \bibliography{bib}
 
