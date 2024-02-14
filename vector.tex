@@ -14,7 +14,7 @@ For the sake of concreteness, all  vector spaces will be over the field of ratio
 
 \begin{example} \label{ex:lina} For a set $X$, let us write $\Lin X$ for the vector space that consists of finite linear combinations of elements from $X$. When $X$ is the set of atoms, the resulting vector space $\Lin \atoms$ is a vector space with atoms, because it comes equipped with a natural action of atom automorphisms.  An example vector in this space is $
 3 \cdot \text{John} + 2 \cdot \text{Eve} - 5 \cdot \text{Mark}.
-$
+$ \exampleend
 \end{example}
 
 When talking about vector spaces with atoms, one has to be careful about using bases. This is because finding a basis might require choice, and choice is not available in the presence of atoms. 
@@ -61,19 +61,13 @@ For the above category, we will use tensor product $\otimes$; this is the usual 
     % \end{tikzcd}
     % \]
 \end{theorem}
-\begin{proof} We apply the standard proof that the category of vector spaces (without atoms and orbit-finiteness) is symmetric monoidal closed. We then observe that: (1) both evaluation and currying are equivariant; (2) the resulting space is orbit-finitely spanned. 
-    
-    For the first observation (1), we simply note that the construction of the function space, as well as  the evaluation and currying morphisms, are constructed using the language of set theory, and therefore they will necessarily be equivariant~\cite[Equivariance Principle]{bojanczyk_slightly2018}.
 
-    Let us now explain the second observation (2), about the function space being orbit-finitely spanned. This uses a non-trivial result from~\cite{bojanczykKM21OrbitFiniteVector} which says that orbit-finitely spanned spaces are closed under duals. 
-    The space $\funspace V W$ is defined to be the space of finitely supported linear maps from $V$ to $W$, with the natural vecor space structure. This can be seen as a subspace of a larger space, call it $\funspacenonfs V W$, which contains all linear maps, not necessarily finitely supported. A standard result in linear algebra is that $\funspacenonfs V W$ is linearly isomorphic to $ \funspacenonfs {V \otimes W} 1$, where $1$ is the field. This isomorphism is equivariant, and it preserves the property of being finitely supported. Therefore, this gives us an equivariant linear isomorphism between $\funspace V W$ is isomorphic and $ \funspace {V \otimes W} 1$. The latter space is the dual of the orbit-finitely spanned space $V \otimes W$, and therefore it is orbit-finitely spanned by~\cite[Corollary VI.5]{bojanczykKM21OrbitFiniteVector}.
-\end{proof}
 
 A corollary of the above theorem is that, in the category of orbit-finitely spanned vector spaces, deterministic automata recognize the same languages as monoids. This is because the usual translation can be done, with a deterministic automaton of states $Q$ being mapped to a monoid with elements $\funspace Q Q$. This was already observed in~\cite[Theorem VIII.3]{bojanczykKM21OrbitFiniteVector}.
 
 However, there are two limitations of the orbit-finitely spanned vector spaces. 
 
-The first limitation is that the existence of function spaces is dependent on the choice of atoms. Theorem~\ref{thm:orbit-finite-vector-space-closed}  works when the atoms have equality only, and it also works when the atoms are equipped with a total order. This is because the dual spaces are orbit-finitely spanned in these cases, as proved in~\cite[Corollary VI.5]{bojanczykKM21OrbitFiniteVector}. However, the dual spaces are no longer orbit-finitely spanned for other choices of  atoms, such as atoms with a graph structure, see~\cite[Example 9]{bojanczykKM21OrbitFiniteVector}.
+The first limitation is that the existence of function spaces is dependent on the choice of atoms. Theorem~\ref{thm:orbit-finite-vector-space-closed}  works when the atoms have equality only, and it also works when the atoms are equipped with a total order. This is because the dual spaces are orbit-finitely spanned in these cases, as proved in~\cite[Corollary VI.5]{bojanczykKM21OrbitFiniteVector}. However, the dual spaces are no longer orbit-finitely spanned for other choices of  atoms, such as the Rado graph, see~\cite[Example 9]{bojanczykKM21OrbitFiniteVector}. This is in contrast to the single-use category, where the existence of function spaces is independent of the choice of atoms. 
 
 A second limitation is that it does not support two-way automata, unlike the single-use category (see Section~\ref{sec:two-way-automata}). This is because this category generalizes the orbit-finite category (i.e.~it admits a faithful functor from it), and in the orbit-finite category emptiness is undecidable for deterministic two-way automata~\cite[Theorem 5.3]{nevenFiniteStateMachines2004}. This precludes the kind of traced construction that we did in the single-use category. This issue appears already without atoms: the category of finite-dimensional vector spaces is not traced with respect to the sum $+$ of vector spaces. 
 

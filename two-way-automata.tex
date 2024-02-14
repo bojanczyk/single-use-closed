@@ -1,18 +1,35 @@
 \section{Traced categories and two-way automata}
 \label{sec:two-way-automata}
 
-(todo complete this section)
-In this section, we show that the single-use category is traced, which enables us to use it to model deterministic two-way automata. Consider a deterministic two-way automaton with states $Q$. The behavior of this automaton over some input word $w$ can be described by a partial  function of type 
-\begin{align*}
-Q + Q \to Q + Q + 1.
-\end{align*}
+In this section, we show that the single-use category is traced with respect to co-product, and we use this to fact to model deterministic two-way automata.
+We begin by describing the usual trace construction in the category of sets and partial functions. 
+Consider some partial function $
+f : A + X \to B + X.$
+For a number $k \in \set{0,1,\ldots}$ we can define a partial function of type $A \to B$, which is called the \emph{$k$-th iteration}, as  follows by induction on $k$. The $0$-th iteration is  completely undefined. For $k > 0$, the $k$-th iteration is defined as follows. First we apply $f$ to the input. If the output is undefined or from  $B$, then that is the final output of the $k$-th iteration. Otherwise, if the output is from $X$, then we apply the $(k-1)$-st iteration and return that output (which may be undefined). It is easy to see that the iterations are ordered by inclusion, i.e.~when viewed as binary relations they form an increasing chain. The limit of this chain, which is a partial function from $A$ to $B$ is defined to be the \emph{trace of $f$}. 
 
-Suppose now that we want to convert this automaton into a single- ..
+We will now show that the traces exist also in the single-use category, even if we take the general variant from Section~\ref{sec:beyond-equality} that arises from some relational structure. However, we will need to make a certain assumption on this structure. Call a structure $\atoms$  \emph{oligomorphic} if for every $k \in \set{0,1,\ldots}$, there  are finitely many orbits in $\atoms^k$ under the action of the automorphism group of $\atoms$.
+Oligomorphism is the standard assumption in the theory of sets with atoms~\cite{bojanczyk_slightly2018}. In particular, ensures that the notion of orbit-finite set is meaningful. Examples of oligomorphic structures include: the atoms with equality only, the rational numbers with their linear order, and the Rado graph. Nonexamples include: the integers with their linear order, Presburger arithmetic, and the real field. 
 
 
-Consider the function 
-\begin{align*}
-(Q+Q) \to (Q + Q) + Q + 1.
-\end{align*}
-We now want to iter
+
+The main observation is that for single-use functions over an oligomorphic structure, the trace is achieved in finitely many steps.
+\begin{lemma}\label{lem:traced-finite-iteration} Let $\atoms$ be an oligomorphic structure, let $A,B,X$ be linear types, and let 
+    \begin{align*}
+        f : \sem{A + X} \to \sem{B + X}
+        \end{align*}
+        be a single-use function over $\atoms$. There is some $k$ such that the trace of $f$ is equal to $f^{(k)}$.
+\end{lemma}
+
+
+Since the trace is achieved in finitely many steps, and it is easily seen to be constructed using operations on functions that preserve the single-use condition, the trace is also single-use. (In this section, we use single-use partial functions, which are defined to be single-use functions of type $X \to Y +1$, where $1$ represents the undefined value.) Therefore, the single-use partial functions over an oligomorphic structure form what is called a \emph{traced category}, with respect to $+$. 
+
+
+
+We now use the trace construction to model deterministic two-way automata. (The idea that traced categories are a natural setting for two-way automata was already noted in~\cite{hines2003categorical}.) We define a deterministic two-way automaton in the same way as a deterministic one-way automaton, except that the transition function now is a partial function from $\Sigma \otimes (Q + Q)$ to $Q + Q + 1$. 
+The two copies of $Q$ represent entering the letter from the left or right, and the $1$ in the output represents acceptance.  The function is partial, and thus if we want to model it as a complete function, then there will be another $1$ in its output, representing rejection.
+
+\begin{theorem}\label{thm:two-way-automata}
+    Let $\atoms$ be an oligomorphic structure with a decidable first-order theory. Then the emptiness problem is decidable for single-use deterministic  two-way automata over $\atoms$.
+\end{theorem}
+
 

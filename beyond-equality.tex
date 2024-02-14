@@ -38,8 +38,11 @@ The benefit is that we can check if two morphisms are equal, as expressed in the
 
 
 
-The above theorem gives us a reasonable category of single-use functions over a relational structure with a decidable first-order theory. 
-However, a decidable first-order theory is not the only property needed to ensure that the category is appropriate to automata. If we want to model automata and their decision procedures, we will also need to execute fixpoint algorithms, as explained in~\cite{bojanczyk_slightly2018}. For this purpose, we will need a stronger assumption on the structure $\atoms$, namely that it is oligomorphic. This means that for every $k$, the set $\atoms^k$ has finitely many orbits under the action of the automorphism group of $\atoms$. Under this assumption,  the notion of orbit-finitness is well-defined. Also, since the morphisms of the single-use category from Definition~\ref{def:single-use-category-relational-structures} represent functions that can be defined in first-order logic, and such functions are finitely supported, we get a faithful functor into the category of orbit-finite sets over $\atoms$ with finitely supported functions. The latter category has decidable termination for fixpoint algorithms that operate on orbit-finite sets, and hence we get the following theorem. 
+The above theorem gives us a reasonable category of single-use functions over a relational structure with a decidable first-order theory. This applies to structures such as Presburger arithmetic, or the real field $(\mathbb R, +, \cdot, \leq)$ with the field operations viewed as ternary relations. 
+However, a decidable first-order theory is not the only property needed to ensure that the category is appropriate to automata. If we want to model automata and their decision procedures, we will also need to execute certain fix-point algorithms, as explained in~\cite{bojanczyk_slightly2018}. This will be illustrated in the next section, where we prove that emptiness for automata, including two-way automata, is decidable under an additional assumption on the structure called \emph{oligomorphism}. This assumption is the standard assumption used to ensure that orbit-finiteness is meaningful. 
+
+% Preseburger arithmetic and the real field do not satisfy this assumption, and also emptines for automata is undecidable for them.
+
 
 \begin{theorem}\label{thm:single-use-automata-relational-structures}
     Consider a relational structure $\atoms$ that is oligomorphic and has a decidable first-order theory. Then the emptiness problem is decidable for all single-use automata models: monoids, and deterministic automata in both the one-way and two-way variants.
