@@ -570,10 +570,14 @@ For this reason we need that every non-well-formed strategy can be made-well for
 show that this can be done in a single-use way). Before we do this, we would like to assume a weaker property of the possibly non-well-formed strategy 
 of the input:
 \begin{definition}
-    A strategy is called \emph{read-consistent} if it always uses the same move to consume a value after requesting it from the environment. 
-    This request can be made either through a move in the constant library component or a "request" move in an $\atoms$ on the input.
-
-
+    A strategy is called \emph{read-consistent} if, after requesting an atomic value from the environment, it uses the same move 
+    to consume this value in all of the branches. This request can be made either through a move in the constant
+    library component or a "request" move in an $\atoms$ on the input. Here is a visual representation:
+    \picc{read-consistant-ex} 
+    (The squigly lines represent more than one move). Here the system requests the atom John from the environment. 
+    The enviroment might respond immediately with write (as in the bottom branch) or it might wait some time 
+    (as in the middle or top branch). The read-consistency propery requires that the system uses the same move to read 
+    the value John in all of those branches (i.e. $M_1 = M_2 = M_3$). 
 \end{definition}
 
 
@@ -585,11 +589,40 @@ of the input:
 
 
 
-In light of the above example, we will want to eliminate irrelevant questions. 
-
-\begin{lemma}\label{lem:eliminate-irrelevant-questions}
-    For every linear types $X$ and $Y$, every single-use function of type  $X \to Y$ is represented by  some strategy that does not ask irrelevant questions.
+The advantage of read-consistency over well-formedness is that it is preserverd under compositions of strategies. 
+(One can show directly from \ref{def:shuffling-and-hiding} -- the key idea is to compare the system's response to the immediate write,
+with the system's response to every other possible write). Using this observation, we can show that read-consitent strategies are complete:
+\begin{lemma}
+    For every single use function $f : X \to Y$, there is a read-consistent strategy in the arena $X \to Y$ that represents it. 
 \end{lemma}
+\begin{proof}
+    The proof is analogous to the proof of Lemma~\ref{lem:su-strategies-complete}. As well-formedness is preserved
+    under the combinators $\circ$, $\otimes$, $\&$, $+$. (The proof for $\otimes$, $\&$, and $+$ is immediate.)
+    Moreover it is not hard to see that all prime functions can be realized by read-consisten strategies. 
+\end{proof}
+
+Next, let us show that every read-consistent strategy can be made well-formed in a way that preserves its semantics
+(thus proving completeness of well-formed strategies). 
+\begin{lemma}
+    For every read-consistent strategy $\sigma$ in the arena for $X \to Y$,
+    there is a well-formed strategy $\sigma'$ in the same arena that represents the same function as $\sigma$.
+\end{lemma}
+\begin{proof}
+    Consider a system's request for a constant, in some branche of $\sigma$. 
+    We say that this request is \emph{offending} if the system's intention (according to read-consistenty) is to use
+    the constant to start a new call to the equality test library function.
+    Let us now show how to remove an offending request from a strategy in a way that preserves the strategy's semantics
+    (without introducing any new offending requests). This is enough to finish the proof of the lemma,
+    because we can repeat this construction for all offending moves. (And thanks to read-consistency, we know that 
+    if a strategy contains no offending moves, then it is well-formed.)
+
+
+    
+    
+
+
+\end{proof}
+
 
 
 The following lemma shows that the set of $k$-bounded strategies can be described using a linear type.
