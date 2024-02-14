@@ -443,18 +443,14 @@ Since each strategy in $1 \to X$ or $1 \to Y$ represents at most one value, it f
 
         \item[Constant function of type $1 \to \atoms$] As in the previous item, this function is implemented by using the library, in this case the constant choice part of the library. 
 
-        \item[Projection of type $ X \otimes Y \to X$] System plays with a restricted version of the shuffling and hiding strategy:
-        whenever Environment plays in the right copy of $X$, then System responds with the same move in he left copy of $X$, 
-        and whenever the environment responds in the left copy of $X$, we respond with the same move in the right 
-        copy of $X$. 
+        \item[Projection of type $ X \otimes Y \to X$] System uses the  shuffling and hiding strategy that was described in Section~\ref{sec:composition-of-strategies}. 
 
-        \item[Projection of type $\textrm{distr}_{\&, \otimes} : X \otimes (Y \& Z) \to (X \otimes Y) \& (X \otimes Z)$]
-        Here we play according to the strategy from \ref{ex:amp-otimes-distr}: The environment 
-        starts by either playin ``left'' or ``right'' in $(X \otimes Y) \& (X \otimes Z)$, 
+        \item[Distributivity  of type $X \otimes (Y \& Z) \to (X \otimes Y) \& (X \otimes Z)$] We use the  strategy from \ref{ex:amp-otimes-distr}.  The environment 
+        starts by either playing ``left'' or ``right'' in $(X \otimes Y) \& (X \otimes Z)$, 
         we respond with the same move in $(Y \& Z)$. The environment has to play ``acknowledge'' 
-        in $(Y \& Z)$, after which we play acknowledge. This leaves in a state that is either 
+        in $(Y \& Z)$, after which we play acknowledge. This leaves us in a state that is either 
         equivalent to $X \otimes Y \to X \times Y$ or  $X \otimes Z \to X \times Z$. 
-        In both cases we play according to the copycat strategy.  \rafal{Define copycat?}
+        In both cases we play according to the shuffling and hiding strategy. 
     \end{description}
 \end{proof}
 One can also show that the system is sound (i.e. that every function repersented by a strategy is single-use). \rafal{reference 
