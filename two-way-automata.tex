@@ -13,15 +13,13 @@ Oligomorphism is the standard assumption in the theory of sets with atoms~\cite{
 
 
 The main observation is that for single-use functions over an oligomorphic structure, the trace is achieved in finitely many steps.
-\begin{lemma}Let $\atoms$ be an oligomorphic structure, let $A,B,X$ be linear types, and let 
+\begin{lemma}\label{lem:traced-finite-iteration} Let $\atoms$ be an oligomorphic structure, let $A,B,X$ be linear types, and let 
     \begin{align*}
         f : \sem{A + X} \to \sem{B + X}
         \end{align*}
         be a single-use function over $\atoms$. There is some $k$ such that the trace of $f$ is equal to $f^{(k)}$.
 \end{lemma}
-\begin{proof}
-    We only need the weaker assumption, which is that the function $f$ is finitely supported. Consider some set of atoms that supports $f$. This same set of atoms will also support all functions $f^{(k)}$, and it will also support their domains. In particular, the domains of these functions will form a decreasing sequence of subsets of $\sem{A + X}$, with all subsets having the same support. Since an orbit-finite set can have finitely many subsets with a given support, this sequence must terminate in finitely many steps.
-\end{proof}
+
 
 Since the trace is achieved in finitely many steps, and it is easily seen to be constructed using operations on functions that preserve the single-use condition, the trace is also single-use. (In this section, we use single-use partial functions, which are defined to be single-use functions of type $X \to Y +1$, where $1$ represents the undefined value.) Therefore, the single-use partial functions over an oligomorphic structure form what is called a \emph{traced category}, with respect to $+$. 
 
