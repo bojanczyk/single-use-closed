@@ -1,11 +1,36 @@
 \section{Traced categories and two-way automata}
 \label{sec:two-way-automata}
 
-(todo complete this section)
-In this section, we show that the single-use category is traced, which enables us to use it to model deterministic two-way automata. Consider a deterministic two-way automaton with states $Q$. The behavior of this automaton over some input word $w$ can be described by a partial  function of type 
+In this section, we show that the single-use category is traced with respect to co-product, and we use this to fact to model deterministic two-way automata.
+We begin by describing the usual trace construction in the category of sets and partial functions. 
+Consider some partial function 
 \begin{align*}
-Q + Q \to Q + Q + 1.
+f : A + X \to B + X.
 \end{align*}
+For a number $k \in \set{1,2,\ldots}$ we can define a partial function  
+\begin{align*}
+f^{(k)} : A \to B
+\end{align*}
+as follows by induction on $k$.  For $k =0$, this function is completely undefined. For $k > 0$, this function is defined as follows. First we apply $f$ to the input. If the output is undefined or from  $B$, then that is the final output of $f^{(k)}$. Otherwise, if the output is from $X$, then we apply $f^{(k-1)}$, and return that output (which may be undefined). It is easy to see that the functions defined this way are order by inclusion (i.e.~the domain grows with $k$, and once an input falls into the domain, then the output value is the same for all $k$). In particular, there is some limit function, which is the union of the sequence. We call this limit the \emph{trace of $f$}. 
+
+The main observation is that for single-use functions, the trace is achieved in finitely many steps.
+\begin{lemma}
+    Let $A,B,X$ be linear types, and let 
+    \begin{align*}
+        f : \sem{A + X} \to \sem{B + X}
+        \end{align*}
+        be a single-use function. Then there is some $k$ such that the trace of $f$ is equal to $f^{(k)}$.
+\end{lemma}
+\begin{proof}
+    We only need the weaker assumption, which is that the function $f$ is finitely supported. Consider some set of atoms that supports $f$. This same set of atoms will also support all functions $f^{(k)}$, and it will also support their domains. In particular, the domains of these functions will form a decreasing sequence of subsets of $\sem{A + X}$, with all subsets having the same support. Since an orbit-finite set can have finitely many subsets with a given support, this sequence must terminate in finitely many steps.
+\end{proof}
+
+Since the trace is achieved in finitely many steps, and it is easily seen to be constructed using operations on functions that preserve the single-use condition, the trace is also single-use. (In this section, we use single-use partial functions, which are defined to be single-use functions of type $X \to Y +1$, where $1$ represents the undefined value.) Therefore, the single-use partial functions form what is called a \emph{traced category}, with respect to $+$. 
+
+We now use this traced construction to model deterministic two-way automata. We define a deterministic two-way automaton in the same way as a deterministic one-way automaton, except that the transition function now is a partial function from $\Sigma \otimes (Q + Q)$ to $Q + Q + 1$. 
+The two copies of $Q$ represent entering the letter from the left or right, and the $1$ in the output represents acceptance.  The function is partial, and therefore if we want to model it as a complete function, then there will be another $1$ in the output that represents rejection.
+
+The transition function in the automaton tells us how it behaves for a single input letter. We now extend this function to input strings. This is done by induction on the length of the input string. Suppose that we have two input strings, to which we have associated two partial functions 
 
 Suppose now that we want to convert this automaton into a single- ..
 
