@@ -693,43 +693,51 @@ Next, we show that we can compose strategies in a single-use way.
     \end{itemize}
 \end{proof}
 
-The final component is the function that transforms values to strategies: 
-\begin{lemma}
-    There is a function $\text{toStrategy} : X \to (1 \Rightarrow X)$, 
+The final helper function transforms values to strategies. This is done in the following lemma, whose straightforward proof we omit.
+\begin{lemma}\label{lem:to-strat}
+    There is a single-use function of type $X \to (1 \Rightarrow X)$, 
     that returns a strategy whose semantics is equal to its input.
  \end{lemma}
-\begin{proof}
-    The function returns a straightforward strategy of the system. 
-\end{proof}
 
-We are now ready to define Currying and evaluation, and thus  complete the proof of Theorem~\ref{thm:single-use-closed}. 
-Consider 
-\begin{align*}
-\text{eval} : X \otimes (X \Rightarrow Y) \to Y
-\end{align*}
-works as follows. We first transform the input into the type
-\begin{align*}
-(1 \Rightarrow X) \otimes (X \Rightarrow Y) 
-\end{align*}
-using the function $\text{toStrategy}$. Then we apply the function $\text{compose}$, and finally we use the function $\text{val}$ to get the result.
 
-Now we define Currying. Consider a single-use function
+We are now ready to define Currying and evaluation, and thus  complete the proof of Theorem~\ref{thm:single-use-closed}.  We begin with the evaluation function, which is defined as follows: 
+    \[
+    \begin{tikzcd}
+     X \otimes (X \Rightarrow Y) 
+        \ar[d, "{\text{function from Lemma~\ref{lem:to-strat} on first coordinate}}"]
+    \\
+        (1 \Rightarrow X) \otimes (X \Rightarrow Y)
+        \ar[d, "{\text{composing function from Lemma~\ref{lem:compose-single-use-linear-type}}}"]
+        \\ 
+        1 \Rightarrow Y   
+        \ar[d, "{\text{function from Lemma~\ref{lem:evaluate-to-values}}}"]
+        \\ 
+        Y    
+    \end{tikzcd}
+    \]
+    Now we consider the Currying of  a single-use function
 \begin{align*}
 f : Z \otimes X \to Y.
 \end{align*}
-Its Currying is defined as follows. First, we add a representation of $f$ to the input, giving a value in 
-\begin{align*}
-Z \otimes (Z \otimes X \Rightarrow Y).
-\end{align*}
-Then we transform the $Z$ into type $1 \Rightarrow Z$ using toStrategy, giving a result in type 
-\begin{align*}
-(1 \Rightarrow Z) \otimes (Z \otimes X \Rightarrow Y).
-\end{align*}
-We now transform, using a copying strategy, the first argument into type $X \otimes (X \Rightarrow Z)$, giving a result in type
-\begin{align*}
-(X \otimes (X \Rightarrow Z))  \otimes (Z \otimes X \Rightarrow Y).
-\end{align*}
-Finally, we use the function $\text{compose}$ to get the desired result.  The properties of the underlying functions ensures that Currying is consistent with evaluation, as required in Theorem~\ref{thm:single-use-closed}.
+By Lemma~\ref{lem:all-well-formed} we know that this single-use function is represented by some element $\hat f$ of the  set represented by the type $Z \otimes (X \Rightarrow Y)$. We use this element to define Currying of $f$ as follows:
+\[
+    \begin{tikzcd}
+     Z  
+        \ar[d, "{\text{extend the input with $\hat f$}}"]
+    \\
+    Z \otimes (Z \otimes X \Rightarrow Y)
+        \ar[d, "{\text{apply function from Lemma~\ref{lem:to-strat} to first argument}}"]
+        \\ 
+        (1 \Rightarrow Z) \otimes (Z \otimes X \Rightarrow Y)   
+        \ar[d, "{\text{lift first argument to function that copies argument from $X$}}"]
+        \\ 
+        (X \Rightarrow X \otimes Z)  \otimes (Z \otimes X \Rightarrow Y)
+        \ar[d, "{\text{composing function from Lemma~\ref{lem:compose-single-use-linear-type}}}"]
+        \\ 
+        X \Rightarrow Y 
+    \end{tikzcd}
+    \]
+These functions are single-use, as compositions of single-use functions. They also satisfy the required properties in a symmetric monoidal closed category, which can easily be verified using the properties proved in the lemmas that were used to define the functions. This completes the proof of  Theorem~\ref{thm:single-use-closed}.
 
 
 
