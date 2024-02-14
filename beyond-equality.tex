@@ -1,7 +1,7 @@
 \section{Beyond equality}
 \label{sec:beyond-equality}
 
-So far, we have only studied the case when the atoms are equipped with equality only. Consider now a more general case: let $\atoms$ be any relational structure, i.e.~any set equipped with relations (but not functions). For example, we could use the rational numbers with their linear order. Another example would be Presburger arithmetic, i.e.~the intergers $\Nat$ together with addition $+$. Since we want to have relations only, we think of addition as a ternary relation $x + y =z$. 
+So far, we have only studied the case when the atoms are equipped with equality only. Consider now a more general case: let $\atoms$ be any relational structure, i.e.~any set equipped with relations (but not functions). For example, we could use the rational numbers with their linear order. Another example would be Presburger arithmetic, i.e.~the integers $\Nat$ together with addition $+$. Since we want to have relations only, we think of addition as a ternary relation $x + y =z$. 
 
 The construction of the single-use category from Section~\ref{sec:single-use-sets} is generic enough so that it be generalized to any relational structure, and not just atoms with equality. (In fact, there is also a suitable generalization for function symbols, but we do not prove anything about it, so we do not talk about it.)
 
@@ -24,7 +24,7 @@ The theorem is proved in the same way as Theorem~\ref{thm:single-use-closed}.  T
 Note that this  theorem can be applied to any relational structure, including undecidable ones. Clearly there must be some benefit from assuming that the structure has a decidable first-order theory, which means that there is an algorithm which checks if a first-order sentence is true in the structure. 
 The benefit is that we can check if two morphisms are equal, as expressed in the following theorem. 
 
-\begin{theorem}
+\begin{theorem}\label{thm:first-order-decidable}
     Consider a relational structure $\atoms$, in which for every $k \in \set{0,1,\ldots}$ there are finitely many relations of arity $k$. If this structure has a decidable first-order theory, then there is an algorithm for the following problem:
     \begin{itemize}
         \item {\bf Input.} Two morphisms, described by expressions using prime functions and combinators.
@@ -39,11 +39,4 @@ The above theorem gives us a reasonable category of single-use functions over a 
 However, a decidable first-order theory is not the only property needed to ensure that the category is appropriate to automata. If we want to model automata and their decision procedures, we will also need to execute certain fix-point algorithms, as explained in~\cite{bojanczyk_slightly2018}. This will be illustrated in the next section, where we prove that emptiness for automata, including two-way automata, is decidable under an additional assumption on the structure called \emph{oligomorphism}. This assumption is the standard assumption used to ensure that orbit-finiteness is meaningful. 
 
 % Preseburger arithmetic and the real field do not satisfy this assumption, and also emptines for automata is undecidable for them.
-
-
-\begin{theorem}\label{thm:single-use-automata-relational-structures}
-    Consider a relational structure $\atoms$ that is oligomorphic and has a decidable first-order theory. Then the emptiness problem is decidable for all single-use automata models: monoids, and deterministic automata in both the one-way and two-way variants.
-\end{theorem}
-
-In the case of two-way automata, the single-use restriction is crucial, since without it the emptiness problem becomes undecidable for all choices of $\atoms$ where the universe is infinite. The above theorem is the first known example of two-way model that has decidable emptiness and uses atoms that are not the equality atoms. 
 
