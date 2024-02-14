@@ -307,9 +307,11 @@ up to isomoprhism.
 
 
 \subsection{Strategies as single-use functions}
-In this section, we explain how a strategy in a function type $X \to Y$ can be interpreted as a single-use function from $\sem X$ to $\sem Y$. This interpretation is partial, since some strategies will be considered inconsistent, and will not represent any function. We begin with an example which presents the intuition of why a strategy might be inconsistent. 
+In this section, we explain how a strategy in a function type $X \to Y$ can be interpreted as a single-use function from the set  $\sem X$ to the set $\sem Y$. This interpretation is partial, since some strategies will be considered inconsistent, and will not represent any function. We begin with an example which explains how  a strategy might be inconsistent. 
 
-\begin{example}[Inconsistent strategy] \label{ex:inconsistent-strategy} Consider a strategy in the arena for  $1 \to \atoms \otimes \atoms$. We would like to think of this strategy of producing a pair of atoms, possibly using the constants from the library. Indeed, if player Environment requests an output, then player System will ultimately need to produce a corresponding read move, which will necessarily need to be fed by a write move that is in the constant choice arena (the appropriate formalizations of these notions will be given in Section~\ref{sec:some-notation-for-describing-plays}). However, an inconsistent strategy for player System could use different constants depending on the order in which Environment requests the two output atoms in $\atoms \otimes \atoms$.  For example, the output could be (John, Mark) for one order, and (Eve, Mary) for some other order.  \exampleend
+\begin{example}[Inconsistent strategy] \label{ex:inconsistent-strategy} Consider a strategy in the arena for  $1 \to \atoms \otimes \atoms$. We would like to think of this strategy of producing a pair of atoms. 
+    %  This pair of atoms can only come from the constant choice arena.  Indeed, if player Environment requests an output, then player System will need to ultimately  produce a corresponding read move (because plays in a strategy have bounded length), which will necessarily need to be fed by a write move that is in the constant choice arena (the appropriate formalizations of these notions will be given in Section~\ref{sec:some-notation-for-describing-plays}). 
+     However, an inconsistent strategy for player System could use different constants from the constant choice arena  depending on the order in which Environment requests the two output atoms in $\atoms \otimes \atoms$.  For example, the output could be (John, Mark) for one order, and (Eve, Mary) for some other order.  \exampleend
 \end{example}
 
 Below, we will formalize the intuition from the above example. We begin by developing some notation for describing plays.
@@ -320,7 +322,7 @@ Below, we will formalize the intuition from the above example. We begin by devel
 
 \subsubsection{Some notation for describing plays}
 \label{sec:some-notation-for-describing-plays}
-Consider a move in the arena associated to a function type $X \to Y$. There are three kinds of moves here: moves from the library, moves from $X$, and moves from $Y$. Depending on where the moves come from, we will associate to this move an \emph{origin} as follows. 
+Consider a move in the arena associated to a function type $X \to Y$. There are three kinds of moves here: moves from the library, moves from $X$, and moves from $Y$. Depending on where the moves come from, we will associate to each move an \emph{origin} as follows. 
 \begin{itemize}
     \item In the case of moves which come from the library, define the  {origin} to be the copy of the constant choice arena or the equality test arena from which the move is taken.
     \item   In the case of moves which come from either $X$ or $Y$, define the origin to be the corresponding node in the syntax tree of $X$ or $Y$. Here, the syntax tree of a type is defined in the obvious way, see Figure~\ref{fig:syntax-tree}.
@@ -337,27 +339,26 @@ Consider a play in the arena for $X \to Y$. Define a \emph{library call} to be a
 
 Consider a read move in the play. By the immediate read condition, this move is directly preceded by a write move. The write move will either originate from a leaf labelled by $\atoms$ in  the syntax tree of the input type $X$, or it will originate from some constant call. In the latter case, it will have a corresponding atom. Therefore, to each read move in a play we can associate either some leaf labelled by $\atoms$ in the syntax tree of the input type, or some individual atom constant. The associated object will be called the \emph{read value} of the read move.
 
-
+Equipped with the above notation, we are ready to define which strategies  can  be interpreted as values or functions.
 
 \subsubsection{Strategies in $1 \to X$ as values in $\sem X$}
 \label{sec:strategies-in-1-to-x-as-elements-of-sem-x}
-Equipped with the above notation, we are ready to define which strategies will be considered consistent, and how they can  be interpreted as values or functions.  We begin by describing strategies which represents values in the underlying set $\sem X$ of a linear type $X$, and then we lift this interpretation to functions.  To represent such values, we will use strategies not in the arena for $X$, but in the arena for $1 \to X$. This is because the second arena contains the library, which is needed to  produce  atom constants.
+  We begin by describing strategies which represent values in the underlying set $\sem X$ of a linear type $X$, and then we lift this interpretation to functions.  To represent such values, we  use strategies not in the arena for $X$, but in the arena for $1 \to X$. This is because the second arena contains the library, which is needed to  produce  atom constants.
 
-
-
-We begin by using the notation from Section~\ref{sec:some-notation-for-describing-plays} to define a notion of consistency that disallows the behaviour from Example~\ref{ex:inconsistent-strategy}.     Let $X$ be a linear type, and consider a strategy $\sigma$ in the arena for $1 \to X$. We say that a node of the syntax tree of $X$ is used by the strategy if at least one play in the strategy contains a move that originates from this node. It is not hard to see that if the strategy uses  a node of the syntax tree that is  labelled by $\otimes$ or $\&$, then it must also use both of its children. This is because player System must be able to respond to moves of player Environment that correspond to both children. On the other hand, if a node is labelled by $+$, then System should consistently choose only one of the child, namely the one that corresponds to the output value. This requirement, together with a similar one for the leaves of the syntax tree that are labelled by $\atoms$, is presented in the following definition.
-
+  Let $X$ be a linear type, and consider a strategy $\sigma$ in the arena for $1 \to X$. 
+  In order to represent some value, this strategy must satisfy certain conditions that avoid the bad behaviour  from Example~\ref{ex:inconsistent-strategy}.   
+  
 
 
 \begin{definition}[Strategy that represents a value]\label{def:consistency}
-    Let $X$ be a linear type. We say that a  strategy in  the arena for $1 \to X$   \emph{represents a value} if it satisfies the following conditions: 
+    Let $X$ be a linear type and consider a  strategy in  the arena for $1 \to X$. We say that the strategy uses a node from the syntax tree of $X$ if at least one play in the strategy uses a move that originates from this node. We say that the  strategy    \emph{represents a value} if it satisfies the following conditions: 
     \begin{enumerate}
         \item Consider a node in  the syntax tree of $X$ that is labelled by co-product $+$. Then at most one child of this node is  used by the strategy. 
         \item Consider a node  in the syntax tree of $X$ that  is labelled by $\atoms$. Then there is some atom $a$ such that for every play in the strategy, if the play contains a read move that originates from the node, then the read value of this move is $a$. 
     \end{enumerate}
 \end{definition}
 
-For a strategy that satisfies the two conditions in the above definition, we can also define the value $x \in \sem X$ that it represents.  This is done as follows.  For every node  in the syntax tree  of $X$ which is used by the strategy, we assign a value, which is called the value of the strategy at the node. This value at a node is in the set $\sem Y$, where $Y$ is the linear type that corresponds to the subtree of the node.  The definition of this value at a given node  is defined by induction on the size of its subtree: 
+For a strategy that satisfies the two conditions in the above definition, we can also define the value $x \in \sem X$ that it represents.  This is done as follows.  For every node  in the syntax tree  of $X$ which is used by the strategy, we assign a value, which is called the value of the strategy at the node. This value at a node is in the set $\sem Y$, where $Y$ is the linear type that corresponds to the subtree of the node.  The definition of this value at a given node  is defined using a straightforward induction on the size of its subtree: 
 \begin{enumerate}
     \item the value at a leaf labelled by $1$ is the unique element of $\sem 1$;
     \item the value at a leaf labelled by $\atoms$ is the atom from the second item in Definition~\ref{def:consistency};
@@ -366,6 +367,7 @@ For a strategy that satisfies the two conditions in the above definition, we can
 \end{enumerate}
 The above definition is well-formed, since one can easily see from the definition of strategies that if a node labelled by $+$ is used by the strategy, then at least one of its children is used, and if a node labelled by $\otimes$ or $\&$ is used, then both of its children are used. Finally, the value represented by a strategy is defined to be the value that is represented at the root node of the syntax tree. 
 
+One can easily see that every value in the set $\sem X$ is represented by at least one strategy. This will also follow from a more general result, Lemma~\ref{lem:all-functions-represented} below.
 
 \subsubsection{Strategies in $X \to Y$ as single-use functions}
 We now move to the main point of this section, which is to show how to interpret a strategy in the arena for $X \to Y$ as a single-use function of type $X \to Y$. This is done by using the definition from for values in the previous section, and then lifting it to functions by using composition of strategies that was defined in Section~\ref{sec:composition-of-strategies}.
@@ -393,7 +395,7 @@ We now move to the main point of this section, which is to show how to interpret
 \end{definition}
 
 Since each strategy in $1 \to X$ or $1 \to Y$ represents at most one value, it follows that a strategy can represent at most one function. This function is called the \emph{function represented by the strategy}.  We are now ready to state the main result of this section, which is that every single-use function is represented by at least one strategy.
-\begin{lemma}
+\begin{lemma}\label{lem:all-functions-represented}
     Let $X$ and $Y$ be linear types, then every single-use function of type $X \to Y$ is represented by at least one strategy. 
     % \begin{itemize}
     %     \item \emph{Soundness.} Every function represented by a strategy in the arena for $X \to Y$ is single-use.
@@ -445,16 +447,16 @@ Since each strategy in $1 \to X$ or $1 \to Y$ represents at most one value, it f
 
         \item[Projection of type $ X \otimes Y \to X$] System uses the  shuffling and hiding strategy that was described in Section~\ref{sec:composition-of-strategies}. 
 
-        \item[Distributivity  of type $X \otimes (Y \& Z) \to (X \otimes Y) \& (X \otimes Z)$] We use the  strategy from \ref{ex:amp-otimes-distr}.  The environment 
-        starts by either playing ``left'' or ``right'' in $(X \otimes Y) \& (X \otimes Z)$, 
-        we respond with the same move in $(Y \& Z)$. The environment has to play ``acknowledge'' 
-        in $(Y \& Z)$, after which we play acknowledge. This leaves us in a state that is either 
-        equivalent to $X \otimes Y \to X \times Y$ or  $X \otimes Z \to X \times Z$. 
-        In both cases we play according to the shuffling and hiding strategy. 
+        \item[Distributivity  of type $X \otimes (Y \& Z) \to (X \otimes Y) \& (X \otimes Z)$] The  strategy from Example~\ref{ex:amp-otimes-distr}.  
+        % The environment 
+        % starts by either playing ``left'' or ``right'' in $(X \otimes Y) \& (X \otimes Z)$, 
+        % we respond with the same move in $(Y \& Z)$. The environment has to play ``acknowledge'' 
+        % in $(Y \& Z)$, after which we play acknowledge. This leaves us in a state that is either 
+        % equivalent to $X \otimes Y \to X \times Y$ or  $X \otimes Z \to X \times Z$. 
+        % In both cases we play according to the shuffling and hiding strategy. 
     \end{description}
 \end{proof}
-One can also show that the system is sound (i.e. that every function repersented by a strategy is single-use). \rafal{reference 
-to a claim, which follows from SMCC-ness. We don't defer the proof of completeness because the proof of SMCC-ness depends on it.}
+One could also show that all represented functions are single-use. We omit this proof, since we will prove a stronger result in the next section. 
 
 \subsection{The set of strategies as a linear type}
 The purpose of this section is to show that the set of strategies in an arena for a function type $X \to Y$ can be described using some linear type, and furthermore the relevant operations on strategies, such as application and currying, can be performed in a single-use way.
