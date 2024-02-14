@@ -6,11 +6,8 @@ So far, we have only studied the case when the atoms are equipped with equality 
 The construction of the single-use category from Section~\ref{sec:single-use-sets} is generic enough so that it be generalized to any relational structure, and not just atoms with equality. (In fact, there is also a suitable generalization for function symbols, but we do not prove anything about it, so we do not talk about it.)
 
 \begin{definition}[Single-use functions over a relational structure]\label{def:single-use-category-relational-structures}
-    Let $\atoms$ be a relational structure. The \emph{single-use category over $\atoms$} is defined in the same way as in Definition~\ref{def:single-use-category}, except that the list of prime functions is extended with one prime function 
-    \begin{align*}
-        \myunderbrace{\atoms \otimes \cdots \otimes \atoms}{$n$ times} \to 1+1
-        \end{align*}
-        for every $n$-ary relation in the vocabulary of $\atoms$. 
+    Let $\atoms$ be a relational structure. The \emph{single-use category over $\atoms$} is defined in the same way as in Definition~\ref{def:single-use-category}, except that the list of prime functions is extended with one prime function  $\atoms^n \to 1 + 1$ 
+        for every $n$-ary relation in the vocabulary of $\atoms$. (Here, the power $\atoms^n$ uses $\otimes$.)
 \end{definition}
 
 
