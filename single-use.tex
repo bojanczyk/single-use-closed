@@ -99,18 +99,18 @@ The design goal of the single-use restriction is to have orbit-finite function s
     
     A function in the larger space is any finitely supported subset of the atoms; such subsets are the same as the finite and co-finite subsets. Therefore, the larger function space admits an equivariant bijection with a disjoint union of two copies of the finite powerset $\powerset_{\text{fin}} \atoms$, in particular it is not orbit-finite.
     
-    Consider now the smaller single-use function space. There are four possible functions of this kind: (a) always return true; (b) always return false; (c) check for equality with some fixed atom $a$; (d) check for disequality with with some fixed atom $a$.  Therefore,  the set of single-use functions  admits an equivariant bijection with the orbit-finite set $1 + 1 + \atoms + \atoms$.
+    Consider now the smaller single-use function space. There are four possible functions of this kind: (a) always return true; (b) always return false; (c) check for equality with some fixed atom $a$; (d) check for disequality ($\neq$) with some fixed atom $a$.  Therefore,  the set of single-use functions  admits an equivariant bijection with the orbit-finite set $1 + 1 + \atoms + \atoms$.
     \exampleend
 \end{example}
 
 
-The above example shows that the space of single-use functions of a some type $X \to Y$ is orbit-finite, and in fact it can be described using a polynomial orbit-finite set. This is true for every choice of polynomial orbit-finite sets $X$ and $Y$, as proved in~\cite[Theorem 5]{stefanski-phd}, and illustrated in the following example. 
+The above example shows that the space of single-use functions of some type $X \to Y$ is orbit-finite, and in fact it can be described using a polynomial orbit-finite set. This is true for every choice of polynomial orbit-finite sets $X$ and $Y$, as proved in~\cite[Theorem 5]{stefanski-phd}, and illustrated in the following example. 
 
 \begin{example}\label{ex:decision-tree-types} Assume that the input type $X$ is some power of the atoms $\atoms^k$, and the output type $Y$ does not use atoms, e.g.~it is~$Y = 1 +1$. The assumption on the input type can be made without loss of generality using distributivity, while the assumption on the output type is a proper restriction, but it will allow us to skip some technical details of the general construction while retaining the important intuitions. 
 We describe below a type $\atoms^k \Rightarrow Y$ that represents all single-use functions from $\atoms^k$ to $Y$. 
 
 This type is defined by  induction on $k$. In the base case of $k=0$ we simply need to give a value from the output type, and therefore $\atoms^0 \Rightarrow Y$ is the same as $Y$. Consider now the induction step of $k > 0$.  
-    We observe that a single-use function that inputs $\atoms^k$ must begin with some equality test, and then continue with one of two single-use function that have fewer arguments (one for the case when the equality test returns true, and one for the other case). This observation leads to the following definition of the type $\atoms^k \Rightarrow Y$:
+    We observe that a single-use function that inputs $\atoms^k$ must begin with some equality test, and then continue with one of two single-use functions that have fewer arguments (one for the case when the equality test returns true, and one for the other case). This observation leads to the following definition of the type $\atoms^k \Rightarrow Y$:
 \begin{align*}
 \myunderbrace{ \coprod_{i \in \set{1,\ldots,k}} 
     \atoms \times (\atoms^{k-1} \Rightarrow Y) \times (\atoms^{k-1} \Rightarrow Y)
@@ -155,9 +155,9 @@ Recall that in Example~\ref{ex:first-single-use-function-space} we showed that t
 \end{example}
 
 For similar reasons, 
-the function space proposed above will also not support function composition, which means that it cannot be used to convert automata into single-use monoids, as we would like to do, since the resulting monoid would need to use function composition as its monoid operation\footnote{This problem is solved in~\cite{bojanczykstefanski2020} and~\cite{stefanski-phd} in a different way, namely by showing that every orbit-finite monoid is necessarily divides a single-use monoid, using a  Krohn-Rhodes construction. However, this construction is difficult and delicate, in particular it does not work for atoms that have more structure than equality alone. In contrast, the proposal that we give in this paper works for other kinds of atoms, as discussed in Section~\ref{sec:beyond-equality}. }
+the function space, we proposed above, will also not support function composition, which means that it cannot be used to convert automata into single-use monoids, as we would like to do, since the resulting monoid would need to use function composition as its monoid operation\footnote{This problem is solved in~\cite{bojanczykstefanski2020} and~\cite{stefanski-phd} in a different way, namely by showing that every orbit-finite monoid is necessarily divides a single-use monoid, using a  Krohn-Rhodes construction. However, this construction is difficult and delicate, in particular it does not work for atoms that have more structure than equality alone. In contrast, the proposal that we give in this paper works for other kinds of atoms, as discussed in Section~\ref{sec:beyond-equality}. }
 
-To solve the problems above, we will introduce a more refined type system, which is based on linear types.  The main idea is to pay more attention to type  in Example~\ref{ex:decision-tree-types}. In that definition, we describe a single-use use function by specifying the first equality test that it makes, and then giving two descriptions of the functions that will be used in each of the two possible outcomes of the equality test. The main observation is that these two outcomes are mutually exclusive, and therefore we intend to use only one of the two descriptions. For this reason, we will use a  type constructor $\&$ that comes from linear logic. The intended meaning is  that an object of type $X \& Y$ consists of two objects, but with the ability to use only one of them. Since linear logic uses $\otimes$  for the  product that we have so far denoted by $\times$, we will also follow that convention. Using these two kinds of product, the appropriate type for Example~\ref{ex:decision-tree-types} will now become: 
+To solve the problems above, we will introduce a more refined type system, which is based on linear types.  The main idea is to pay more attention to type  in Example~\ref{ex:decision-tree-types}. In that definition, we describe a single-use use function by specifying the first equality test that it makes, and then giving two descriptions of the functions that will be used in each of the two possible outcomes of the equality test. The main observation is that these two outcomes are mutually exclusive, and therefore we intend to use only one of the two descriptions. For this reason, we will use a  type constructor $\&$ that comes from linear logic. The intended meaning is  that an object of type $X \& Y$ consists of two objects, but with the ability to use only one of them. Since linear logic uses $\otimes$  for the  product that we have so far denoted by $\times$, we will also follow that convention. Using these two kinds of products, the appropriate type for Example~\ref{ex:decision-tree-types} will now become: 
 \begin{align*}
 \coprod_{i \in \set{1,\ldots,k}} 
         \atoms \otimes ((\atoms^{k-1} \Rightarrow Y) \& (\atoms^{k-1} \Rightarrow Y))
@@ -168,12 +168,12 @@ Under this definition, the problems from Example~\ref{ex:Currying-not-single-use
 
 \subsection{Linear types and single-use functions on them}
 \label{sec:linear-types-and-single-use-functions}
-As mentioned above, to solve the problems with single-use function spaces, we will consider a type system with two kinds of products, as in the following definitoin.
+As mentioned above, to solve the problems with single-use function spaces, we will consider a type system with two kinds of products, as in the following definition.
 \begin{definition}[Linear types]\label{def:datatypes}
     A \emph{linear type} is any expression constructed from the atomic types $1$ and $\atoms$ using three\footnote{We managed to set up our type system without using the type constructor  $\rotatebox[origin=c]{180}{\&}$.} binary type constructors $+, \&$ and $\otimes$. 
 \end{definition}
 In our linear types, it is only the products that are differentiated, while  $+$ comes in only one version. 
-    Here is the intuitive explanation of the difference between the two kinds of products, following Girard~\cite[p.2]{girard1995advances}. Having a pair $x \otimes y$ is like having the ability of using both components $x$ and $y$. On the other hand, having a pair $x \& y$ is like having the ability to use one of the two components, at our choice, but not both at once. For example, the input type of the equality test will be $\atoms \otimes \atoms$ not $\atoms \& \atoms$, since the test will need to consume both arguments. This intuition can only go so far; for example it is not entirely clear what ``our choice'' means. We revisit this intuition in  the appendix, where game semantics will be used to indicate who makes which choices. 
+    Here is the intuitive explanation of the difference between the two kinds of products, following Girard~\cite[p.2]{girard1995advances}. Having a pair $x \otimes y$ is like having the ability of using both components $x$ and $y$. On the other hand, having a pair $x \& y$ is like having the ability to use one of the two components, at our choice, but not both at once. For example, the input type of the equality test will be $\atoms \otimes \atoms$ not $\atoms \& \atoms$, since the test will need to consume both arguments. This intuition can only go so far; for example, it is not entirely clear what ``our choice'' means. We revisit this intuition in  the appendix, where game semantics will be used to indicate who makes which choices. 
 
 
 
@@ -221,7 +221,7 @@ As we did in Section~\ref{sec:single-use-functions-over-polynomial-orbit-finite-
         $x \& \text{right}(z) \mapsto \text{right}(x \& z)$
         \end{tabular}\right.$ \\ \\ 
     \end{tabular}
-    \caption{Prime single use functions that involve $\&$.}
+    \caption{Prime single-use functions that involve $\&$.}
     \label{fig:prime-morphisms-with-with}
 \end{table}
 
@@ -252,7 +252,7 @@ In the very definition of the above category, there is a faithful functor to the
 
 
  
-The main technical result of this paper is that the category of single-use sets has function spaces, as stated in the following theorem.  The appropriate product will be $\otimes$, and not $\&$. Since the Cartesian product in our category is $\&$ and not $\otimes$, this means that the result we are targetting is symmetric monoidal closed with respect to $\otimes$, and not Cartesian closed. (The same situation will happen  for vector spaces later in this paper.)  Our theorem stops a bit short of saying that the category is monoidal closed, since several different elements of the function space might represent the same function. This non-uniqueness of representation can be overcome  by quotienting the function space  by an equivalence relation that identifies two elements if they represent the same single-use function; this is explained in Appendix~\ref{sec:quotient-category}. For now, we stick with non-uniqueness of representation, and we state the theorem as follows.
+The main technical result of this paper is that the category of single-use sets has function spaces, as stated in the following theorem.  The appropriate product will be $\otimes$, and not $\&$. Since the Cartesian product in our category is $\&$ and not $\otimes$, this means that the result we are targeting is symmetric monoidal closed with respect to $\otimes$, and not Cartesian closed. (The same situation will happen  for vector spaces later in this paper.)  Our theorem stops a bit short of saying that the category is monoidal closed, since several different elements of the function space might represent the same function. This non-uniqueness of representation can be overcome  by quotienting the function space  by an equivalence relation that identifies two elements if they represent the same single-use function; this is explained in Appendix~\ref{sec:quotient-category}. For now, we stick with non-uniqueness of representation, and we state the theorem as follows.
 
 \begin{theorem}\label{thm:single-use-closed}
     Let $V$ and $W$ be objects (i.e.~linear types). There exists an object, denoted by  $\funspace V W$, and a morphism (i.e.~a partial single-use function)
@@ -282,7 +282,7 @@ The main technical result of this paper is that the category of single-use sets 
     \]
 \end{theorem}
 
-The above theorem is the main technical contribution of this paper, and its proof is presented in Appendix~\ref{sec:game-semantics}. The difficulty in the proof is finding a representation of the single-use  functions that is rich enough to capture all functions, but simple enough to be described by a linear type (in particular, the corresponding set will be orbit-finite). In  Section~\ref{sec:single-use-functions-over-polynomial-orbit-finite-sets}, when the types did not have $\&$, we could pull off a relatively simple construction, which was possible mainly due to the strong distributivity rules that allowed to convert each type into a normal like $\atoms^{n_1} + \cdots + \atoms^{n_\ell}$. In the presence of $\&$, the distributivity rules are not as strong, and the way in which a single-use program can interact with its input is rather subtle. 
+The above theorem is the main technical contribution of this paper, and its proof is presented in Appendix~\ref{sec:game-semantics}. The difficulty in the proof is finding a representation of the single-use  functions that is rich enough to capture all functions, but simple enough to be described by a linear type (in particular, the corresponding set will be orbit-finite). In  Section~\ref{sec:single-use-functions-over-polynomial-orbit-finite-sets}, when the types did not have $\&$, we could pull off a relatively simple construction, which was possible mainly due to the strong distributivity rules that allowed converting each type into a normal like $\atoms^{n_1} + \cdots + \atoms^{n_\ell}$. In the presence of $\&$, the distributivity rules are not as strong, and the way in which a single-use program can interact with its input is rather subtle. 
 Our solution, and the technical core of this paper, is to use game semantics, appropriately extended to describe the type $\atoms$ and the operations on it that are allowed. This solution is presented entirely in the appendix.
 
 
