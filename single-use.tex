@@ -10,7 +10,7 @@ In the introduction, we have already given an intuitive description behind the s
 We do not define the single-use functions on all orbit-finite sets, but only a syntactically defined fragment, namely the \emph{polynomial orbit-finite sets}, which are sets that can be generated from $1$ and $\atoms$ using  
  products $\times$ and disjoint unions $+$. Therefore, we will allow orbit-finite sets like $1 + \atoms^2$, but we will not allow orbit-finite sets like 
 the set of non-repeating pairs
-$\setbuild{(a,b)}{$a \neq b \in \atoms$}$ or the set of unordered pairs $\setbuild{\set{a,b}}{$a \neq b \in \atoms$}$. It is an open problem to find a satisfactory definition of single-use functions on all orbit-finite sets. A simple hack is to use a quotienting construction, similar to Section~\ref{sec:quotient-category}, but what we would really like to do is to identify some extra structure in a set, possibly an action of some yet unknown group or semigroup, which enables us to speak about single-use functions.
+$\setbuild{(a,b)}{$a \neq b \in \atoms$}$ or the set of unordered pairs $\setbuild{\set{a,b}}{$a \neq b \in \atoms$}$. It is an open problem to find a satisfactory definition of single-use functions on all orbit-finite sets. (A simple hack is to use a quotienting construction, similar to \Cref{sec:quotient-category}, but what we would really like to do is to identify some extra structure in a set, possibly an action of some yet unknown group or semigroup, which enables us to speak about single-use functions.)
 
 Consider two polynomial orbit-finite sets $X$ and $Y$. To define which functions $X \to Y$ are single-use, we use an inductive definition. We begin with certain functions that are considered single-use, such as the equality test of type $\atoms \times \atoms \to 1 + 1$. These functions are called the \emph{prime functions}, and their full list is given in Figure~\ref{fig:prime-morphisms-without-with}. Next, we combine the prime functions into new ones using three combinators. The first, and most important, combinator is  function composition. Then, we have two combinators for the two type constructors: if two functions $f_1 : X_1 \to Y_1$ and $f_2 : X_2 \to Y_2$ are single-use, then the same is true for:
 \begin{align*}
@@ -24,7 +24,7 @@ Consider two polynomial orbit-finite sets $X$ and $Y$. To define which functions
         \text{right}(x_2) \mapsto \text{right}(f_2(x_2)) }.
 \end{align*}
 
-Crucially, the list of prime single-use function does not contain the copying function $a \in \atoms \mapsto (a,a) \in \atoms^2$. Therefore, an alternative name for the single-use functions is \emph{copyless}. If we added copying, then we would get all finitely supported functions~\cite[Lemma 23]{stefanski-phd}.
+Crucially, the list of prime single-use functions does not contain the copying function $a \in \atoms \mapsto (a,a) \in \atoms^2$. Therefore, an alternative name for the single-use functions is \emph{copyless}. If we added copying, then we would get all finitely supported functions~\cite[Lemma 23]{stefanski-phd}.
 
 \begin{table}[h!]
     \centering
@@ -89,13 +89,13 @@ Crucially, the list of prime single-use function does not contain the copying fu
         Co-diagonal & $\atoms$ 
     \end{tabular}
 \end{center}
-To justify this description, one should also show that the six functions are single-use. Three of the functions, namely append 1, distributivity and co-diagonal are prime functions. The other three are obtained by combining prime functions using the combinators. For example, the equality test is paired, using the combinator for $\times$, with the identity on the remaining two atoms. 
+To justify this description, one should also show that the six functions are single-use. Three of the functions, namely append 1, distributivity and co-diagonal are prime functions. The other three are obtained by combining prime functions using the combinators. For example, the equality test is paired, using the combinator for $\times$, with the identity on the remaining two atoms. \exampleend
 \end{example}
 
 The design goal of the single-use restriction is to have orbit-finite function spaces. The rough idea is that a single-use function can only use a bounded number of atoms in its source code, which guarantees orbit-finiteness of the function space. 
 
 \begin{example}\label{ex:first-single-use-function-space}
-    Consider function of type $\atoms \to 1 + 1$, which can be seen as subsets of the atoms, with $1+1$ representing the Booleans. We will consider two function spaces: the larger space of all finitely supported functions, and the smaller space of the single-use function.
+    Consider function of type $\atoms \to 1 + 1$, which can be seen as subsets of the atoms, with $1+1$ representing the Booleans. We will consider two function spaces: the larger space of all finitely supported functions, and the smaller space of single-use functions.
     
     A function in the larger space is any finitely supported subset of the atoms; such subsets are the same as the finite and co-finite subsets. Therefore, the larger function space admits an equivariant bijection with a disjoint union of two copies of the finite powerset $\powerset_{\text{fin}} \atoms$, in particular it is not orbit-finite.
     
@@ -107,7 +107,7 @@ The design goal of the single-use restriction is to have orbit-finite function s
 The above example shows that the space of single-use functions of some type $X \to Y$ is orbit-finite, and in fact it can be described using a polynomial orbit-finite set. This is true for every choice of polynomial orbit-finite sets $X$ and $Y$, as proved in~\cite[Theorem 5]{stefanski-phd}, and illustrated in the following example. 
 
 \begin{example}\label{ex:decision-tree-types} Assume that the input type $X$ is some power of the atoms $\atoms^k$, and the output type $Y$ does not use atoms, e.g.~it is~$Y = 1 +1$. The assumption on the input type can be made without loss of generality using distributivity, while the assumption on the output type is a proper restriction, but it will allow us to skip some technical details of the general construction while retaining the important intuitions. 
-We describe below a type $\atoms^k \Rightarrow Y$ that represents all single-use functions from $\atoms^k$ to $Y$. 
+We describe below a type that represents all single-use functions from $\atoms^k$ to $Y$; we shall denote it by $\atoms^k \Rightarrow Y$. Note that $\Rightarrow$ is \emph{not} a primitive type constructor in our grammar of types; it is a notation that stands for the inductive construction below.
 
 This type is defined by  induction on $k$. In the base case of $k=0$ we simply need to give a value from the output type, and therefore $\atoms^0 \Rightarrow Y$ is the same as $Y$. Consider now the induction step of $k > 0$.  
     We observe that a single-use function that inputs $\atoms^k$ must begin with some equality test, and then continue with one of two single-use functions that have fewer arguments (one for the case when the equality test returns true, and one for the other case). This observation leads to the following definition of the type $\atoms^k \Rightarrow Y$:
@@ -120,21 +120,21 @@ This type is defined by  induction on $k$. In the base case of $k=0$ we simply n
     starts by comparing the \\ 
     $i$-th and $j$-th coordinates}.
 \end{align*}
-Note that the above representation of the function space is not necessarily unique, i.e.~the same function can be represented in several different ways. For example, the order in which equality tests are performed will matter for the representation, but might not matter for the function. This is not something that we worry about, and we will use function spaces with non-unique representations in the paper, see also Section~\ref{sec:quotient-category} for how we deal with non-uniqueness. \exampleend
+Note that the above representation of the function space is not necessarily unique, i.e.~the same function can be represented in several different ways. For example, the order in which equality tests are performed will matter for the representation, but might not matter for the function. This is not something that we worry about, and we will use function spaces with non-unique representations in the paper, see also \Cref{sec:quotient-category} for how we deal with non-uniqueness. \exampleend
 \end{example}
 
 
-\textbf{Problem with Currying.}
+\subparagraph{Problem with currying.}
 Unfortunately, the proposal illustrated in Example~\ref{ex:decision-tree-types} and described in more detail in~\cite{stefanski-phd}  does not give a satisfactory solution to the problem of function spaces. The problem is that the set of representations $X \Rightarrow Y$ should  also support operations on functions. More specifically, we should be able to indicate single-use operations which do the following:
-\begin{enumerate}
-    \item evaluation: a single-use function from $(X \Rightarrow Y) \times X$ to $Y$ which inputs a representation of a function and applies it to an argument;
-    \item composition: a function from $(X \Rightarrow Y) \times (Y \Rightarrow Z)$ to $(X \Rightarrow Z)$ which inputs the representations of two functions and returns a representation of their composition.
-    \item Currying: for each single-use function from  $ X \times Y $ to $Z$, there should be a single-use function from $X$ to $Y \Rightarrow Z$ which inputs a first argument and returns a representation of the  partially applied function;
-\end{enumerate}
-Only in the presence of all of these operations can we speak of a function space, and the corresponding category can be called closed. (Composition can be obtained through evaluation and Currying, so the essential operations are evaluation and Currying.) The following example shows that the Currying operation is not single-use, and therefore the space of single-use functions as defined in this section is not closed. 
+\begin{description}
+    \item[evaluation:] a single-use function from $(X \Rightarrow Y) \times X$ to $Y$ which inputs a representation of a function and applies it to an argument;
+    \item[composition:] a function from $(X \Rightarrow Y) \times (Y \Rightarrow Z)$ to $(X \Rightarrow Z)$ which inputs the representations of two functions and returns a representation of their composition.
+    \item[currying:] for each single-use function from  $ X \times Y $ to $Z$, there should be a single-use function from $X$ to $Y \Rightarrow Z$ which inputs a first argument and returns a representation of the  partially applied function;
+\end{description}
+Only in the presence of all of these operations can we speak of a function space, and the corresponding category can be called closed. (Composition can be obtained through evaluation and currying, so the essential operations are evaluation and currying.) The following example shows that the currying operation is not single-use, and therefore the space of single-use functions as defined in this section is not closed.
 
 
-\begin{example}\label{ex:Currying-not-single-use}
+\begin{example}\label{ex:currying-not-single-use}
     Consider  the single-use function
     \begin{align*}
     f : \atoms \times \atoms \to 1 + 1 \qquad (a,b)  
@@ -143,7 +143,7 @@ Only in the presence of all of these operations can we speak of a function space
         \text{result of test $a = $ John} & \text{otherwise}.
         \end{cases}
     \end{align*}
-The Currying of this function, is a new function which  maps a first argument $a \in \atoms$ to the partially applied function $f(a,\_)$. This Currying is
+The currying of this function, is a new function which  maps a first argument $a \in \atoms$ to the partially applied function $f(a,\_)$. This currying is
 \begin{align*}
     a \mapsto \begin{cases}
         b \mapsto b = \text{Eve} & \text{if } a = \text{Mark} \\
@@ -151,26 +151,26 @@ The Currying of this function, is a new function which  maps a first argument $a
         b \mapsto \text{false} & \text{otherwise}
         \end{cases}
 \end{align*}
-Recall that in Example~\ref{ex:first-single-use-function-space} we showed that the space of single-use functions of type $\atoms \to 1 + 1$ can be represented as $1 + 1 + \atoms + \atoms$. If we use this representation,  then the Currying of the function $f$  is not single-use, because we need to compare the input atom $a$ to two constants, Mark and John. If we use the representation from Example~\ref{ex:decision-tree-types}, then the corresponding type will be $\atoms \otimes (1 + 1)^2$, but the problems with Currying will persist. \exampleend
+Recall that in Example~\ref{ex:first-single-use-function-space} we showed that the space of single-use functions of type $\atoms \to 1 + 1$ can be represented as $1 + 1 + \atoms + \atoms$. If we use this representation,  then the currying of the function $f$  is not single-use, because we need to compare the input atom $a$ to two constants, Mark and John. If we use the representation from Example~\ref{ex:decision-tree-types}, then the corresponding type will be $\atoms \otimes (1 + 1)^2$, but the problems with currying will persist. \exampleend
 \end{example}
 
 For similar reasons, 
-the function space, we proposed above, will also not support function composition, which means that it cannot be used to convert automata into single-use monoids, as we would like to do, since the resulting monoid would need to use function composition as its monoid operation\footnote{This problem is solved in~\cite{bojanczykstefanski2020} and~\cite{stefanski-phd} in a different way, namely by showing that every orbit-finite monoid is necessarily divides a single-use monoid, using a  Krohn-Rhodes construction. However, this construction is difficult and delicate, in particular it does not work for atoms that have more structure than equality alone. In contrast, the proposal that we give in this paper works for other kinds of atoms, as discussed in Section~\ref{sec:beyond-equality}. }
+the function space, we proposed above, will also not support function composition, which means that it cannot be used to convert automata into single-use monoids, as we would like to do, since the resulting monoid would need to use function composition as its monoid operation.\footnote{This problem is solved in~\cite{bojanczykstefanski2020} and~\cite{stefanski-phd} in a different way, namely by showing that every orbit-finite monoid necessarily divides a single-use monoid, using a  Krohn-Rhodes construction. However, this construction is difficult and delicate, in particular it does not work for atoms that have more structure than equality alone. In contrast, the proposal that we give in this paper works for other kinds of atoms, as discussed in Section~\ref{sec:beyond-equality}. }
 
-To solve the problems above, we will introduce a more refined type system, which is based on linear types.  The main idea is to pay more attention to type  in Example~\ref{ex:decision-tree-types}. In that definition, we describe a single-use use function by specifying the first equality test that it makes, and then giving two descriptions of the functions that will be used in each of the two possible outcomes of the equality test. The main observation is that these two outcomes are mutually exclusive, and therefore we intend to use only one of the two descriptions. For this reason, we will use a  type constructor $\&$ that comes from linear logic. The intended meaning is  that an object of type $X \& Y$ consists of two objects, but with the ability to use only one of them. Since linear logic uses $\otimes$  for the  product that we have so far denoted by $\times$, we will also follow that convention. Using these two kinds of products, the appropriate type for Example~\ref{ex:decision-tree-types} will now become: 
+To solve the problems above, we will introduce a more refined type system, which is based on linear types.  The main idea is to pay more attention to type  in Example~\ref{ex:decision-tree-types}. In that definition, we describe a single-use function by specifying the first equality test that it makes, and then giving two descriptions of the functions that will be used in each of the two possible outcomes of the equality test. The main observation is that these two outcomes are mutually exclusive, and therefore we intend to use only one of the two descriptions. For this reason, we will use a  type constructor $\&$ that comes from linear logic. The intended meaning is  that an object of type $X \& Y$ consists of two objects, but with the ability to use only one of them. Since linear logic uses $\otimes$  for the  product that we have so far denoted by $\times$, we will also follow that convention. Using these two kinds of products, the appropriate type for Example~\ref{ex:decision-tree-types} will now become:
 \begin{align*}
 \coprod_{i \in \set{1,\ldots,k}} 
         \atoms \otimes ((\atoms^{k-1} \Rightarrow Y) \& (\atoms^{k-1} \Rightarrow Y))
           \quad + \quad 
     \coprod_{i, j \in \set{1,\ldots,k}} (\atoms^{k-2} \to Y) \& (\atoms^{k-2} \to Y).
     \end{align*}
-Under this definition, the problems from Example~\ref{ex:Currying-not-single-use} will be solved, at least for the particular type considered in that example. However, by introducing a new type constructor, we will have to redefine the single-use functions, and then we will have to give a representation of functions that allow this new type constructor, without incurring the need to add any other new type constructors. This is the subject of the next section.
+Under this definition, the problems from Example~\ref{ex:currying-not-single-use} will be solved, at least for the particular type considered in that example. However, by introducing a new type constructor, we will have to redefine the single-use functions, and then we will have to give a representation of functions that allow this new type constructor, without incurring the need to add any other new type constructors. This is the subject of the next section.
 
 \subsection{Linear types and single-use functions on them}
 \label{sec:linear-types-and-single-use-functions}
 As mentioned above, to solve the problems with single-use function spaces, we will consider a type system with two kinds of products, as in the following definition.
 \begin{definition}[Linear types]\label{def:datatypes}
-    A \emph{linear type} is any expression constructed from the atomic types $1$ and $\atoms$ using three\footnote{We managed to set up our type system without using the type constructor  $\rotatebox[origin=c]{180}{\&}$.} binary type constructors $+, \&$ and $\otimes$. 
+    A \emph{linear type} is any expression constructed from the atomic types $1$ and $\atoms$ using three\footnote{We set up our type system without using the multiplicative disjunction $\rotatebox[origin=c]{180}{\&}$ of linear logic -- morally, we take our inspiration from intuitionistic linear logic, rather than classical linear logic.} binary type constructors $+, \&$ and $\otimes$.
 \end{definition}
 In our linear types, it is only the products that are differentiated, while  $+$ comes in only one version. 
     Here is the intuitive explanation of the difference between the two kinds of products, following Girard~\cite[p.2]{girard1995advances}. Having a pair $x \otimes y$ is like having the ability of using both components $x$ and $y$. On the other hand, having a pair $x \& y$ is like having the ability to use one of the two components, at our choice, but not both at once. For example, the input type of the equality test will be $\atoms \otimes \atoms$ not $\atoms \& \atoms$, since the test will need to consume both arguments. This intuition can only go so far; for example, it is not entirely clear what ``our choice'' means. We revisit this intuition in  the appendix, where game semantics will be used to indicate who makes which choices. 
@@ -179,15 +179,13 @@ In our linear types, it is only the products that are differentiated, while  $+$
 
 We think of each linear type $X$ as representing a set $\sem X$, as defined below:
 \begin{align*}
-\hspace{-0.6cm}
     \sem{1} = 1
 \quad 
 \sem{\atoms} = \atoms 
 \quad 
 \sem{X+Y} = \sem X + \sem Y 
 \quad 
-\sem{X \otimes Y} = \sem X \times \sem Y 
-\quad
+\sem{X \otimes Y} =
 \sem{X \& Y} = \sem X \times \sem Y.
 \end{align*}
 All sets that arise in this way will be polynomial orbit-finite sets.
