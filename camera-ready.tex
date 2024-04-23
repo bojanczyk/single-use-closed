@@ -31,12 +31,12 @@
 
 
 
-\author{Mikołaj Bojańczyk}{University of Warsaw \and \url{https://www.mimuw.edu.pl/~bojan/}}{bojan@mimuw.edu.pl}{}{}%{(Optional) author-specific funding acknowledgements}
+\author{Mikołaj Bojańczyk}{University of Warsaw, Poland \and \url{https://www.mimuw.edu.pl/~bojan/}}{bojan@mimuw.edu.pl}{}{}%{(Optional) author-specific funding acknowledgements}
 
 \author{Lê Thành Dũng (Tito) Nguy\~{\^{e}}n}{École normale supérieure de Lyon, France \and \url{https://nguyentito.eu/}}{nltd@nguyentito.eu}{https://orcid.org/0000-0002-6900-5577}{Supported by the LABEX MILYON (ANR-10-LABX-0070) of Université de Lyon, within the program ``France 2030'' (ANR-11-IDEX-0007) operated by the French National Research Agency (ANR).}
 
 
-\author{Rafał Stefański}{University of Warsaw}{rafal.stefanski@mimuw.edu.pl}{}{}%{(Optional) author-specific funding acknowledgements}
+\author{Rafał Stefański}{University of Warsaw, Poland}{rafal.stefanski@mimuw.edu.pl}{}{}%{(Optional) author-specific funding acknowledgements}
 
 
 \authorrunning{M.~Bojańczyk, L.~T.~D.~Nguy\~{\^{e}}n and R.~Stefański} %TODO mandatory. First: Use abbreviated first/middle names. Second (only in severe cases): Use first author plus 'et al.'
@@ -49,8 +49,8 @@
 
 \category{Track B: Automata, Logic, Semantics, and Theory of Programming}
 
-\relatedversion{} %optional, e.g. full version hosted on arXiv, HAL, or other respository/website
-%\relatedversiondetails[linktext={opt. text shown instead of the URL}, cite=DBLP:books/mk/GrayR93]{Classification (e.g. Full Version, Extended Version, Previous Version}{URL to related version} %linktext and cite are optional
+%\relatedversion{} %optional, e.g. full version hosted on arXiv, HAL, or other respository/website
+\relatedversiondetails[linktext={arXiv:2404.05265}]{Full version with appendix}{https://arxiv.org/abs/2404.05265} %linktext and cite are optional
 
 %\supplement{}%optional, e.g. related research data, source code, ... hosted on a repository like zenodo, figshare, GitHub, ...
 %\supplementdetails[linktext={opt. text shown instead of the URL}, cite=DBLP:books/mk/GrayR93, subcategory={Description, Subcategory}, swhid={Software Heritage Identifier}]{General Classification (e.g. Software, Dataset, Model, ...)}{URL to related version} %linktext, cite, and subcategory are optional
@@ -93,7 +93,7 @@
 \section{Introduction}
 The class of orbit-finite sets is a class of sets that contains all finite sets and some infinite sets, but still shares some properties with the class of finite sets.  The idea, which dates back to Fraenkel--Mostowski models of set theory,  is to begin with an infinite set $\atoms$ of \emph{atoms} or \emph{urelements}. We think of the atoms as being names, such as Eve or John, and atoms can only be compared with respect to equality. Intuitively speaking, an  orbit-finite set is a set  that can be constructed using the atoms, such as $\atoms^2$ or $\atoms^*$, subject to the constraint that there are finitely many elements up to  renaming atoms. For example, $\atoms^2$ is orbit-finite because it has two elements up to renaming atoms, namely (John, John) and (John, Eve), while $\atoms^*$ is not orbit-finite, because the length of a sequence is invariant under renaming atoms, and there are infinitely many possible lengths. For a survey on orbit-finite sets, see~\cite{bojanczyk_slightly2018}.
 
-The notion of orbit-finiteness can be seen as an attempt to find an appropriate notion of finiteness for the  nominal sets of Gabbay and Pitts~\cite{PittsAM:nomsns}.  This attempt emerged from the study of computational models such as monoids~\cite{bojanczykNominalMonoids2013} and automata~\cite{bojanczykAutomataTheoryNominal2014} over infinite alphabets. Since automata are also the main use case for the present paper, we illustrate orbit-finiteness using an automaton example. 
+The notion of orbit-finiteness can be seen as an attempt to find an appropriate notion of finiteness for the  nominal sets of Gabbay and Pitts~\cite{PittsAM:nomsns}.  This attempt emerged from the study of computational models such as monoids~\cite{bojanczykNominalMonoids2013} and automata~\cite{bojanczykAutomataTheoryNominal2014} over infinite alphabets. Let us illustrate orbit-finiteness using an automaton example. 
 
 \begin{example}[An orbit-finite automaton]\label{ex:first-letter-repeats}
     Let  $L \subseteq \atoms^*$ be the language of  words in which the letter from the first position does not appear again. This language contains John $\cdot$ Mark $\cdot$ Mark $\cdot$ Eve, because John does not reappear, but it does not contain John $\cdot$ Mark $\cdot$ John. To recognize this language, we can use a deterministic automaton, which uses its state to remember the first letter. In this automaton, the input alphabet is $\Sigma = \atoms$ and  the state space is $Q = 1 + 1 + \atoms$. In this state space, there are two special states, namely the initial state and a rejecting error state, and furthermore there is one state for each atom $a \in \atoms$, which represents a situation where the first letter was $a$ but it has not been seen again yet. This state space is infinite; but it is orbit-finite, since each of the three components in $Q$ represents a single orbit, with the orbits of the $1$ components being singletons.\exampleend
@@ -110,7 +110,7 @@ However, orbit-finite sets do not have all the closure properties of finite sets
 \end{example}
 
 
-An attempt to address this problem was provided in~\cite{stefansk-msc,stefanski-phd,bojanczykstefanski2020}, by using \emph{single-use} functions. The idea, which originates in linear types and linear logic,  is to restrict the functions so that they use each argument at most once. For example, consider the following two functions that input atoms and output Booleans:
+An attempt to address this problem was provided in~\cite{stefanski-phd,bojanczykstefanski2020}, based on \emph{single-use} functions. The idea, which originates in linear types and linear logic,  is to restrict the functions so that they use each argument at most once. For example, consider the following two functions that input atoms and output Booleans:
 \begin{align*}
 a \in \atoms \mapsto 
 \begin{cases}
@@ -167,11 +167,11 @@ Typical examples of orbit-finite sets are polynomial expressions such as $\atoms
 \label{sec:orbit-finite-function-spaces}
 As mentioned above, orbit-finite sets can be seen as  a certain generalization of finite sets. They allow some, but not all, operations that can usually be done on finite sets. For example, orbit-finite sets are closed under disjoint unions $X + Y$ and products $X \times Y$.  Another good property is that an orbit-finite set has only finitely many equivariant subsets (an equivariant subset is one that is invariant under the action of atom permutations). This is because an equivariant subset is a union of some of the finitely many orbits. This accounts for some of the good computational properties of orbit-finite sets.
 
-If $X$ and $Y$ are orbit-finite sets, the set of equivariant functions $X \to Y$ is always literally finite, because it is an equivariant subset of $X\times Y$. However, as we have seen in Example~\ref{ex:first-letter-repeats-monoid}, when converting an automaton to a monoid, we want to use \emph{partially applied} transition functions, which are in general not equivariant. But they are \emph{finitely supported}, i.e.~invariant under all atom renamings that fix some finite set of atoms that depends only on the function.
+If $X$ and $Y$ are orbit-finite sets, the set of equivariant functions $X \to Y$ is always literally finite, because it is an equivariant subset of $X\times Y$. However, as we have seen in Example~\ref{ex:first-letter-repeats-monoid}, when converting an automaton to a monoid, we want to use the \emph{partial applications} $\delta(-,a)$ of the transition function $\delta : Q \times \Sigma \to Q$; while $\delta$ is invariant, in general, $\delta(-,a)$ is not. But it is \emph{finitely supported}, i.e.~invariant under all atom renamings that fix some finite set of atoms that depends only on the function.
 The issue is that the \emph{finitely supported function space} from $X$ to $Y$ is not orbit-finite.
 
 \begin{example}\label{ex:atoms-to-atoms}
-    Consider the space of finitely supported functions of type $\atoms \to \atoms$. For example, the function below is finitely supported, because it is invariant under all atom renamings that fix Mark, John, Eve and Bill:
+    The function $\atoms\to\atoms$ below is finitely supported, because it is invariant under all atom renamings that fix Mark, John, Eve and Bill:
     \begin{align*}
     f(a) = \begin{cases}
         \text{Mark} & \text{if $a \in \set{\text{John, Eve, Bill}}$} \\
@@ -261,7 +261,7 @@ Crucially, the list of prime single-use functions does not contain the copying f
 
 
 \begin{example}\label{ex:six-compositions}
-    Consider function of type $\atoms^3 \to \atoms$ which inputs a triple $(a,b,c)$ of atoms and returns $a$ if $c$ is equal to Mark, and $b$ otherwise. This function is a single-use function. It is obtained by composing the six functions listed below:
+    Consider the function of type $\atoms^3 \to \atoms$ which inputs a triple $(a,b,c)$ of atoms and returns $a$ if $c$ is equal to Mark, and $b$ otherwise. This function is a single-use function. It is obtained by composing the six functions listed below:
 \begin{center}
     \begin{tabular}{ll}
         Function & Type after function \\
@@ -274,18 +274,17 @@ Crucially, the list of prime single-use functions does not contain the copying f
         Co-diagonal & $\atoms$ 
     \end{tabular}
 \end{center}
-To justify this description, one should also show that the six functions are single-use. Three of the functions, namely append 1, distributivity and co-diagonal are prime functions. The other three are obtained by combining prime functions using the combinators. For example, the equality test is paired, using the combinator for $\times$, with the identity on the remaining two atoms. \exampleend
+To justify this description, one should also show that the six functions are single-use. Appending 1, distributivity and co-diagonal are prime functions. The other three are obtained by combining prime functions using the combinators. For example, the equality test is paired, using the combinator for $\times$, with the identity on the remaining two atoms. \exampleend
 \end{example}
 
 The design goal of the single-use restriction is to have orbit-finite function spaces. The rough idea is that a single-use function can only use a bounded number of atoms in its source code, which guarantees orbit-finiteness of the function space. 
 
 \begin{example}\label{ex:first-single-use-function-space}
-    Consider function of type $\atoms \to 1 + 1$, which can be seen as subsets of the atoms, with $1+1$ representing the Booleans. We will consider two function spaces: the larger space of all finitely supported functions, and the smaller space of single-use functions.
-    
-    A function in the larger space is any finitely supported subset of the atoms; such subsets are the same as the finite and co-finite subsets. Therefore, the larger function space admits an equivariant bijection with a disjoint union of two copies of the finite powerset $\powerset_{\text{fin}} \atoms$, in particular it is not orbit-finite.
-    
-    Consider now the smaller single-use function space. There are four possible functions of this kind: (a) always return true; (b) always return false; (c) check for equality with some fixed atom $a$; (d) check for disequality ($\neq$) with some fixed atom $a$.  Therefore,  the set of single-use functions  admits an equivariant bijection with the orbit-finite set $1 + 1 + \atoms + \atoms$.
-    \exampleend
+    Consider the functions of type $\atoms \to 1 + 1$, which can be seen as subsets of the atoms, with $1+1$ representing the Booleans.
+    \begin{itemize}
+        \item The finitely supported functions $\atoms \to 1 + 1$ correspond to the finite or co-finite subsets of $\atoms$. Therefore, the set of such functions admits an equivariant bijection with a disjoint union of two copies of the finite powerset $\powerset_{\text{fin}} \atoms$, in particular it is not orbit-finite.
+        \item There are four possible single-use functions $\atoms\to1+1$: (a) always return true; (b) always return false; (c) check for equality with some fixed atom $a$; (d) check for disequality ($\neq$) with some fixed atom $a$.  Therefore,  the set of single-use functions  admits an equivariant bijection with the orbit-finite set $1 + 1 + \atoms + \atoms$. \exampleend
+    \end{itemize}
 \end{example}
 
 
@@ -305,7 +304,7 @@ This type is defined by  induction on $k$. In the base case of $k=0$ we simply n
     starts by comparing the \\ 
     $i$-th and $j$-th coordinates}.
 \end{align*}
-Note that the above representation of the function space is not necessarily unique, i.e.~the same function can be represented in several different ways. For example, the order in which equality tests are performed will matter for the representation, but might not matter for the function. This is not something that we worry about, and we will use function spaces with non-unique representations in the paper, see also \Cref{sec:quotient-category} for how we deal with non-uniqueness. \exampleend
+Note that the above representation of the function space is not necessarily unique, i.e.~the same function can be represented in several different ways. For example, the order in which equality tests are performed will matter for the representation, but might not matter for the function. This is not something that we worry about; it is dealt with in \Cref{sec:quotient-category}. \exampleend
 \end{example}
 
 
@@ -313,8 +312,8 @@ Note that the above representation of the function space is not necessarily uniq
 Unfortunately, the proposal illustrated in Example~\ref{ex:decision-tree-types} and described in more detail in~\cite{stefanski-phd}  does not give a satisfactory solution to the problem of function spaces. The problem is that the set of representations $X \Rightarrow Y$ should  also support operations on functions. More specifically, we should be able to indicate single-use operations which do the following:
 \begin{description}
     \item[evaluation:] a single-use function from $(X \Rightarrow Y) \times X$ to $Y$ which inputs a representation of a function and applies it to an argument;
-    \item[composition:] a function from $(X \Rightarrow Y) \times (Y \Rightarrow Z)$ to $(X \Rightarrow Z)$ which inputs the representations of two functions and returns a representation of their composition.
-    \item[currying:] for each single-use function from  $ X \times Y $ to $Z$, there should be a single-use function from $X$ to $Y \Rightarrow Z$ which inputs a first argument and returns a representation of the  partially applied function;
+    \item[composition:] a single-use function from $(X \Rightarrow Y) \times (Y \Rightarrow Z)$ to $(X \Rightarrow Z)$ which inputs the representations of two functions and returns a representation of their composition;
+    \item[currying:] for each single-use function from  $ X \times Y $ to $Z$, there should be a single-use function from $X$ to $Y \Rightarrow Z$ which inputs a first argument and returns a representation of the  partially applied function.
 \end{description}
 Only in the presence of all of these operations can we speak of a function space, and the corresponding category can be called closed. (Composition can be obtained through evaluation and currying, so the essential operations are evaluation and currying.) The following example shows that the currying operation is not single-use, and therefore the space of single-use functions as defined in this section is not closed.
 
@@ -339,26 +338,24 @@ The currying of this function, is a new function which  maps a first argument $a
 Recall that in Example~\ref{ex:first-single-use-function-space} we showed that the space of single-use functions of type $\atoms \to 1 + 1$ can be represented as $1 + 1 + \atoms + \atoms$. If we use this representation,  then the currying of the function $f$  is not single-use, because we need to compare the input atom $a$ to two constants, Mark and John. If we use the representation from Example~\ref{ex:decision-tree-types}, then the corresponding type will be $\atoms \otimes (1 + 1)^2$, but the problems with currying will persist. \exampleend
 \end{example}
 
-For similar reasons, 
-the function space, we proposed above, will also not support function composition, which means that it cannot be used to convert automata into single-use monoids, as we would like to do, since the resulting monoid would need to use function composition as its monoid operation.\footnote{This problem is solved in~\cite{bojanczykstefanski2020} and~\cite{stefanski-phd} in a different way, namely by showing that every orbit-finite monoid necessarily divides a single-use monoid, using a  Krohn-Rhodes construction. However, this construction is difficult and delicate, in particular it does not work for atoms that have more structure than equality alone. In contrast, the proposal that we give in this paper works for other kinds of atoms, as discussed in \Cref{sec:further-topics}. }
+For similar reasons, the function space we proposed above does not support function composition either; it cannot be used to convert automata into single-use monoids since the resulting monoid would need to use function composition as its monoid operation.\footnote{This problem is solved in~\cite{bojanczykstefanski2020} and~\cite{stefanski-phd} in a different way, namely by showing that every orbit-finite monoid necessarily divides a single-use monoid, using a  Krohn-Rhodes construction. However, this construction is difficult and delicate, in particular it does not work for atoms that have more structure than equality alone. In contrast, the proposal that we give in this paper works for other kinds of atoms, as discussed in \Cref{sec:further-topics}. }
 
-To solve the problems above, we will introduce a more refined type system, which is based on linear types.  The main idea is to pay more attention to type  in Example~\ref{ex:decision-tree-types}. In that definition, we describe a single-use function by specifying the first equality test that it makes, and then giving two descriptions of the functions that will be used in each of the two possible outcomes of the equality test. The main observation is that these two outcomes are mutually exclusive, and therefore we intend to use only one of the two descriptions. For this reason, we will use a  type constructor $\&$ that comes from linear logic. The intended meaning is  that an object of type $X \& Y$ consists of two objects, but with the ability to use only one of them. Since linear logic uses $\otimes$  for the  product that we have so far denoted by $\times$, we will also follow that convention. Using these two kinds of products, the appropriate type for Example~\ref{ex:decision-tree-types} will now become:
+\subsection{Linear types and single-use functions on them}
+\label{sec:linear-types-and-single-use-functions}
+To solve the problems above, we introduce a more refined type system, which is based on linear types.  The main idea is to pay more attention to types in \Cref{ex:decision-tree-types}, where we describe a single-use function by specifying the first equality test that it makes, and then giving two descriptions of the functions that will be used in each of the two possible outcomes of the equality test. The main observation is that these two outcomes are mutually exclusive, and therefore we intend to use only one of the two descriptions. For this reason, we will use a  type constructor $\&$ that comes from linear logic. The intended meaning is  that an object of type $X \& Y$ consists of two objects, but with the ability to use only one of them. Since linear logic uses $\otimes$  for the  product that we have so far denoted by $\times$, we will also follow that convention. Using these two products, the appropriate type for Example~\ref{ex:decision-tree-types} becomes:
 \begin{align*}
 \coprod_{i \in \set{1,\ldots,k}} 
         \atoms \otimes ((\atoms^{k-1} \Rightarrow Y) \& (\atoms^{k-1} \Rightarrow Y))
           \quad + \quad 
     \coprod_{i, j \in \set{1,\ldots,k}} (\atoms^{k-2} \to Y) \& (\atoms^{k-2} \to Y).
     \end{align*}
-Under this definition, the problems from Example~\ref{ex:currying-not-single-use} will be solved, at least for the particular type considered in that example. However, by introducing a new type constructor, we will have to redefine the single-use functions, and then we will have to give a representation of functions that allow this new type constructor, without incurring the need to add any other new type constructors. This is the subject of the next section.
+Under this definition, the problems from Example~\ref{ex:currying-not-single-use} will be solved, at least for the particular type considered in that example. However, by introducing a new type constructor, we will have to redefine the single-use functions, and then we will have to give a representation of functions that allow this new type constructor, without incurring the need to add any other new type constructors. This is what we will do now.
 
-\subsection{Linear types and single-use functions on them}
-\label{sec:linear-types-and-single-use-functions}
-As mentioned above, to solve the problems with single-use function spaces, we will consider a type system with two kinds of products, as in the following definition.
 \begin{definition}[Linear types]\label{def:datatypes}
     A \emph{linear type} is any expression constructed from the atomic types $1$ and $\atoms$ using three\footnote{We set up our type system without using the multiplicative disjunction $\rotatebox[origin=c]{180}{\&}$ of linear logic -- morally, we take our inspiration from intuitionistic linear logic, rather than classical linear logic.} binary type constructors $+, \&$ and $\otimes$.
 \end{definition}
 In our linear types, it is only the products that are differentiated, while  $+$ comes in only one version. 
-    Here is the intuitive explanation of the difference between the two kinds of products, following Girard~\cite[p.~2]{girard1995advances}. Having a pair $x \otimes y$ is like having the ability of using both components $x$ and $y$. On the other hand, having a pair $x \& y$ is like having the ability to use one of the two components, at our choice, but not both at once. For example, the input type of the equality test will be $\atoms \otimes \atoms$ not $\atoms \& \atoms$, since the test will need to consume both arguments. This intuition can only go so far; for example, it is not entirely clear what ``our choice'' means. We revisit this intuition in  the appendix, where game semantics will be used to indicate who makes which choices. 
+    Here is the intuitive explanation of the difference between the two kinds of products, following Girard~\cite[p.~2]{girard1995advances}. Having a pair $x \otimes y$ is like having the ability of using both components $x$ and $y$. On the other hand, having a pair $x \& y$ is like having the ability to use one of the two components, at our choice, but not both at once. For example, the input type of the equality test will be $\atoms \otimes \atoms$ not $\atoms \& \atoms$, since the test will need to consume both arguments. This intuition can only go so far; for example, it is not entirely clear what ``our choice'' means. We revisit this intuition in \Cref{sec:game-semantics}, where game semantics will be used to indicate who makes which choices. 
 
 
 
@@ -394,7 +391,7 @@ As we did in Section~\ref{sec:single-use-functions-over-polynomial-orbit-finite-
 \begin{table}[h!]
     \centering
     \begin{tabular}{lll}
-        \textbf{Function} & \textbf{Type} & \textbf{Definition} \\ \\
+        \textbf{Function} & \textbf{Type} & \textbf{Definition} \\
         diagonal  & $X \to X \& X$ & $x \mapsto x \& x$ \\
         first projection & $X \& Y \to X$ & $x \& y \mapsto x$ \\
         second projection & $X \& Y \to Y$ & $x \& y \mapsto y$ \\
@@ -421,7 +418,7 @@ Formally speaking, a single-use function consists of an input linear type $X$, a
     The category of single-use sets is:
     \begin{enumerate}
         \item The objects are linear types, as per Definition~\ref{def:datatypes}.
-        \item Morphisms between types $X$ and $Y$ are single-use functions from $\sem X$ to $\sem Y$.
+        \item The morphisms between types $X$ and $Y$ are single-use functions from $\sem X$ to $\sem Y$.
     \end{enumerate}
 \end{definition}
 
@@ -460,28 +457,27 @@ The main technical result of this paper is that the category of single-use sets 
 \end{theorem}
 
 The above theorem is the main technical contribution of this paper. The difficulty in its proof is finding a representation of the single-use  functions that is rich enough to capture all functions, but simple enough to be described by a linear type (in particular, the corresponding set will be orbit-finite). In  Section~\ref{sec:single-use-functions-over-polynomial-orbit-finite-sets}, when the types did not have $\&$, we could pull off a relatively simple construction, which was possible mainly due to the strong distributivity rules that allowed converting each type into a normal like $\atoms^{n_1} + \cdots + \atoms^{n_\ell}$. In the presence of $\&$, the distributivity rules are not as strong, and the way in which a single-use program can interact with its input is rather subtle. 
-Our solution, and the technical core of this paper, is to use game semantics, appropriately extended to describe the type $\atoms$ and the operations on it that are allowed. This solution is presented in \Cref{sec:game-semantics}.
+Our solution is presented in \Cref{sec:game-semantics}.
 
-\section{A quotient construction}
+\section{Quotienting by partial equivalence relations}
 \label{sec:quotient-category}
-A drawback of Theorem~\ref{thm:single-use-closed} is that the function space $\funspace V W$ can contain different representations of the same function; this will mean that currying is not unique. To overcome this issue, we use a simple quotient construction. 
-Define a \emph{partial equivalence relation} to be a relation that is symmetric and transitive, but not necessarily reflexive.  This is the same as (complete) equivalence relation on some subset. We will use a partial equivalence on the function space $X \Rightarrow Y$ to: (1)
+A drawback of Theorem~\ref{thm:single-use-closed} is that the function space $\funspace V W$ can contain different representations of the same function; this will mean that currying is not unique. To overcome this issue, we use a simple quotient construction, inspired by a classical technique used in realizability semantics of typed $\lambda$-calculi (see e.g.~\cite[Chapter~15]{AmadioCurien}).
+
+Define a \emph{partial equivalence relation} to be a relation that is symmetric and transitive, but not necessarily reflexive.  This is the same as (complete) equivalence relation on some subset, hence we may speak of the quotient of a set by a partial equivalence relation (which is an usual quotient of a subset). We will use a partial equivalence on the function space $X \Rightarrow Y$ to: (1)
  remove objects that do not represent any morphism; (2) identify two objects if they represent the same morphism. After such a quotient, the function space will have unique representations for functions. 
 
 \begin{definition}
     The \emph{quotiented single-use category} is: 
     \begin{itemize}
     \item Objects are pairs (linear type $X$, equivariant partial equivalence relation on $\sem X$);
-    \item Morphisms between objects $(X,\sim_X)$ and $(Y,\sim_Y)$ are single-use functions from $\sem X$ to $\sem Y$ such that the domain of the function is contained in the domain of $\sim_X$, and equivalent inputs are mapped to equivalent outputs.
+    \item The set of morphisms between objects $(X,\sim_X)$ and $(Y,\sim_Y)$ is the quotient of the set of single-use functions from $X$ to $Y$ by
+    \[ f \sim g :\iff \left[ \forall x,x' \in \sem X, \; x \sim_X x' \Rightarrow f(x) \sim_Y g(x') \right] \]
     \end{itemize}
 \end{definition}
-
-The quotiented single-use category is also equipped with a tensor product $\otimes$ on its objects.
+We can then define the function space object from $(X,\sim_X)$ to $(Y,\sim_Y)$ as $(X\Rightarrow Y, \sim_{X\Rightarrow Y})$ where two elements of $X\Rightarrow Y$ are related by the partial equivalence relation $\sim_{X\Rightarrow Y}$ when the single-use functions they represent are related by the above-defined $\sim$. The quotiented single-use category is also equipped with a tensor product $\otimes$ on its objects.
 \begin{theorem}\label{thm:quotient-closed}
     The quotiented single-use category, equipped with the tensor product $\otimes$, is a monoidal closed category, i.e.~it satisfies the conclusions of Theorem~\ref{thm:single-use-closed}, but, furthermore, the morphism $h$ is unique.
 \end{theorem}
-
-\tito{Amadio--Curien?}
 
 \newcommand{\invar}[1]{#1_{\mathrm{in}}}
 \newcommand{\outvar}[1]{#1_{\mathrm{out}}}
@@ -495,87 +491,65 @@ Let us begin with a brief motivation for why game semantics will be useful.
 
 While it is intuitively clear which functions should be allowed as single-use for simple types such as $\atoms \to 1+1$ or $\atoms \otimes \atoms \to \atoms + \atoms$, these intuitions start to falter when considering more complex types. How can one show that a function is \emph{not} single-use? If one were to use the definition of single-use functions alone, then one would need to rule out any possibility of constructing the function from the primes using the combinators, including constructions that use composition many times, and with unknown intermediate types. 
 
-This is the reason why we consider game semantics. It will allow us to give  a more principled description of the intuition that pairs of type $X \otimes Y$ can be used on both coordinates, while pairs of type $X + Y$ can be used on a chosen coordinate only. The idea behind game semantics is to give the description in terms of an interaction between two players:
+This is the reason why we consider game semantics. It will allow us to give  a more principled description of the intuition that pairs of type $X \otimes Y$ can be used on both coordinates, while pairs of type $X \& Y$ can be used on a chosen coordinate only. The idea behind game semantics is to give the description in terms of an interaction between two players:
 \begin{enumerate}
     \item System, who represents the function (we will identify with this player); and
     \item Environment, who supplies inputs and requests outputs of the function.
 \end{enumerate}
-One of the intuitions behind the setup is that if a type $X \& Y$ appears in the input of the function, then it is the System who can choose to use $X$ or $Y$, while if the type appears in the output, then it is the Environment who makes the choice. (In this paper, we consider functions of first-order types of the form $X \to Y$, where $X$ and $Y$ are linear types that do not use $\otimes$, and therefore there will be a clear distinction between input and output values.)
+One of the intuitions behind the setup is that if a type $X \& Y$ appears in the input of the function, then it is the System who can choose to use $X$ or $Y$, while if the type appears in the output, then it is the Environment who makes the choice. (In this paper, we consider functions of first-order types of the form $X \to Y$, where $X$ and $Y$ are linear types that do not use $\to$, and therefore there will be a clear distinction between input and output values.)
 Before giving a formal definition of game semantics, we give simple example of the interaction.
 
 \begin{example}\label{ex:amp-otimes-distr}
-    Consider the two types 
-    \begin{align*}
-        X \otimes (Y \& Z) 
-        \quad \text{and} \quad
-        (X \otimes Y) \& (X \otimes Z).
-    \end{align*}
+    Consider the two types $X \otimes (Y \& Z)$ and $(X \otimes Y) \& (X \otimes Z)$.
+
     Among the prime functions in Table~\ref{fig:prime-morphisms-with-with}, we find distributivity in the direction $\rightarrow$, but not in the direction $\leftarrow$. We explain this asymmetry using the interaction between two players System and Enviroment.
 
-    Let us first consider the interaction in the  direction $\rightarrow$. Player Environment begins be requesting an output. Since this output is of type $(X \otimes Y) \& (X \otimes Z)$, this means that Environment can choose to request either of the two types  $X \otimes Y$ and $X \otimes Z$. Suppose that Environment requests $X \otimes Y$. Now player System needs to react, and produce two elements: one of type $X$ and one of type $Y$. Both can be obtained from the input; for the second one player System can choose how to resolve the input $Y \& Z$ to get the appropriate value. 
+    Let us first consider the interaction in the  direction $\rightarrow$. The player Environment begins by requesting an output. Since this output is of type $(X \otimes Y) \& (X \otimes Z)$, this means that Environment can choose to request either of the two types  $X \otimes Y$ and $X \otimes Z$. Suppose that Environment requests $X \otimes Y$. Now System needs to react, and produce two elements: one of type $X$ and one of type $Y$. Both can be obtained from the input; for the second one player System can choose how to resolve the input $Y \& Z$ to get the appropriate value. 
 
-    Consider now the interaction in the opposite direction $\leftarrow$. As we will see, player System will be unable to react to the behavior of player Environment, which will demonstrate that there is no distributivity in this direction. The problem is that player Environment can begin by requesting an element of type $X$, since the output type is $X \otimes (Y \& Z)$, while still reserving the possibility to request $Y \& Z$ in the future (because the tensor product $\otimes$ means that both output values need to be produced). To produce this element, player System will need  choose one of the two coordinates in the input type $(X \otimes Y) \& (X \otimes Z)$, and any of these two  choices will be premature, since player Environment can then request the opposite choice in the output type.  \exampleend
+    Consider now the interaction in the opposite direction $\leftarrow$. As we will see, System will be unable to react to the behavior of Environment, which demonstrates that there is no distributivity in this direction. The problem is that Environment can begin by requesting an element of type $X$, since the output type is $X \otimes (Y \& Z)$, while still reserving the possibility to request $Y \& Z$ in the future (because the tensor product $\otimes$ means that both output values need to be produced). To produce this element, System will need  choose one of the two coordinates in the input type $(X \otimes Y) \& (X \otimes Z)$, and any of these two  choices will be premature, since Environment can then request the opposite choice in the output type.  \exampleend
 \end{example}
 
-As illustrated in the above example, we will use a game to describe the possible behaviours of a function, as modelled by behaviours of player System. The game will be played in an arena, which will arise from the type of the function, and will tell us what are the possibilities for the moves of both players.  Here is the  outline the plan for the rest of this section. 
-\begin{enumerate}
-    \item For every two linear types $X$ and $Y$, we  define an arena, which is a data structure that describes all possible interactions between players Environment and System that can arise when running a  single-use  functions of type $X \to Y$;
-    \item In each arena, we will be interested in the strategies of player System, i.e.~the ways in which System reacts to moves of Environment. We will show how such strategies can be interpreted as single-use functions: to a strategy we will assign a single-use function of type $X \to Y$ that is represented by this strategy. This mapping will be partial, i.e.~some ill-behaved strategies will not represent any functions. 
-    \item We will show that the  set of strategies in an arena is  large enough to represent all single-use functions, but small enough to be orbit-finite. 
-    \item We will then strengthen this: not only is the set of strategies orbit-finite, but it can be equipped with the structure of a linear type, such that both evaluation and Currying will be single-use functions.
-\end{enumerate}
-
-The arenas from the first step of the plan will  be defined in two sub-steps. We begin by defining arenas and strategies for functions that do not use the structure of the atoms, i.e. constants and equality tests. This will be a fairly generic definition, almost identical to the classical game semantics for linear logic. Then we will extend the definition to cover the extra structure. 
+As illustrated in the above example, we will use a game to describe the possible behaviours of a function $X \to Y$. The game will be played in an arena, arising from the linear types $X$ and $Y$, which will tell us what moves are possible for the two players. In each arena, we will be interested in strategies for System, telling us how System should react to Environment's moves. Morally, such a strategy will say how the function reacts to requests in the output type $Y$ and values in the input type $X$. Some of these strategies will represent single-use functions, and we will show that all single-use functions are thus represented. 
 
 \subsection{Arenas and strategies without constants and equality tests}
 \label{sec:arenas-without-constants-and-equality-tests}
 
-We begin with a simpler version of the game semantics, in which the arenas and strategies will describe functions that are not allowed to perform equality tests, and are not allowed to use constants. These strategies will model functions such as the identity function $\atoms \to \atoms$, which directly passes its input to its output, but they  will not model the equality test $\atoms \otimes \atoms \to 1 + 1$, or the constant functions of type $1 \to \atoms$. The general idea is to use standard game semantics for linear logic, with an extra feature that we call \emph{register operations}. The register operations will be used to model the way in which atoms are passed from the input to output. For example, in the identity function,  Environment will  write the input atom into the register, and then player System will read the output atom from that register. The following definition of an arena is based on the definition from \cite[p.4]{abramsky2013semantics}, slightly
+We begin with a simpler version of the game semantics, in which the arenas and strategies will describe functions that are not allowed to perform equality tests, nor to use constants. These strategies will model functions such as the identity function $\atoms \to \atoms$, which directly passes its input to its output, but they  will not model the equality test $\atoms \otimes \atoms \to 1 + 1$, or the constant functions of type $1 \to \atoms$. The general idea is to use standard game semantics for linear logic, with an extra feature that we call \emph{register operations}. The register operations will be used to model the way in which atoms are passed from the input to output. For example, in the identity function,  Environment will  write the input atom into the register, and then player System will read the output atom from that register. The following definition of an arena is based on the definition from \cite[p.~4]{abramsky2013semantics}, slightly
 adapted for the context of this paper:
 \begin{definition}[Arena] \label{def:arena}
     An \emph{arena} consists of:
     \begin{enumerate}
-        \item A set of \emph{moves}, with each move having an assigned owner, who is either ``System'' or ``Environment'', and one of three\footnote{\label{footnote:read-write} In all arenas that we consider, the ``read'' moves will be owned by System and the ``write'' moves will be owned by Environment. Therefore, we could simplify the register operations and have just one, called ``read/write'', whose status is determined by its owner. 
-        } register operations, which are ``none'', ``read'', or ``write''.
+        \item A set of \emph{moves}, with each move having an assigned owner, who is either ``System'' or ``Environment'', and one of three register operations, which are ``none'', ``read'', or ``write''.
                 \item A set of plays, which a set of finite sequences of moves that is closed under prefixes, and such that in every play, the owner of the first move is Environment, and then the owners alternate between the two players.
     \end{enumerate}
 \end{definition}
+\begin{remark}\label{rem:read-write}
+    In all arenas that we consider, the ``read'' moves will be owned by System and the ``write'' moves will be owned by Environment. Therefore, we could simplify the register operations and have just one, called ``read/write'', whose status is determined by its owner. 
+\end{remark}
 
-
-
-
-An arena will correspond to a type. The inhabitants of that type, which will be  functions if the type is a functional type $X \to Y$, will be described by strategies in the arena. Such a strategy tells us how player System should react to the moves of player Environment. Intuitively speaking, in the case of a functional type, a strategy will say how the function reacts to requests in the output type and values in the input type. We will only be talking about strategies for player System, so from now on, all strategies will be for player System. The following definition corresponds to the definition from \cite[p.5]{abramsky2013semantics}:
-%unless otherwise stated.
-% In the above definition, the operations are a non-standard part of the arenas.  The idea is that the operations modify a memory store which has exactly one register, which contain a single atom or be empty.  A move that has an associated operation that is not ``none'' will be called an \emph{atom move}.
-
-
+In this paper, all the strategies that we consider shall be for player System.
 \begin{definition}
     A \emph{strategy}  in an arena  is a subset of plays in the arena, which: 
     \begin{enumerate}
         \item is closed under prefixes;
-        \item\label{item:sys-ext} if the strategy contains a play $p$ that ends with a move owned by player System, then it also contains all possible plays  in the arena that extend $p$ with one move of player Environment;
-        \item\label{item:env-ext} if the strategy contains a play $p$ that ends with a move owned by player Environment, then it contains exactly one play  in the arena that extends $p$ with one move of player System;
+        \item\label{item:sys-ext} if the strategy contains a play $p$ that ends with a move owned by System, then it also contains all possible plays  in the arena that extend $p$ with one move of Environment;
+        \item\label{item:env-ext} if the strategy contains a play $p$ that ends with a move owned by Environment, then it contains exactly one play  in the arena that extends $p$ with one move of System;
          \item there is some $k$ such that all plays in the strategy have length at most $k$;
         \item every ``read'' move is directly preceded by a ``write'' move (in particular a play cannot begin with ``read''), and every ``write'' move is either the last move, or directly succeeded by a ``read'' move.
     \end{enumerate}
 \end{definition}
 
-Conditions \ref{item:sys-ext} and \ref{item:env-ext}, which are standard in game semantics,  guarantee that the strategy only ``ends'' when 
+Conditions \ref{item:sys-ext} and \ref{item:env-ext}, which are standard in game semantics (cf.~\cite[p.~5]{abramsky2013semantics}),  guarantee that the strategy is deterministic and only ``ends'' when 
 Environment has no moves to play.  Let us now comment on the last two conditions, which are not standard.
-
-The fourth condition is motivated by the idea that we study ``finite'' types,  and there will be no need for unbounded computations. 
-
-The last condition will be called the  \emph{immediate read condition}. It ensures that there is matching between ``read'' and ``write'' moves in plays that do not end with write. Since ``write'' will always be owned by Environment, the immediate read condition will ensure a matching between ``write'' and ``read'' moves.
-%in the plays that do not end with a move by player Environment, and such plays will be the most important ones. 
-
-We now show how to associate to each linear type a corresponding arena, and also how to associate an arena to a function type $X \to Y$. This definition will be compositional, i.e.~it will arise through operations on arenas that correspond to the type constructors such as $1$ or $\otimes$. The arenas that we will construct so far will not be our final proposal, since the corresponding strategies will not be able to use constants or perform equality tests. This will be fixed in Section~\ref{sec:arenas-with-constants-and-equality-tests}, where a more complex arena will be defined for function types. Before giving formal definition, we begin with a simple example of the arena for the type $\atoms \to \atoms$.
+\begin{itemize}
+    \item The fourth condition is motivated by the idea that we study ``finite'' types,  and there will be no need for unbounded computations. 
+    \item The last condition will be called the  \emph{immediate read condition}. It ensures that there is matching between ``read'' and ``write'' moves in plays that do not end with write. Since ``write'' will always be owned by Environment, the immediate read condition will ensure a matching between ``write'' and ``read'' moves.
+\end{itemize}
+We now show how to associate to each linear type a corresponding arena, and also how to associate an arena to a function type $X \to Y$ (which is not a linear type in the sense of \Cref{def:datatypes}) between linear types $X$ and $Y$. The arenas that we will construct so far will not be our final proposal, since the corresponding strategies will not be able to use constants or perform equality tests; this will be fixed in Section~\ref{sec:arenas-with-constants-and-equality-tests}. Before giving a formal definition, we begin with a simple example.
 \begin{example}\label{ex:identity-function-without-equality-tests-and-constants}
-    We define an arena for the type $\atoms \to \atoms$. This arena will be rather impoverished, since the  only allowed strategy in it will correspond to the identity function. However, this is consistent with the stage that we are at, where we only consider functions that do not use constants or perform equality tests; for such functions the only possibility is the identity function.
+    We define an arena for $\atoms \to \atoms$. It will be rather impoverished, since the  only allowed strategy in it will correspond to the identity function. However, this is consistent with the stage that we are at, where we only consider functions that do not use constants or perform equality tests; for such functions $\atoms\to\atoms$ the only possibility is the identity.
 
-     The arena will describe the following interaction between the two players: Environment  requests an output,  then System requests an input, then Environment grants the input, and finally player System grants the output by forwarding the input grant. 
-    The arena is shown in the following picture: 
-    \mypic{6}
-    The methodology of drawing this picture will become clearer later on, as we define operations on arenas such as $\otimes$. For the moment we describe the arena without caring that it arises as a special case of some general construction. The arena has four moves: 
+     The arena describes the following interaction between the two players: Environment  requests an output, then System requests an input, then Environment grants the input, and finally System grants the output by forwarding the input that was granted. It has 4 moves:
     \begin{center}
         \begin{tabular}{lll}
          move & owner & register operation \\
@@ -586,13 +560,12 @@ We now show how to associate to each linear type a corresponding arena, and also
             grant output & System & read 
         \end{tabular}    
     \end{center}
-    The set of plays is defined as follows. These are all sequences that begin with a move of player Environment, alternate between players, use each move only once, and have the following condition:  ``grant output'' can only be played after ``request output'', and likewise for ``grant input'' and ``request input''.  
+    The plays are defined as all sequences that begin with a move of Environment, alternate between players, use each move only once, and have the following condition:  ``grant output'' can only be played after ``request output'', and likewise for ``grant input'' and ``request input''.  
 
-    A quick inspection of the above definition reveals that the arena has a unique maximal play, where the moves are played in the order from the table, and all other plays are prefixes of this maximal play. Because of the uniqueness of responses, the set of plays is also a strategy. As mentioned at the beginning of this example, the strategy describes the identity function.  \exampleend
+    A quick inspection of this definition reveals that there is a unique maximal play, where the moves are played in the order from the table, and all other plays are prefixes of this maximal play. Because of the uniqueness of responses, the set of plays is also a strategy. As mentioned at the beginning of this example, the strategy describes the identity function.  \exampleend
 \end{example}
 
-We hope that the above example explains some intuitions about how arenas describe types and strategies describe functions. We now give a formal definition. As mentioned before, this definition is compositional: we define arenas for the basic types $1$ and $\atoms$, and then we define operations on arenas that correspond to the type constructors  $+$, $\&$, and $\otimes$. We begin with the basic types.
-
+We hope that the above example explains some intuitions about how arenas describe types and strategies describe functions. We now give a formal definition which is compositional: we define arenas for the basic types $1$ and $\atoms$, and then we define operations on arenas that correspond to the type constructors  $+$, $\&$, and $\otimes$. We begin with the basic types.
 
 \begin{definition}[Arenas for $1$ and $\atoms$]\label{def:arenas-without-atoms-or-functions} \ 
     \begin{enumerate}
@@ -600,80 +573,70 @@ We hope that the above example explains some intuitions about how arenas describ
         \item The arena for type $\atoms$ has two moves, which must be played one after the other: first player Environment makes a move called ``request'' that has no register operation, and then player System responds with  a move called ``grant'' that has register operation ``read''.
     \end{enumerate}
 \end{definition}
+In the above definition, we only described the behaviour of $\atoms$ when viewed as an output type. To get the input type, where the players are swapped and read is swapped with write, we will use duality, which is another operation on arenas. This operation is defined below, together with other operations that correspond to the type constructors.   
 
-In the above definition, we only described the behaviour of $\atoms$ when viewed as an output type. To get the input type, where the players are swapped and read is swapped with write, we will use duality, which is another operation on arenas. This operation, together with other operations that correspond to the type constructors, are defined below.   
-
-\begin{definition}[Operations on arenas]\label{def:composition-of-arenas}
+\begin{definition}\label{def:composition-of-arenas}
     Let  $A$ and $B$ be arenas. We define the following arenas (see also Figure~\ref{fig:arena-constructors}):
         \begin{description}
+            \item[$\bar A$] This is called the \emph{dual arena} of $A$. The moves and plays are the same as in $A$, except the owners are swapped, and the ``read'' and ``write'' register operations are swapped.
             \item[$A+B$] The moves in this arena are the disjoint union of the moves of $A$ and $B$, with inherited owners and register operations, plus three extra moves: ``ask'' owned by Environment, and ``left'', ``right'' owned by System. 
             The plays are defined as follows. Player Environment begins with  an ask move, then System responds with a left or right move, and the remaining sequence is a play in the arena $A$ or $B$, depending on whether System chose left or right. 
             \item[$A \& B$] The moves in this arena are the disjoint union of the moves of $A$ and $B$, with inherited owners and register operations, plus three extra moves: ``acknowledge'' owned by System, and ``left'', ``right'' owned by Environment. 
-            The plays are defined as follows. Player Environment begins by choosing left or right, then player System responds with an acknowledge move, and the remaining sequence is a play  in the arena $A$ or $B$, depending on whether Environment chose left or right.
-            (This construction differs slightly from the one from \cite[Excercise~1.10]{abramsky2013semantics} -- this is because we want to keep it analogous to the construction for $A + B$.)
+            The plays are defined as follows. Environment begins by choosing left or right, then System responds with an acknowledge move, and the remaining sequence is a play in either $A$ or $B$, depending on Environment's choice.
+            (This construction differs slightly from the one from \cite[Exercise~1.10]{abramsky2013semantics} -- this is because we want to keep it analogous to the construction for $A + B$.)
             \item[$A \otimes B$] The moves in this arena are the disjoint union of the moves of $A$ and $B$, with inherited owners and register operations. A play in this arena is any shuffle of plays in the two arenas $A$ and $B$. (A shuffle of two words is any word obtained by interleaving them, e.g.~shuffles of ``abc'' and ``123'' include ``a1b23c'' and ``12ab3c'').
             By Definition~\ref{def:arenas-without-atoms-or-functions}, we require that the owners of the move alternate in the 
             interleaved sequences. (This construction is based on \cite[p.7]{abramsky2013semantics}.) 
-            
-
-            \item[$\bar A$] This is called the dual arena of $A$. The moves and plays are the same as in $A$, except the owners are swapped, and the ``read'' and ``write'' register operations are swapped.
         \end{description} 
 \end{definition}
+Equipped with the above definitions, we  present our first attempt at assigning arenas to types. In the second item of the following definition, we use the name \emph{library-less}, because our final definition of the arena for a function type, as presented in the next section, will be equipped with an extra feature that will be called a library. 
 
 \begin{figure}
-The arena $A+ B$:
-            \mypic{7}
-The arena $A \& B$: 
-            \mypic{8}
-The arena $A \otimes B$:
-            \mypic{9}
-    \caption{\label{fig:arena-constructors} Pictures of the operations on arenas. The picture for $\otimes$  is less useful than previous two, since the root node of the tree is not a player, but a node labelled by $\otimes$. The intuition is that the game is played in parallel on both arenas, and therefore a position in it can be visualized as a pair of positions in the two arenas.}
+    \hspace{-0.3cm}\mypicnocenter{9}\hspace{-1.4cm}
+    \mypicnocenter{7}\hspace{-0.2cm}
+            \mypicnocenter{8}
+    \caption{\label{fig:arena-constructors} Pictures of the operations $A\otimes B$, $A+B$, $A\&B$ and $A\otimes B$ respectively on arenas.\\
+    The picture for $\otimes$  is less useful than the next two, since the root node of the tree is not a player, but a node labelled by $\otimes$. The intuition is that the game is played in parallel on both arenas, and therefore a position in it can be visualized as a pair of positions in the two arenas.}
 \end{figure}
 
 
         
-Equipped with the above definitions, we  present our first attempt at assigning arenas to types. In the second item of the following definition, we use the name \emph{library-less}, because our final definition of the arena for a function type, as presented in the next section, will be equipped with an extra feature that will be called a library. 
 
-\begin{definition} Let $X$ and $Y$ be linear types.
+\begin{definition}\label{def:library-less} Let $X$ and $Y$ be linear types.
     \begin{itemize}
         \item The \emph{arena for  $X$} is defined by inductively applying the constructions from Definition~\ref{def:arenas-without-atoms-or-functions} and Definition~\ref{def:composition-of-arenas} according to the structure of the type.
         \item The \emph{library-less arena for $X \to Y$} is defined to be (dual of arena of $X$) $\otimes$ (arena of $Y$).
     \end{itemize}
 \end{definition}
+\begin{example}
+    The library-less arena for the identity type $\atoms \to \atoms$ is the same as the arena that we explicitly defined in Example~\ref{ex:identity-function-without-equality-tests-and-constants}. It can be drawn as the following picture:
+    \mypic{6}
+\end{example}
 
-As discussed previously, our notion of arenas does not yet take into account the structure of the atoms, i.e.~the constants and equality tests. This will be fixed in the next section, by modifying the second item in the above definition. On the other hand, the arenas from that first item in the above definition, for linear types without function types, are already in their final form. 
+As discussed previously, our notion of arenas does not yet take into account some structure on the atoms. This will be fixed in the next section, by modifying the second item in \Cref{def:library-less}. On the other hand, the arenas from the first item, for linear types without function types, are already in their final form. 
 
-In principle the construction from the second item in the above definition can be nested, and thus used to assign arenas to higher order types that can nest $\to$ with the other type constructors. This is how it is usually done in linear logic. However,  the construction that we will describe in the next section will  be less amenable to nesting, and will use it only  to describe functions between types that do not use $\to$.
+In principle the construction from the second item in \Cref{def:library-less} can be nested, and thus used to assign arenas to higher-order types that can nest $\to$ with the other type constructors. This is how it is usually done in linear logic. However,  the construction that we will describe in the next section will  be less amenable to nesting, and will use it only  to describe functions between types that do not use $\to$.
 
 
  
-
-\begin{example}
-    The arena for the identity type $\atoms \to \atoms$ is the same as the arena from Example~\ref{ex:identity-function-without-equality-tests-and-constants}.
-\end{example}
-
-
-
-
-
 \subsection{Arenas and strategies with constants and equality tests}
 \label{sec:arenas-with-constants-and-equality-tests}
-In the Section~\ref{sec:arenas-without-constants-and-equality-tests}, we described arenas for functions that did not use the structure of the atoms, i.e.~constants and equality tests. We now show how these arenas can be extended to cover this structure. The general idea is to equip the arenas with an extra part, which we call the \emph{library},  that describes the allowed operations on the atoms. (The library as we present it here only contains functions for equality and constants, but in the proof of Theorem~\ref{thm:single-use-automata-relational-structures}, we can use a library that has other relations beyond equality. )
+In Section~\ref{sec:arenas-without-constants-and-equality-tests}, we described arenas for functions that did not use the structure of the atoms, i.e.~constants and equality tests. We now show how these arenas can be extended to cover this structure. The general idea is to equip the arenas with an extra part, which we call the \emph{library},  that describes the allowed operations on the atoms. (The library as we present it here only contains functions for equality and constants, but in the proof of Theorem~\ref{thm:single-use-automata-relational-structures}, we can use a library that has other relations beyond equality. )
 
 
 
-\begin{definition}[The library arena] \label{def:library-arena} The library arena and its parts are defined as follows, see Figure~\ref{fig:library-arenas} for pictures.
+\begin{definition}\label{def:library-arena} The \emph{library arena} and its parts are defined as follows (cf.~Figure~\ref{fig:library-arenas}).
     \begin{enumerate}
         \item The \emph{constant choice arena} is the following arena $\atoms+1$ moves:
         first player System chooses an atom, then player Environment plays move with register operation ``write''. 
         \item The \emph{equality test arena} is an arena which the plays are as follows:
     \begin{enumerate}
-        \item first player System plays a move with register operation ``read'';
-        \item then player Environment plays an move with no register operation;
-        \item then player System plays a move with register operation ``read'';
-        \item then player Environment plays one of two moves, called $=$ and $\neq$, with no register operation.
+        \item first System plays a move with register operation ``read'';
+        \item then Environment plays an move with no register operation;
+        \item then System plays a move with register operation ``read'';
+        \item then Environment plays one of two moves, called $=$ and $\neq$, with no register operation.
     \end{enumerate}
-    \item The \emph{library arena} is defined to be an arena that is obtained by applying $\otimes$ to infinitely many copies of the constant choice arena and infinitely many copies of the  equality test arena.
+    \item The \emph{library arena} is obtained by applying $\otimes$ to infinitely many copies of the constant choice arena and infinitely many copies of the  equality test arena.
     \end{enumerate}
 \end{definition}
 
@@ -700,20 +663,30 @@ In the above, $\equiv$ refers to isomorphism of arenas, which is defined in the 
 \quad \equiv \quad
 \text{library arena} \otimes \text{library arena}.
 \end{align}
-
-
 We are now ready to give the final definition of arenas for functions between linear types, which takes into account the structure of the atoms.
 
-\begin{definition}[Arena for a function type]\label{def:arena-for-function-type} For linear types $X$ and $Y$, the arena of $X \to Y$ is 
+\begin{definition}[Function arena]\label{def:arena-for-function-type} For linear types $X$ and $Y$, the arena of $X \to Y$ is 
     \begin{align*}
     \text{(library arena)} \otimes \text{(dual arena of $X$)} \otimes \text{(arena of $Y$)}.
     \end{align*}
 \end{definition}
+This completes the game semantics of linear types and functions between them. We do not intend to give game semantics for higher-order types, such as functions on functions etc. As a result, we will only be using the dual once, namely for the arena of the input type. Also, note that the read/write operations will be used in a restricted way, as announced in \Cref{rem:read-write}, namely that the ``read'' moves will be owned by System and the ``write'' moves will be owned by Environment.  This is because the library arena has this property, the arena for $\atoms$ has this property, and all operations on arenas that we have defined preserve this property.
 
-This completes the game semantics of linear types and functions between them. We do not intend to give game semantics for higher order types, such as functions on functions etc. As a result, we will only be using the dual once, namely for the arena of the input type. Also, note that the read/write operations will be used in a restricted way, as announced in Footnote~\ref{footnote:read-write}, namely that the ``read'' moves will be owned by System and the ``write'' moves will be owned by Environment.  This is because the library arena has this property, the arena for $\atoms$ has this property, and all operations on arenas that we have defined preserve this property.
+\tito{todo say a few words on how we conclude}
+\begin{enumerate}
+    \item For every two linear types $X$ and $Y$, we  define an arena, which is a data structure that describes all possible interactions between players Environment and System that can arise when running a  single-use  function of type $X \to Y$;
+    \item  We will show how such strategies can be interpreted as single-use functions: to a strategy we will assign a single-use function of type $X \to Y$ that is represented by this strategy. This mapping will be partial, i.e.~some ill-behaved strategies will not represent any functions. 
+    \item We will show that the  set of strategies in an arena is  large enough to represent all single-use functions, but small enough to be orbit-finite. 
+    \item We will then strengthen this: not only is the set of strategies orbit-finite, but it can be equipped with the structure of a linear type, such that both evaluation and Currying will be single-use functions.
+\end{enumerate}
+
+The arenas from the first step of the plan will  be defined in two sub-steps. We begin by defining arenas and strategies for functions that do not use the structure of the atoms, i.e. constants and equality tests. This will be a fairly generic definition, almost identical to the classical game semantics for linear logic. Then we will extend the definition to cover the extra structure. 
+
 
 \section{Further topics}
 \label{sec:further-topics}
+
+\tito{cleanup + expand a bit}
 
 The same situation will happen  for vector spaces later in this paper. (monoidal instead of cartesian)
 
@@ -735,21 +708,6 @@ Conversely, our \Cref{thm:single-use-closed} might also be provable by represent
 
 
 \bibliography{bib}
-
-\appendix
-
-
-
-\input{beyond-equality}
-\input{beyond-equality-appendix}
-\input{two-way-automata}
-\input{two-way-appendix}
-\input{vector}
-\input{vector-appendix}
-
-
-
-
 
 
 \end{document}
