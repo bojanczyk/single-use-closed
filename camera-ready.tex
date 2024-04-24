@@ -180,7 +180,7 @@ The issue is that the \emph{finitely supported function space} from $X$ to $Y$ i
     \end{align*}
     If $\pi$ is the atom renaming that swaps Mark with Adam, then applying it to the function $f$ defined above gives the function $\pi(f)$ that has the same definition (or source code, if a programming intuition is to be followed), except that Mark is used instead of Adam.
 
-    In the case of $\atoms \to \atoms$, the finitely supported function space is not orbit-finite. Indeed, the condition $a \in \set{\text{John, Eve, Bill}}$ can be replaced by $a \in X$ for any finite set $X \subset \atoms$ of exceptional values, and two choices of $X$ of different cardinalities will give us two functions in different orbits. \exampleend
+    In the case of $\atoms \to \atoms$, the finitely supported function space is not orbit-finite. Indeed, the condition $a \in \set{\text{John, Eve, Bill}}$ can be replaced by $a \in X$ for any finite set $X \subset \atoms\setminus\{\text{Mark}\}$ of exceptional values, and two choices of $X$ of different cardinalities will give us two functions in different orbits. \exampleend
 \end{example}
 
 
@@ -313,7 +313,7 @@ Unfortunately, the proposal illustrated in Example~\ref{ex:decision-tree-types} 
 \begin{description}
     \item[evaluation:] a single-use function from $(X \Rightarrow Y) \times X$ to $Y$ which inputs a representation of a function and applies it to an argument;
     \item[composition:] a single-use function from $(X \Rightarrow Y) \times (Y \Rightarrow Z)$ to $(X \Rightarrow Z)$ which inputs the representations of two functions and returns a representation of their composition;
-    \item[currying:] for each single-use function from  $ X \times Y $ to $Z$, there should be a single-use function from $X$ to $Y \Rightarrow Z$ which inputs a first argument and returns a representation of the  partially applied function.
+    \item[currying (i.e.\ partial application):] for each single-use function from  $ X \times Y $ to $Z$, there should be a single-use function from $X$ to $Y \Rightarrow Z$ which inputs a first argument and returns a representation of the  partially applied function.
 \end{description}
 Only in the presence of all of these operations can we speak of a function space, and the corresponding category can be called closed. (Composition can be obtained through evaluation and currying, so the essential operations are evaluation and currying.) The following example shows that the currying operation is not single-use, and therefore the space of single-use functions as defined in this section is not closed.
 
@@ -435,7 +435,7 @@ In the very definition of the above category, there is a faithful functor to the
 The main technical result of this paper is that the category of single-use sets has function spaces, as stated in the following theorem.  The appropriate product will be $\otimes$, and not $\&$. Since the Cartesian product in our category is $\&$ and not $\otimes$, this means that the result we are targeting is symmetric monoidal closed with respect to $\otimes$, and not Cartesian closed.  For now, our theorem stops a bit short of saying that the category is monoidal closed, since several different elements of the function space might represent the same function; but we will come back to this in \Cref{sec:quotient-category}.
 
 \begin{theorem}\label{thm:single-use-closed}
-    Let $V$ and $W$ be objects (i.e.~linear types). There exists an object, denoted by  $\funspace V W$, and a morphism (i.e.~a partial single-use function)
+    Let $V$ and $W$ be objects (i.e.~linear types). There exists an object, denoted by  $\funspace V W$, and a morphism (i.e.~a single-use function)
     $\mathrm{eval} : (\funspace V W) \otimes V \to  W$
     with the following property. For every morphism
     $f : {X \otimes V} \to  W$
@@ -509,12 +509,20 @@ Before giving a formal definition of game semantics, we give simple example of t
     Consider now the interaction in the opposite direction $\leftarrow$. As we will see, System will be unable to react to the behavior of Environment, which demonstrates that there is no distributivity in this direction. The problem is that Environment can begin by requesting an element of type $X$, since the output type is $X \otimes (Y \& Z)$, while still reserving the possibility to request $Y \& Z$ in the future (because the tensor product $\otimes$ means that both output values need to be produced). To produce this element, System will need  choose one of the two coordinates in the input type $(X \otimes Y) \& (X \otimes Z)$, and any of these two  choices will be premature, since Environment can then request the opposite choice in the output type.  \exampleend
 \end{example}
 
-As illustrated in the above example, we will use a game to describe the possible behaviours of a function $X \to Y$. The game will be played in an arena, arising from the linear types $X$ and $Y$, which will tell us what moves are possible for the two players. In each arena, we will be interested in strategies for System, telling us how System should react to Environment's moves. Morally, such a strategy will say how the function reacts to requests in the output type $Y$ and values in the input type $X$. Some of these strategies will represent single-use functions, and we will show that all single-use functions are thus represented. 
+As illustrated in the above example, we will use a game to describe the possible behaviours of a function $X \to Y$. The game will be played in an arena, arising from the linear types $X$ and $Y$, which will tell us what moves are possible for the two players. In each arena, we will be interested in strategies for System, telling us how System should react to Environment's moves. Morally, such a strategy will say how the function reacts to requests in the output type $Y$ and values in the input type $X$.
+
+\subparagraph{Proof scheme for \Cref{thm:single-use-closed}.}
+
+In the remainder of this section, we define the arenas and strategies of our game semantics. Our main \Cref{thm:single-use-closed} will then follow from the two key properties below, that we establish in the technical appendix of the full version.
+\begin{description}
+    \item[Representation of single-use functions by strategies:] To a strategy in the arena for $X \to Y$, we will assign a single-use function of type $X \to Y$ that it represents. This mapping will be partial, i.e.~some ill-behaved strategies will not represent any functions. We will show that the set of strategies in the arena is large enough to represent all single-use functions.
+    \item[Representation of strategies by a linear type:] We shall build a linear type $X \Rightarrow Y$ which can represent all well-formed strategies on the arena for $X\to Y$. In particular, this implies that such strategies form an orbit-finite set. Furthermore, this linear type $X\Rightarrow Y$ will be equipped with single-use evaluation and currying functions, as required.
+\end{description}
 
 \subsection{Arenas and strategies without constants and equality tests}
 \label{sec:arenas-without-constants-and-equality-tests}
 
-We begin with a simpler version of the game semantics, in which the arenas and strategies will describe functions that are not allowed to perform equality tests, nor to use constants. These strategies will model functions such as the identity function $\atoms \to \atoms$, which directly passes its input to its output, but they  will not model the equality test $\atoms \otimes \atoms \to 1 + 1$, or the constant functions of type $1 \to \atoms$. The general idea is to use standard game semantics for linear logic, with an extra feature that we call \emph{register operations}. The register operations will be used to model the way in which atoms are passed from the input to output. For example, in the identity function,  Environment will  write the input atom into the register, and then player System will read the output atom from that register. The following definition of an arena is based on the definition from \cite[p.~4]{abramsky2013semantics}, slightly
+We begin with a simpler version of the game semantics, in which the arenas and strategies will describe functions that are not allowed to perform equality tests, nor to use constants. These strategies will model functions such as the identity function $\atoms \to \atoms$, which directly passes its input to its output, but they  will not model the equality test $\atoms \otimes \atoms \to 1 + 1$, or the constant functions of type $1 \to \atoms$. The general idea is to use standard game semantics for linear logic, with an extra feature that we call \emph{register operations}. The register operations will be used to model the way in which atoms are passed from the input to output. For example, in the identity function,  Environment will write the input atom into the register, and then System will read the output atom from that register. The following definition of an arena is based on the definition from \cite[p.~4]{abramsky2013semantics}, slightly
 adapted for the context of this paper:
 \begin{definition}[Arena] \label{def:arena}
     An \emph{arena} consists of:
@@ -575,6 +583,14 @@ We hope that the above example explains some intuitions about how arenas describ
 \end{definition}
 In the above definition, we only described the behaviour of $\atoms$ when viewed as an output type. To get the input type, where the players are swapped and read is swapped with write, we will use duality, which is another operation on arenas. This operation is defined below, together with other operations that correspond to the type constructors.   
 
+\begin{figure}
+    \hspace{-0.3cm}\mypicnocenter{9}\hspace{-1.4cm}
+    \mypicnocenter{7}\hspace{-0.2cm}
+            \mypicnocenter{8}
+    \caption{\label{fig:arena-constructors} Pictures of the operations $A\otimes B$, $A+B$, $A\&B$ and $A\otimes B$ respectively on arenas.\\
+    The picture for $\otimes$  is less useful than the next two, since the root node of the tree is not a player, but a node labelled by $\otimes$. The intuition is that the game is played in parallel on both arenas, and therefore a position in it can be visualized as a pair of positions in the two arenas.}
+\end{figure}
+        
 \begin{definition}\label{def:composition-of-arenas}
     Let  $A$ and $B$ be arenas. We define the following arenas (see also Figure~\ref{fig:arena-constructors}):
         \begin{description}
@@ -589,18 +605,10 @@ In the above definition, we only described the behaviour of $\atoms$ when viewed
             interleaved sequences. (This construction is based on \cite[p.7]{abramsky2013semantics}.) 
         \end{description} 
 \end{definition}
+The tensor product $\otimes$ makes sense for arbitrary families of arenas $(A_i)_{i\in I}$ (the above being the case $|I|=2$) using infinitary disjoint unions. This will prove useful in \Cref{sec:arenas-with-constants-and-equality-tests}.
+
 Equipped with the above definitions, we  present our first attempt at assigning arenas to types. In the second item of the following definition, we use the name \emph{library-less}, because our final definition of the arena for a function type, as presented in the next section, will be equipped with an extra feature that will be called a library. 
 
-\begin{figure}
-    \hspace{-0.3cm}\mypicnocenter{9}\hspace{-1.4cm}
-    \mypicnocenter{7}\hspace{-0.2cm}
-            \mypicnocenter{8}
-    \caption{\label{fig:arena-constructors} Pictures of the operations $A\otimes B$, $A+B$, $A\&B$ and $A\otimes B$ respectively on arenas.\\
-    The picture for $\otimes$  is less useful than the next two, since the root node of the tree is not a player, but a node labelled by $\otimes$. The intuition is that the game is played in parallel on both arenas, and therefore a position in it can be visualized as a pair of positions in the two arenas.}
-\end{figure}
-
-
-        
 
 \begin{definition}\label{def:library-less} Let $X$ and $Y$ be linear types.
     \begin{itemize}
@@ -672,34 +680,72 @@ We are now ready to give the final definition of arenas for functions between li
 \end{definition}
 This completes the game semantics of linear types and functions between them. We do not intend to give game semantics for higher-order types, such as functions on functions etc. As a result, we will only be using the dual once, namely for the arena of the input type. Also, note that the read/write operations will be used in a restricted way, as announced in \Cref{rem:read-write}, namely that the ``read'' moves will be owned by System and the ``write'' moves will be owned by Environment.  This is because the library arena has this property, the arena for $\atoms$ has this property, and all operations on arenas that we have defined preserve this property.
 
-\tito{todo say a few words on how we conclude}
-\begin{enumerate}
-    \item For every two linear types $X$ and $Y$, we  define an arena, which is a data structure that describes all possible interactions between players Environment and System that can arise when running a  single-use  function of type $X \to Y$;
-    \item  We will show how such strategies can be interpreted as single-use functions: to a strategy we will assign a single-use function of type $X \to Y$ that is represented by this strategy. This mapping will be partial, i.e.~some ill-behaved strategies will not represent any functions. 
-    \item We will show that the  set of strategies in an arena is  large enough to represent all single-use functions, but small enough to be orbit-finite. 
-    \item We will then strengthen this: not only is the set of strategies orbit-finite, but it can be equipped with the structure of a linear type, such that both evaluation and Currying will be single-use functions.
-\end{enumerate}
+As said before, the rest of the proof of \Cref{thm:single-use-closed} takes place in the technical appendix.
 
-The arenas from the first step of the plan will  be defined in two sub-steps. We begin by defining arenas and strategies for functions that do not use the structure of the atoms, i.e. constants and equality tests. This will be a fairly generic definition, almost identical to the classical game semantics for linear logic. Then we will extend the definition to cover the extra structure. 
+\section{Beyond equality}
+\label{sec:beyond-equality}
+
+So far, we have studied the case when the atoms are equipped with equality only. Consider now a more general case: let $\atoms$ be any relational structure, i.e.~any set equipped with relations (but not functions). For example, we could use the rational numbers with their linear order. Another example would be Presburger arithmetic, i.e.~$(\Nat,+)$. Since we want to have relations only, we think of addition as a ternary relation $x + y =z$. The construction from Section~\ref{sec:single-use-sets} of the single-use category can be generalized to this case; and not only is the definition of the category generic, but the same is true for  the proof that function spaces exist.
+
+\begin{definition}[Single-use functions over a relational structure]\label{def:single-use-category-relational-structures}
+    Let $\atoms$ be a relational structure. The \emph{single-use category over $\atoms$} is defined in the same way as in Definition~\ref{def:single-use-category}, except that the list of prime functions is extended with one prime function  $\atoms^n \to 1 + 1$ 
+        for every $n$-ary relation in the vocabulary of $\atoms$. (Here, the power $\atoms^n$ uses $\otimes$.)
+\end{definition}
+\begin{theorem}\label{thm:single-use-closed-relational-structures}
+    Consider a relational structure $\atoms$, in which for every $k \in \set{0,1,\ldots}$ there are finitely many relations of arity $k$. Then the single-use category over $\atoms$ satisfies the weak universal property stated in \Cref{thm:single-use-closed}.
+\end{theorem}
+In the above statement, ``weak'' alludes to the non-uniqueness of currying; we could again get a symmetric monoidal closed category by performing the quotient construction of \Cref{sec:quotient-category}.
+
+The theorem is proved in the same way as Theorem~\ref{thm:single-use-closed}.  The assumption on the vocabulary is used to ensure that in the corresponding game semantics (cf.~\Cref{sec:game-semantics}), there are finitely available moves in any given moment, because the vocabulary can only be queried up to the maximal number of atoms in the input, due to the single-use restriction.
+
+Note that this  theorem can be applied to any relational structure, including undecidable ones. Clearly, there must be some benefit from assuming that the structure has a decidable first-order theory, which means that there is an algorithm which checks if a first-order sentence is true in the structure. 
+The benefit is that we can check if two morphisms are equal, as expressed in the following theorem, whose assumption applies to structures such as Presburger arithmetic, or the real field $(\mathbb R, +, \cdot, \leq)$.
+
+\begin{theorem}\label{thm:first-order-decidable}
+    Consider a relational structure $\atoms$, in which for every $k \in \set{0,1,\ldots}$ there are finitely many relations of arity $k$. If this structure has a decidable first-order theory, then there is an algorithm for the following problem:
+    \begin{description}
+        \item[Input:] Two morphisms, described by expressions using prime functions and combinators.
+        \item[Question:] Are they the same morphism?
+    \end{description}
+\end{theorem}
+
 
 
 \section{Further topics}
 \label{sec:further-topics}
 
-\tito{cleanup + expand a bit}
+For this final section, all proofs are in the technical appendix.
 
-The same situation will happen  for vector spaces later in this paper. (monoidal instead of cartesian)
+\subparagraph{Two-way automata.}
 
-Along the way, we provide examples of how the category can be useful in automata theory. Our xsmain example is converting a deterministic automaton into a monoid, but another example is modelling two-way deterministic automata, and deciding their emptiness. 
+\Cref{thm:first-order-decidable} gives us a reasonable category of single-use functions over a relational structure with a decidable first-order theory. 
+However, the latter property is not the only one needed to ensure that the category is appropriate to automata. If we want to model automata and their decision procedures, we will also need to execute certain fixpoint algorithms, as explained in~\cite{bojanczyk_slightly2018}. We illustrate this through the following theorem:
+\begin{theorem}\label{thm:two-way-automata}
+    Let $\atoms$ be an \emph{oligomorphic} structure with a decidable first-order theory. Then the emptiness problem is decidable for single-use deterministic two-way automata over $\atoms$.
+\end{theorem}
+Oligomorphism is a standard assumption in the theory of sets with atoms~\cite{bojanczyk_slightly2018}, used to ensure that the notion of orbit-finite set is meaningful. Examples of oligomorphic structures include the atoms with equality only, the rational numbers with their linear order, and the Rado graph. Nonexamples include Presburger arithmetic and the real field. 
 
-An important property of our construction is that it is generic. In fact, instead of having a set that is equipped with equality only, one could apply the construction to any relational structure, e.g.~real arithmetic $(\mathbb R, +, \times, <)$, as long as the structure is given using relations and not functions. Under further assumptions on the structure, such as having a decidable first-order theory (which holds for real arithmetic) and being oligomorphic (which does not hold for real arithmetic but does hold for the rational numbers with their linear order), further benefits in the resulting single-use category can be derived, such as having an emptiness algorithm for deterministic two-way automata. 
+We show that the single-use category over an oligomorphic structure $\atoms$ is \emph{traced} with respect to the coproduct $+$, and use this to model deterministic two-way automata over $\atoms$. The idea that traced monoidal categories are a natural setting for two-way automata was already noted in~\cite{hines2003categorical}.
 
-Finally, as a minor contribution, we present an alternative solution for the problem of function spaces, which is  to use vector spaces of orbit-finite dimension. This is a minor contribution as far as the present paper is concerned, because the technical tools were developed already in~\cite{bojanczykKM21OrbitFiniteVector}, and the only contribution -- if any -- of this paper is one of perspective, namely framing it as a symmetric monoidal closed category. An advantage of the vector space category is its simplicity, and the fact that it is ``bigger'' in the following sense. The two solutions for function spaces discussed in this paper, namely the single-use solution and the vector space solution, sit on both sides of the classical category of orbit-finite sets, as witnessed by two faithful functors, one from the single-use category to the orbit-finite category, and one from the orbit-finite category to the vector space category. 
-The generality of vector spaces comes at a price, though. As mentioned before, the single-use construction can be applied to any structure, and the orbit-finite benefits can be derived for all $\omega$-categorical structures (this is the standard assumption in the study of orbit-finiteness). In contrast, the vector space construction is more brittle, and it fails for certain $\omega$-categorical  structures such as the Rado graph.   Another disadvantage of the vector space category is that it is not traced with respect to the coproduct, unlike the single-use category, which precludes the applications to two-way automata.
+\subparagraph{Orbit-finite dimensional vector spaces.}
+
+An alternative solution for the problem of function spaces -- our central motivation in this paper -- is to use vector spaces of orbit-finite dimension. The technical tools for this were developed already in~\cite{bojanczykKM21OrbitFiniteVector}; our contribution here is mainly one of perspective, namely framing it as a symmetric monoidal closed category.
+\begin{theorem}\label{thm:orbit-finite-vector-space-closed} The category of orbit-finitely spanned vector spaces is symmetric monoidal closed, with respect to the tensor product.
+\end{theorem}
+\begin{remark}
+    A similar result was observed in~\cite[Theorem 3.8]{przybylek2024note}, but using the smaller category of vector spaces that admit an orbit-finite basis.   
+\end{remark}
+An advantage of the vector space category is its simplicity, and the fact that it is ``bigger'' in the following sense. The two solutions for function spaces discussed in this paper, namely the single-use solution and the vector space solution, sit on both sides of the classical category of orbit-finite sets, as witnessed by two faithful functors, one from the single-use category to the orbit-finite category, and one from the orbit-finite category to the vector space category. 
+
+However, there are two limitations of the orbit-finitely spanned vector spaces. 
+
+First, the existence of function spaces is dependent on the choice of atoms. Theorem~\ref{thm:orbit-finite-vector-space-closed}  works when the atoms have equality only, and it also works when the atoms are equipped with a total order. This is because the dual spaces are orbit-finitely spanned in these cases, as proved in~\cite[Corollary VI.5]{bojanczykKM21OrbitFiniteVector}. However, this is no longer the case for other choices of  atoms, such as the Rado graph, see~\cite[Example 9]{bojanczykKM21OrbitFiniteVector}. This is in contrast to the single-use category, where the existence of function spaces is independent of the choice of atoms. 
+
+A second limitation is that unlike the single-use category (cf.\ \Cref{thm:two-way-automata}), the vector space category does not support two-way automata. This is because this category generalizes the orbit-finite category (i.e.~it admits a faithful functor from it), and in the orbit-finite category emptiness is undecidable for deterministic two-way automata~\cite[Theorem 5.3]{nevenFiniteStateMachines2004}. This precludes the kind of traced construction that we did in the single-use category. This issue appears already without atoms: the category of finite-dimensional vector spaces is not traced with respect to the sum $\oplus$ of vector spaces. 
 
 \subparagraph{Related work: categories and $\lambda$-calculus.}
 
-There have been several works using category theory to generalize classical operations on automata, such as the coalgebraic ``generalized powerset construction''~\cite{DBLP:journals/corr/abs-1302-1046}. The closest to the philosophy we exposed in the introduction might be the setting introduced by Colcombet and Petrişan~\cite{colcombet2020automata}, where automata in different categories are compared. Within this setting, Nguy{\~{ê}}n and Pradic have studied some properties of automata over symmetric monoidal closed categories~\cite[Sections~1.2.3~and~4.7--4.8]{titoPhD}.
+There have been several works using category theory to generalize classical operations on automata, such as the coalgebraic ``generalized powerset construction''~\cite{DBLP:journals/corr/abs-1302-1046}. The closest to the philosophy that this paper might be the work of Colcombet and Petrişan~\cite{colcombet2020automata}: it introduces a setting where automata over different categories may be studied and compared (see~\cite{ColcombetPS21,Aristote24} for applications). Within this setting, Nguy{\~{ê}}n and Pradic have investigated some properties of automata over symmetric monoidal closed categories~\cite[Sections~1.2.3~and~4.7--4.8]{titoPhD}.
 
 The latter emerged as part of their research on ``implicit automata''~\cite{IATLC,IATLC2,titoPhD,pradic2024implicit}, which is about relating the expressive power of automata and typed $\lambda$-calculi. In~\cite{IATLC2,titoPhD}, a monoidal closed category of single-use assignments on string-valued registers is built and used to relate a register-based string transducer model to a $\lambda$-calculus with linear types. Indeed, symmetric monoidal closed categories are famous for providing denotational semantics for the linear $\lambda$-calculus. Similarly, our results here could serve to characterize the languages of words with atoms from~\cite{bojanczykstefanski2020} via some typed $\lambda$-calculus.
 
@@ -708,6 +754,7 @@ Conversely, our \Cref{thm:single-use-closed} might also be provable by represent
 
 
 \bibliography{bib}
+
 
 
 \end{document}
