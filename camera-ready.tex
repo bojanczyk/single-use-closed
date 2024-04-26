@@ -31,12 +31,12 @@
 
 
 
-\author{Mikołaj Bojańczyk}{University of Warsaw, Poland \and \url{https://www.mimuw.edu.pl/~bojan/}}{bojan@mimuw.edu.pl}{}{}%{(Optional) author-specific funding acknowledgements}
+\author{Mikołaj Bojańczyk}{University of Warsaw, Poland \and \url{https://www.mimuw.edu.pl/~bojan/}}{bojan@mimuw.edu.pl}{}{Supported by Polish NCN Maestro Grant 2022/46/A/ST6/00072}%{(Optional) author-specific funding acknowledgements}
 
 \author{Lê Thành Dũng (Tito) Nguy\~{\^{e}}n}{École normale supérieure de Lyon, France \and \url{https://nguyentito.eu/}}{nltd@nguyentito.eu}{https://orcid.org/0000-0002-6900-5577}{Supported by the LABEX MILYON (ANR-10-LABX-0070) of Université de Lyon, within the program ``France 2030'' (ANR-11-IDEX-0007) operated by the French National Research Agency (ANR).}
 
 
-\author{Rafał Stefański}{University of Warsaw, Poland}{rafal.stefanski@mimuw.edu.pl}{}{}%{(Optional) author-specific funding acknowledgements}
+\author{Rafał Stefański}{University of Warsaw, Poland}{rafal.stefanski@mimuw.edu.pl}{}{Supported by EPSRC project EP/V040944/1 ``Resources in Computation''. }%{(Optional) author-specific funding acknowledgements}
 
 
 \authorrunning{M.~Bojańczyk, L.~T.~D.~Nguy\~{\^{e}}n and R.~Stefański} %TODO mandatory. First: Use abbreviated first/middle names. Second (only in severe cases): Use first author plus 'et al.'
@@ -57,7 +57,8 @@
 
 %\funding{(Optional) general funding statement \dots}%optional, to capture a funding statement, which applies to all authors. Please enter author specific funding statements as fifth argument of the \author macro.
 
-\acknowledgements{L.~T.~D.\ Nguy\~{\^{e}}n would like to thank Clovis Eberhart and Cécilia Pradic for their ongoing collaboration on ``implicit automata for data words'' (cf.~\cite[\S1.4.4]{titoPhD}), which inspired some ideas in this paper.}%optional
+\acknowledgements{L.~T.~D.\ Nguy\~{\^{e}}n would like to thank Clovis Eberhart and Cécilia Pradic for their ongoing collaboration on ``implicit automata for data words'' (cf.~\cite[\S1.4.4]{titoPhD}), which inspired some ideas in this paper.
+                  R. Stefański would like to thank Samson Abramsky for introducing him to the beautiful world of game semantics and suggesting to study it in the context of this paper.}%optional
 
 \nolinenumbers %uncomment to disable line numbering
 %\hideLIPIcs
@@ -96,13 +97,13 @@ The class of orbit-finite sets is a class of sets that contains all finite sets 
 The notion of orbit-finiteness can be seen as an attempt to find an appropriate notion of finiteness for the  nominal sets of Gabbay and Pitts~\cite{PittsAM:nomsns}.  This attempt emerged from the study of computational models such as monoids~\cite{bojanczykNominalMonoids2013} and automata~\cite{bojanczykAutomataTheoryNominal2014} over infinite alphabets. Let us illustrate orbit-finiteness using an automaton example. 
 
 \begin{example}[An orbit-finite automaton]\label{ex:first-letter-repeats}
-    Let  $L \subseteq \atoms^*$ be the language of  words in which the letter from the first position does not appear again. This language contains John $\cdot$ Mark $\cdot$ Mark $\cdot$ Eve, because John does not reappear, but it does not contain John $\cdot$ Mark $\cdot$ John. To recognize this language, we can use a deterministic automaton, which uses its state to remember the first letter. In this automaton, the input alphabet is $\Sigma = \atoms$ and  the state space is $Q = 1 + 1 + \atoms$. In this state space, there are two special states, namely the initial state and a rejecting error state, and furthermore there is one state for each atom $a \in \atoms$, which represents a situation where the first letter was $a$ but it has not been seen again yet. This state space is infinite; but it is orbit-finite, since each of the three components in $Q$ represents a single orbit, with the orbits of the $1$ components being singletons.\exampleend
+    Let  $L \subseteq \atoms^*$ be the language of  words in which the letter from the first position does not appear again. This language contains John $\cdot$ Mark $\cdot$ Mark $\cdot$ Eve, because John does not reappear, but it does not contain John $\cdot$ Mark $\cdot$ John. To recognize this language, we can use a deterministic automaton, which uses its state to remember the first letter. In this automaton, the input alphabet is $\Sigma = \atoms$ and  the state space is $Q = 1 + 1 + \atoms$. In this state space, there are two special states, namely the initial state and a rejecting error state, and furthermore there is one state for each atom $a \in \atoms$, which represents a situation where the first letter was $a$ but it has not been seen again yet. This state space is infinite; but it is orbit-finite, since each of the three components in $Q$ represents a single orbit.\exampleend
 \end{example}
 
 Orbit-finite sets have many advantages, which ensure that they are a good setting for automata theory, and discrete mathematics in general. For example, an orbit-finite set can be represented in a finite way~\cite{bojanczyk_slightly2018}, which ensures that it becomes meaningful to talk about algorithms that input orbit-finite sets, such as an emptiness check for an automaton. Also, orbit-finite sets are closed under taking disjoint unions and products, which ensures that natural automata constructions, such as the union of two nondeterministic automata or the product of two deterministic automata can be performed.
 %  (Closure of orbit-finite sets under products is not immediately obvious, for example the set $\atoms$ has one orbit, but the set $\atoms^3$ has five orbits.)
 
-However, orbit-finite sets do not have all the closure properties of finite sets. Notably missing is the powerset construction, and more generally taking function spaces. For example, if we look at the powerset of $\atoms$, then this powerset will not be orbit-finite, since already the finite subsets give infinitely many orbits (two finite subsets of different sizes will be in different orbits). The lack of powersets means that one cannot do the subset construction from automata theory, and in particular deterministic and nondeterministic automata are not equivalent. This non-equivalence was known from the early days of automata for infinite alphabets~\cite{kaminskiFiniteMemoryAutomata1994}, and in fact, some decision problems, such as equivalence, are decidable for deterministic automata but undecidable for nondeterministic automata~\cite{nevenFiniteStateMachines2004}. Another construction that fails is converting a deterministic automaton into a monoid~\cite[p.~221]{bojanczykNominalMonoids2013}; this is because function spaces on orbit-finite sets are no longer orbit-finite, as explained in the following example. 
+However, orbit-finite sets do not have all the closure properties of finite sets. Notably missing is the powerset operation, and more generally taking function spaces. For example, if we look at the powerset of $\atoms$, then this powerset will not be orbit-finite, since already the finite subsets give infinitely many orbits (two finite subsets of different sizes will be in different orbits). The lack of powersets means that one cannot do the subset construction from automata theory, and in particular deterministic and nondeterministic automata are not equivalent. This non-equivalence was known from the early days of automata for infinite alphabets~\cite{kaminskiFiniteMemoryAutomata1994}, and in fact, some decision problems, such as equivalence, are decidable for deterministic automata but undecidable for nondeterministic automata~\cite{nevenFiniteStateMachines2004}. Another construction that fails is converting a deterministic automaton into a monoid~\cite[p.~221]{bojanczykNominalMonoids2013}; this is because function spaces on orbit-finite sets are no longer orbit-finite, as explained in the following example. 
 
 \begin{example}[Failure of the monoid construction]\label{ex:first-letter-repeats-monoid}
     Let us show that the  automaton from Example~\ref{ex:first-letter-repeats} cannot be converted into a monoid. The standard construction would be to define the monoid as the subset $M \subseteq Q \to Q$ of all state transformations, namely the subset generated by individual input letters. 
@@ -139,7 +140,9 @@ This approach was pursued in~\cite{stefanski-phd}, in which a \emph{category} of
  \subparagraph{Contributions of this paper.}
  The main contribution of this paper is to propose a notion of single-use sets and functions, which extends the proposal from~\cite{stefanski-phd}, but which is rich enough to be closed under taking function spaces. More formally, we propose a category of single-use functions between orbit-finite sets equipped with additional metadata, and we prove that a suitable quotient of this category is symmetric monoidal closed (\Cref{thm:quotient-closed}).
 
-The main idea is to follow the tradition of linear types, and to  distinguish two kinds of products, namely $X \otimes Y$ and $X \& Y$. Thanks to this distinction, the function space can be built so that the appropriate operations on functions, namely application and currying, can be implemented in a single-use way.
+
+The main idea is to follow the tradition of linear types, and extend the type system from \cite{stefanski-phd} with a new type constructor $\&$. This way we can distinguish between two kinds of products
+namely $X \otimes Y$ (in \cite{stefanski-phd} denoted as $X \times Y$) and $X \& Y$. Thanks to this distinction, the function space can be built so that the appropriate operations on functions, namely application and currying, can be implemented in a single-use way.
 
 Our proposed category is strongly inspired by linear types, and the proof that it admits function spaces uses a form of \emph{game semantics} -- a tool that we take from programming language theory. However, as far as we know, it is an original idea to have an infinite but orbit-finite base type $\atoms$, and to observe that all constructions in game semantics are consistent with orbit-finiteness. We believe that the resulting category deserves further study, and that it is an interesting and non-trivial example of a category representing ``finite'' objects.
 
@@ -167,7 +170,7 @@ Typical examples of orbit-finite sets are polynomial expressions such as $\atoms
 \label{sec:orbit-finite-function-spaces}
 As mentioned above, orbit-finite sets can be seen as  a certain generalization of finite sets. They allow some, but not all, operations that can usually be done on finite sets. For example, orbit-finite sets are closed under disjoint unions $X + Y$ and products $X \times Y$.  Another good property is that an orbit-finite set has only finitely many equivariant subsets (an equivariant subset is one that is invariant under the action of atom permutations). This is because an equivariant subset is a union of some of the finitely many orbits. This accounts for some of the good computational properties of orbit-finite sets.
 
-If $X$ and $Y$ are orbit-finite sets, the set of equivariant functions $X \to Y$ is always literally finite, because it is an equivariant subset of $X\times Y$. However, as we have seen in Example~\ref{ex:first-letter-repeats-monoid}, when converting an automaton to a monoid, we want to use the \emph{partial applications} $\delta(-,a)$ of the transition function $\delta : Q \times \Sigma \to Q$; while $\delta$ is invariant, in general, $\delta(-,a)$ is not. But it is \emph{finitely supported}, i.e.~invariant under all atom renamings that fix some finite set of atoms that depends only on the function.
+If $X$ and $Y$ are orbit-finite sets, the set of equivariant functions $X \to Y$ is always literally finite, because it is an equivariant subset of $X\times Y$. However, as we have seen in Example~\ref{ex:first-letter-repeats-monoid}, when converting an automaton to a monoid, we want to use the \emph{partial applications} $\delta(-,a)$ of the transition function $\delta : Q \times \Sigma \to Q$; while $\delta$ is equivariant, in general, $\delta(-,a)$ is not. But it is \emph{finitely supported}, i.e.~invariant under all atom renamings that fix some finite set of atoms that depends only on the function.
 The issue is that the \emph{finitely supported function space} from $X$ to $Y$ is not orbit-finite.
 
 \begin{example}\label{ex:atoms-to-atoms}
@@ -352,7 +355,12 @@ To solve the problems above, we introduce a more refined type system, which is b
 Under this definition, the problems from Example~\ref{ex:currying-not-single-use} will be solved, at least for the particular type considered in that example. However, by introducing a new type constructor, we will have to redefine the single-use functions, and then we will have to give a representation of functions that allow this new type constructor, without incurring the need to add any other new type constructors. This is what we will do now.
 
 \begin{definition}[Linear types]\label{def:datatypes}
-    A \emph{linear type} is any expression constructed from the atomic types $1$ and $\atoms$ using three\footnote{We set up our type system without using the multiplicative disjunction $\rotatebox[origin=c]{180}{\&}$ of linear logic -- morally, we take our inspiration from intuitionistic linear logic, rather than classical linear logic.} binary type constructors $+, \&$ and $\otimes$.
+    A \emph{linear type} is any expression constructed from the atomic types $1$ and $\atoms$ using three\footnote{
+    We set up our type system without using the multiplicative disjunction $\rotatebox[origin=c]{180}{\&}$ of linear logic.
+    This is a common pracice in linear type systems \cite{wadler1990linear}, as they are based on intuitionistic linear logic,
+    rather than classical linear logic. It is also worth mentioning that our type system might have been also described an \emph{affine} type system \cite{asperti1998light},
+    as we are going to allow discarding the unused values of $\atoms$. However, since there is no risk of confusion, 
+    we have decided to use the name \emph{linear types} for the sake of simplicity.} binary type constructors $+, \&$ and $\otimes$.
 \end{definition}
 In our linear types, it is only the products that are differentiated, while  $+$ comes in only one version. 
     Here is the intuitive explanation of the difference between the two kinds of products, following Girard~\cite[p.~2]{girard1995advances}. Having a pair $x \otimes y$ is like having the ability of using both components $x$ and $y$. On the other hand, having a pair $x \& y$ is like having the ability to use one of the two components, at our choice, but not both at once. For example, the input type of the equality test will be $\atoms \otimes \atoms$ not $\atoms \& \atoms$, since the test will need to consume both arguments. This intuition can only go so far; for example, it is not entirely clear what ``our choice'' means. We revisit this intuition in \Cref{sec:game-semantics}, where game semantics will be used to indicate who makes which choices. 
@@ -501,8 +509,9 @@ Before giving a formal definition of game semantics, we give simple example of t
 
 \begin{example}\label{ex:amp-otimes-distr}
     Consider the two types $X \otimes (Y \& Z)$ and $(X \otimes Y) \& (X \otimes Z)$.
-
-    Among the prime functions in Table~\ref{fig:prime-morphisms-with-with}, we find distributivity in the direction $\rightarrow$, but not in the direction $\leftarrow$. We explain this asymmetry using the interaction between two players System and Enviroment.
+    Among the prime functions in Table~\ref{fig:prime-morphisms-with-with}, we find distributivity in the direction $\rightarrow$, but not in the direction $\leftarrow$. We explain this asymmetry using the interaction between two players System and Enviroment\footnote{
+        Observe that in Table~\ref{fig:prime-morphisms-without-with} the $(+, \otimes)$-distributivity is also only given in one direction. In that case the inverse is, in fact, a single-use function, as it can be constructed from prime functions.
+    }.
 
     Let us first consider the interaction in the  direction $\rightarrow$. The player Environment begins by requesting an output. Since this output is of type $(X \otimes Y) \& (X \otimes Z)$, this means that Environment can choose to request either of the two types  $X \otimes Y$ and $X \otimes Z$. Suppose that Environment requests $X \otimes Y$. Now System needs to react, and produce two elements: one of type $X$ and one of type $Y$. Both can be obtained from the input; for the second one player System can choose how to resolve the input $Y \& Z$ to get the appropriate value. 
 
@@ -550,12 +559,14 @@ In this paper, all the strategies that we consider shall be for player System.
 Conditions \ref{item:sys-ext} and \ref{item:env-ext}, which are standard in game semantics (cf.~\cite[p.~5]{abramsky2013semantics}),  guarantee that the strategy is deterministic and only ``ends'' when 
 Environment has no moves to play.  Let us now comment on the last two conditions, which are not standard.
 \begin{itemize}
-    \item The fourth condition is motivated by the idea that we study ``finite'' types,  and there will be no need for unbounded computations. 
+    \item The fourth condition is motivated by the idea that we study ``finite'' types,  and there will be no need for unbounded computations\footnote{This condition is only meaningful, if there 
+          are arenas that admit plays of unbounded lenght. Since, in this section, all the arenas will be finite this condition will be vacously true. It will only become relevant in 
+            Section~\ref{sec:arenas-with-constants-and-equality-tests}, once we introduce arenas with constants and equality tests.}
     \item The last condition will be called the  \emph{immediate read condition}. It ensures that there is matching between ``read'' and ``write'' moves in plays that do not end with write. Since ``write'' will always be owned by Environment, the immediate read condition will ensure a matching between ``write'' and ``read'' moves.
 \end{itemize}
-We now show how to associate to each linear type a corresponding arena, and also how to associate an arena to a function type $X \to Y$ (which is not a linear type in the sense of \Cref{def:datatypes}) between linear types $X$ and $Y$. The arenas that we will construct so far will not be our final proposal, since the corresponding strategies will not be able to use constants or perform equality tests; this will be fixed in Section~\ref{sec:arenas-with-constants-and-equality-tests}. Before giving a formal definition, we begin with a simple example.
+We now show how to associate to each linear type a corresponding arena, and also how to associate an arena to a function type $X \to Y$ (which is not a linear type in the sense of \Cref{def:datatypes}) between linear types $X$ and $Y$. The arenas that we construct so far will not be our final proposal, since the corresponding strategies will not be able to use constants or perform equality tests; this will be fixed in Section~\ref{sec:arenas-with-constants-and-equality-tests}. Before giving a formal definition, we begin with a simple example.
 \begin{example}\label{ex:identity-function-without-equality-tests-and-constants}
-    We define an arena for $\atoms \to \atoms$. It will be rather impoverished, since the  only allowed strategy in it will correspond to the identity function. However, this is consistent with the stage that we are at, where we only consider functions that do not use constants or perform equality tests; for such functions $\atoms\to\atoms$ the only possibility is the identity.
+    We define an arena for $\atoms \to \atoms$. It will be rather impoverished, since the  only allowed strategy in it will correspond to the identity function. However, this is consistent with the stage that we are at, where we only consider functions that do not use constants or perform equality tests; for such functions of type $\atoms\to\atoms$ the only possibility is the identity.
 
      The arena describes the following interaction between the two players: Environment  requests an output, then System requests an input, then Environment grants the input, and finally System grants the output by forwarding the input that was granted. It has 4 moves:
     \begin{center}
@@ -602,12 +613,12 @@ In the above definition, we only described the behaviour of $\atoms$ when viewed
             (This construction differs slightly from the one from \cite[Exercise~1.10]{abramsky2013semantics} -- this is because we want to keep it analogous to the construction for $A + B$.)
             \item[$A \otimes B$] The moves in this arena are the disjoint union of the moves of $A$ and $B$, with inherited owners and register operations. A play in this arena is any shuffle of plays in the two arenas $A$ and $B$. (A shuffle of two words is any word obtained by interleaving them, e.g.~shuffles of ``abc'' and ``123'' include ``a1b23c'' and ``12ab3c'').
             By Definition~\ref{def:arenas-without-atoms-or-functions}, we require that the owners of the move alternate in the 
-            interleaved sequences. (This construction is based on \cite[p.7]{abramsky2013semantics}.) 
+            interleaved sequences. See \cite[p.7]{abramsky2013semantics}.
         \end{description} 
 \end{definition}
-The tensor product $\otimes$ makes sense for arbitrary families of arenas $(A_i)_{i\in I}$ (the above being the case $|I|=2$) using infinitary disjoint unions. This will prove useful in \Cref{sec:arenas-with-constants-and-equality-tests}.
+%The tensor product $\otimes$ makes sense for arbitrary families of arenas $(A_i)_{i\in I}$ (the above being the case $|I|=2$) using infinitary disjoint unions. This will prove useful in \Cref{sec:arenas-with-constants-and-equality-tests}.
 
-Equipped with the above definitions, we  present our first attempt at assigning arenas to types. In the second item of the following definition, we use the name \emph{library-less}, because our final definition of the arena for a function type, as presented in the next section, will be equipped with an extra feature that will be called a library. 
+Equipped with the above definitions, we  present our first attempt at assigning arenas to types. In the second item of the following definition, we use the name \emph{library-less}, because our second and final definition of the arena for a function type, as presented in the next section, will be equipped with an extra feature that will be called a library. 
 
 
 \begin{definition}\label{def:library-less} Let $X$ and $Y$ be linear types.
@@ -629,7 +640,7 @@ In principle the construction from the second item in \Cref{def:library-less} ca
  
 \subsection{Arenas and strategies with constants and equality tests}
 \label{sec:arenas-with-constants-and-equality-tests}
-In Section~\ref{sec:arenas-without-constants-and-equality-tests}, we described arenas for functions that did not use the structure of the atoms, i.e.~constants and equality tests. We now show how these arenas can be extended to cover this structure. The general idea is to equip the arenas with an extra part, which we call the \emph{library},  that describes the allowed operations on the atoms. (The library as we present it here only contains functions for equality and constants, but in the proof of Theorem~\ref{thm:single-use-automata-relational-structures}, we can use a library that has other relations beyond equality. )
+In Section~\ref{sec:arenas-without-constants-and-equality-tests}, we described arenas for functions that did not use the structure of the atoms, i.e.~constants and equality tests. We now show how these arenas can be extended to cover this structure. The general idea is to equip the arenas with an extra part, which we call the \emph{library},  that describes the allowed operations on the atoms. (The library as we present it here only contains functions for equality and constants, but in the proof of Theorem~\ref{thm:single-use-closed-relational-structures}, we will use a library that has other relations beyond equality. )
 
 
 
@@ -644,7 +655,9 @@ In Section~\ref{sec:arenas-without-constants-and-equality-tests}, we described a
         \item then System plays a move with register operation ``read'';
         \item then Environment plays one of two moves, called $=$ and $\neq$, with no register operation.
     \end{enumerate}
-    \item The \emph{library arena} is obtained by applying $\otimes$ to infinitely many copies of the constant choice arena and infinitely many copies of the  equality test arena.
+    \item The \emph{library arena} is obtained by applying $\otimes$ to infinitely many copies of the constant choice arena and infinitely\footnote{
+        Observe that the shuffle operation from Definition~\ref{def:composition-of-arenas} can also be used for infinite families of arenas.
+    } many copies of the  equality test arena. 
     \end{enumerate}
 \end{definition}
 
@@ -660,7 +673,7 @@ Note that the first move in this arena is owned by System, and we assume in Defi
 The library arena is infinite. Taking the tensor product of infinitely many copies of the two arenas ensures that the library arena satisfies the following property, which corresponds to the $!$ operation from linear logic: 
 \begin{align}\label{eq:bang-library-arena}
 \text{library arena} 
-\quad \equiv \quad 
+\ \  \equiv \ \  
 \text{(constant choice arena)} \otimes 
 \text{(equality test arena)} \otimes
  \text{(library arena)}.
@@ -702,7 +715,7 @@ Note that this  theorem can be applied to any relational structure, including un
 The benefit is that we can check if two morphisms are equal, as expressed in the following theorem, whose assumption applies to structures such as Presburger arithmetic, or the real field $(\mathbb R, +, \cdot, \leq)$.
 
 \begin{theorem}\label{thm:first-order-decidable}
-    Consider a relational structure $\atoms$, in which for every $k \in \set{0,1,\ldots}$ there are finitely many relations of arity $k$. If this structure has a decidable first-order theory, then there is an algorithm for the following problem:
+    Consider a relational structure $\atoms$, in which for every $k \in \set{0,1,\ldots}$ there are finitely many relations in the vocabulary that have arity $k$. If this structure has a decidable first-order theory, then there is an algorithm for the following problem:
     \begin{description}
         \item[Input:] Two morphisms, described by expressions using prime functions and combinators.
         \item[Question:] Are they the same morphism?
@@ -714,29 +727,30 @@ The benefit is that we can check if two morphisms are equal, as expressed in the
 \section{Further topics}
 \label{sec:further-topics}
 
-For this final section, all proofs are in the technical appendix.
-
 \subparagraph{Two-way automata.}
 
 \Cref{thm:first-order-decidable} gives us a reasonable category of single-use functions over a relational structure with a decidable first-order theory. 
-However, the latter property is not the only one needed to ensure that the category is appropriate to automata. If we want to model automata and their decision procedures, we will also need to execute certain fixpoint algorithms, as explained in~\cite{bojanczyk_slightly2018}. We illustrate this through the following theorem:
+However, the latter property is not the only one needed to ensure that the category is appropriate to automata. If we want to model automata and their decision procedures, we will also need to execute certain fixpoint algorithms, as explained in~\cite{bojanczyk_slightly2018}.
+In order to allow it, we assume that $\atoms$ is an \emph{oligomorphic} (see \cite[Definition~3.9]{bojanczyk_slightly2018}) structure.
+It is a standard assumption in the theory of sets with atoms, used to ensure that the notion of orbit-finite set is meaningful.
+Examples of oligomorphic structures include the atoms with equality only, the rational numbers with their linear order, and the Rado graph. Nonexamples include Presburger arithmetic and the real field. 
+
 \begin{theorem}\label{thm:two-way-automata}
     Let $\atoms$ be an \emph{oligomorphic} structure with a decidable first-order theory. Then the emptiness problem is decidable for single-use deterministic two-way automata over $\atoms$.
 \end{theorem}
-Oligomorphism is a standard assumption in the theory of sets with atoms~\cite{bojanczyk_slightly2018}, used to ensure that the notion of orbit-finite set is meaningful. Examples of oligomorphic structures include the atoms with equality only, the rational numbers with their linear order, and the Rado graph. Nonexamples include Presburger arithmetic and the real field. 
 
-We show that the single-use category over an oligomorphic structure $\atoms$ is \emph{traced} with respect to the coproduct $+$, and use this to model deterministic two-way automata over $\atoms$. The idea that traced monoidal categories are a natural setting for two-way automata was already noted in~\cite{hines2003categorical}.
+In the proof of this theorem, 
+we show that the single-use category over an oligomorphic structure $\atoms$ is \emph{traced} with respect to the coproduct $+$, and use this to model deterministic two-way automata over $\atoms$. The idea that traced monoidal categories are a natural setting for two-way automata comes from~\cite{hines2003categorical}.
 
 \subparagraph{Orbit-finite dimensional vector spaces.}
 
 An alternative solution for the problem of function spaces -- our central motivation in this paper -- is to use vector spaces of orbit-finite dimension. The technical tools for this were developed already in~\cite{bojanczykKM21OrbitFiniteVector}; our contribution here is mainly one of perspective, namely framing it as a symmetric monoidal closed category.
-\begin{theorem}\label{thm:orbit-finite-vector-space-closed} The category of orbit-finitely spanned vector spaces is symmetric monoidal closed, with respect to the tensor product.
+\begin{theorem}\label{thm:orbit-finite-vector-space-closed} The category of orbit-finitely spanned vector spaces \cite[Section~VI]{bojanczykKM21OrbitFiniteVector} is symmetric monoidal closed, with respect to the tensor product.
 \end{theorem}
 \begin{remark}
     A similar result was observed in~\cite[Theorem 3.8]{przybylek2024note}, but using the smaller category of vector spaces that admit an orbit-finite basis.   
 \end{remark}
-An advantage of the vector space category is its simplicity, and the fact that it is ``bigger'' in the following sense. The two solutions for function spaces discussed in this paper, namely the single-use solution and the vector space solution, sit on both sides of the classical category of orbit-finite sets, as witnessed by two faithful functors, one from the single-use category to the orbit-finite category, and one from the orbit-finite category to the vector space category. 
-
+An advantage of the vector space category is its simplicity, and the fact that it is ``bigger'' in the following sense: The two solutions for function spaces discussed in this paper, namely the single-use solution and the vector space solution, sit on both sides of the classical category of orbit-finite sets, as witnessed by two faithful functors, one from the single-use category to the orbit-finite category, and one from the orbit-finite category to the vector space category. 
 However, there are two limitations of the orbit-finitely spanned vector spaces. 
 
 First, the existence of function spaces is dependent on the choice of atoms. Theorem~\ref{thm:orbit-finite-vector-space-closed}  works when the atoms have equality only, and it also works when the atoms are equipped with a total order. This is because the dual spaces are orbit-finitely spanned in these cases, as proved in~\cite[Corollary VI.5]{bojanczykKM21OrbitFiniteVector}. However, this is no longer the case for other choices of  atoms, such as the Rado graph, see~\cite[Example 9]{bojanczykKM21OrbitFiniteVector}. This is in contrast to the single-use category, where the existence of function spaces is independent of the choice of atoms. 
