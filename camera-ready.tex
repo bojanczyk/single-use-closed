@@ -286,7 +286,7 @@ The design goal of the single-use restriction is to have orbit-finite function s
     Consider the functions of type $\atoms \to 1 + 1$, which can be seen as subsets of the atoms, with $1+1$ representing the Booleans.
     \begin{itemize}
         \item The finitely supported functions $\atoms \to 1 + 1$ correspond to the finite or co-finite subsets of $\atoms$. Therefore, the set of such functions admits an equivariant bijection with a disjoint union of two copies of the finite powerset $\powerset_{\text{fin}} \atoms$, in particular it is not orbit-finite.
-        \item There are four possible single-use functions $\atoms\to1+1$: (a) always return true; (b) always return false; (c) check for equality with some fixed atom $a$; (d) check for disequality ($\neq$) with some fixed atom $a$.  Therefore,  the set of single-use functions  admits an equivariant bijection with the orbit-finite set $1 + 1 + \atoms + \atoms$. \exampleend
+        \item There are four possible single-use functions $\atoms\to1+1$: (a) always return true; (b) always return false; (c) check for equality with some fixed atom $a$; (d) check for inequality ($\neq$) with some fixed atom $a$.  Therefore,  the set of single-use functions  admits an equivariant bijection with the orbit-finite set $1 + 1 + \atoms + \atoms$. \exampleend
     \end{itemize}
 \end{example}
 
@@ -341,7 +341,7 @@ The currying of this function, is a new function which  maps a first argument $a
 Recall that in Example~\ref{ex:first-single-use-function-space} we showed that the space of single-use functions of type $\atoms \to 1 + 1$ can be represented as $1 + 1 + \atoms + \atoms$. If we use this representation,  then the currying of the function $f$  is not single-use, because we need to compare the input atom $a$ to two constants, Mark and John. If we use the representation from Example~\ref{ex:decision-tree-types}, then the corresponding type will be $\atoms \otimes (1 + 1)^2$, but the problems with currying will persist. \exampleend
 \end{example}
 
-For similar reasons, the function space we proposed above does not support function composition either; it cannot be used to convert automata into single-use monoids since the resulting monoid would need to use function composition as its monoid operation.\footnote{This problem is solved in~\cite{bojanczykstefanski2020} and~\cite{stefanski-phd} in a different way, namely by showing that every orbit-finite monoid necessarily divides a single-use monoid, using a  Krohn-Rhodes construction. However, this construction is difficult and delicate, in particular it does not work for atoms that have more structure than equality alone. In contrast, the proposal that we give in this paper works for other kinds of atoms, as discussed in \Cref{sec:further-topics}. }
+For similar reasons, the function space we proposed above does not support function composition either; it cannot be used to convert automata into single-use monoids since the resulting monoid would need to use function composition as its monoid operation.\footnote{This problem is solved in~\cite{bojanczykstefanski2020} and~\cite{stefanski-phd} in a different way, namely by showing that every orbit-finite monoid necessarily divides a single-use monoid, using a  Krohn-Rhodes construction. However, this construction is difficult and delicate, in particular it does not work for atoms that have more structure than equality alone. In contrast, the proposal that we give in this paper works for other kinds of atoms, as discussed in \Cref{sec:beyond-equality}. }
 
 \subsection{Linear types and single-use functions on them}
 \label{sec:linear-types-and-single-use-functions}
@@ -357,13 +357,13 @@ Under this definition, the problems from Example~\ref{ex:currying-not-single-use
 \begin{definition}[Linear types]\label{def:datatypes}
     A \emph{linear type} is any expression constructed from the atomic types $1$ and $\atoms$ using three\footnote{
     We set up our type system without using the multiplicative disjunction $\rotatebox[origin=c]{180}{\&}$ of linear logic.
-    This is a common pracice in linear type systems \cite{wadler1990linear}, as they are based on intuitionistic linear logic,
-    rather than classical linear logic. It is also worth mentioning that our type system might have been also described an \emph{affine} type system \cite{asperti1998light},
+    This is a common practice in linear type systems, as they are often based on intuitionistic linear logic,
+    rather than classical linear logic (see e.g.~\cite{Abramsky93}). It is also worth mentioning that our type system is in fact \emph{affine}~\cite[\S1.2.1]{LLSS},
     as we are going to allow discarding the unused values of $\atoms$. However, since there is no risk of confusion, 
     we have decided to use the name \emph{linear types} for the sake of simplicity.} binary type constructors $+, \&$ and $\otimes$.
 \end{definition}
 In our linear types, it is only the products that are differentiated, while  $+$ comes in only one version. 
-    Here is the intuitive explanation of the difference between the two kinds of products, following Girard~\cite[p.~2]{girard1995advances}. Having a pair $x \otimes y$ is like having the ability of using both components $x$ and $y$. On the other hand, having a pair $x \& y$ is like having the ability to use one of the two components, at our choice, but not both at once. For example, the input type of the equality test will be $\atoms \otimes \atoms$ not $\atoms \& \atoms$, since the test will need to consume both arguments. This intuition can only go so far; for example, it is not entirely clear what ``our choice'' means. We revisit this intuition in \Cref{sec:game-semantics}, where game semantics will be used to indicate who makes which choices. 
+    Here is the intuitive explanation of the difference between the two kinds of products, following Girard~\cite[\S1.1.2]{LLSS}. Having a pair $x \otimes y$ is like having the ability of using both components $x$ and $y$. On the other hand, having a pair $x \& y$ is like having the ability to use one of the two components, at our choice, but not both at once. For example, the input type of the equality test will be $\atoms \otimes \atoms$ not $\atoms \& \atoms$, since the test will need to consume both arguments. This intuition can only go so far; for example, it is not entirely clear what ``our choice'' means. We revisit this intuition in \Cref{sec:game-semantics}, where game semantics will be used to indicate who makes which choices. 
 
 
 
@@ -451,9 +451,9 @@ The main technical result of this paper is that the category of single-use sets 
     $h :  X \to (\funspace V W)$
     such that the following diagram commutes:
     \[
-    \begin{tikzcd}
+    \begin{tikzcd}[column sep=large]
     X \otimes V 
-    \arrow[r,"h \otimes id"]
+    \arrow[r,"h \otimes \mathrm{id}"]
     \arrow[dr,"f"']
     &
     (\funspace V W) \otimes V
@@ -464,7 +464,7 @@ The main technical result of this paper is that the category of single-use sets 
     \]
 \end{theorem}
 
-The above theorem is the main technical contribution of this paper. The difficulty in its proof is finding a representation of the single-use  functions that is rich enough to capture all functions, but simple enough to be described by a linear type (in particular, the corresponding set will be orbit-finite). In  Section~\ref{sec:single-use-functions-over-polynomial-orbit-finite-sets}, when the types did not have $\&$, we could pull off a relatively simple construction, which was possible mainly due to the strong distributivity rules that allowed converting each type into a normal like $\atoms^{n_1} + \cdots + \atoms^{n_\ell}$. In the presence of $\&$, the distributivity rules are not as strong, and the way in which a single-use program can interact with its input is rather subtle. 
+The above theorem is the main technical contribution of this paper. The difficulty in its proof is finding a representation of the single-use  functions that is rich enough to capture all functions, but simple enough to be described by a linear type (in particular, the corresponding set will be orbit-finite). In  Section~\ref{sec:single-use-functions-over-polynomial-orbit-finite-sets}, when the types did not have `$\&$', we could pull off a relatively simple construction, which was possible mainly due to the strong distributivity rules that allowed converting each type into a normal like $\atoms^{n_1} + \cdots + \atoms^{n_\ell}$. In the presence of `$\&$', the distributivity rules are not as strong, and the way in which a single-use program can interact with its input is rather subtle. 
 Our solution is presented in \Cref{sec:game-semantics}.
 
 \section{Quotienting by partial equivalence relations}
@@ -479,7 +479,7 @@ Define a \emph{partial equivalence relation} to be a relation that is symmetric 
     \begin{itemize}
     \item Objects are pairs (linear type $X$, equivariant partial equivalence relation on $\sem X$);
     \item The set of morphisms between objects $(X,\sim_X)$ and $(Y,\sim_Y)$ is the quotient of the set of single-use functions from $X$ to $Y$ by
-    \[ f \sim g :\iff \left[ \forall x,x' \in \sem X, \; x \sim_X x' \Rightarrow f(x) \sim_Y g(x') \right] \]
+    \[ f \sim g \quad:\Longleftrightarrow\quad  \forall x,x' \in \sem X, \; x \sim_X x' \Rightarrow f(x) \sim_Y g(x') \]
     \end{itemize}
 \end{definition}
 We can then define the function space object from $(X,\sim_X)$ to $(Y,\sim_Y)$ as $(X\Rightarrow Y, \sim_{X\Rightarrow Y})$ where two elements of $X\Rightarrow Y$ are related by the partial equivalence relation $\sim_{X\Rightarrow Y}$ when the single-use functions they represent are related by the above-defined $\sim$. The quotiented single-use category is also equipped with a tensor product $\otimes$ on its objects.
@@ -509,7 +509,7 @@ Before giving a formal definition of game semantics, we give simple example of t
 
 \begin{example}\label{ex:amp-otimes-distr}
     Consider the two types $X \otimes (Y \& Z)$ and $(X \otimes Y) \& (X \otimes Z)$.
-    Among the prime functions in Table~\ref{fig:prime-morphisms-with-with}, we find distributivity in the direction $\rightarrow$, but not in the direction $\leftarrow$. We explain this asymmetry using the interaction between two players System and Enviroment\footnote{
+    Among the prime functions in Table~\ref{fig:prime-morphisms-with-with}, we find distributivity in the direction $\rightarrow$, but not in the direction $\leftarrow$. We explain this asymmetry using the interaction between two players System and Environment\footnote{
         Observe that in Table~\ref{fig:prime-morphisms-without-with} the $(+, \otimes)$-distributivity is also only given in one direction. In that case the inverse is, in fact, a single-use function, as it can be constructed from prime functions.
     }.
 
@@ -560,7 +560,7 @@ Conditions \ref{item:sys-ext} and \ref{item:env-ext}, which are standard in game
 Environment has no moves to play.  Let us now comment on the last two conditions, which are not standard.
 \begin{itemize}
     \item The fourth condition is motivated by the idea that we study ``finite'' types,  and there will be no need for unbounded computations\footnote{This condition is only meaningful, if there 
-          are arenas that admit plays of unbounded lenght. Since, in this section, all the arenas will be finite this condition will be vacously true. It will only become relevant in 
+          are arenas that admit plays of unbounded length. Since, in this section, all the arenas will be finite this condition will be vacuously true. It will only become relevant in 
             Section~\ref{sec:arenas-with-constants-and-equality-tests}, once we introduce arenas with constants and equality tests.}
     \item The last condition will be called the  \emph{immediate read condition}. It ensures that there is matching between ``read'' and ``write'' moves in plays that do not end with write. Since ``write'' will always be owned by Environment, the immediate read condition will ensure a matching between ``write'' and ``read'' moves.
 \end{itemize}
@@ -655,9 +655,9 @@ In Section~\ref{sec:arenas-without-constants-and-equality-tests}, we described a
         \item then System plays a move with register operation ``read'';
         \item then Environment plays one of two moves, called $=$ and $\neq$, with no register operation.
     \end{enumerate}
-    \item The \emph{library arena} is obtained by applying $\otimes$ to infinitely many copies of the constant choice arena and infinitely\footnote{
+    \item The \emph{library arena} is obtained by applying $\otimes$ to infinitely\footnote{
         Observe that the shuffle operation from Definition~\ref{def:composition-of-arenas} can also be used for infinite families of arenas.
-    } many copies of the  equality test arena. 
+    } many copies of the constant choice arena and infinitely many copies of the  equality test arena. 
     \end{enumerate}
 \end{definition}
 
@@ -733,7 +733,7 @@ The benefit is that we can check if two morphisms are equal, as expressed in the
 However, the latter property is not the only one needed to ensure that the category is appropriate to automata. If we want to model automata and their decision procedures, we will also need to execute certain fixpoint algorithms, as explained in~\cite{bojanczyk_slightly2018}.
 In order to allow it, we assume that $\atoms$ is an \emph{oligomorphic} (see \cite[Definition~3.9]{bojanczyk_slightly2018}) structure.
 It is a standard assumption in the theory of sets with atoms, used to ensure that the notion of orbit-finite set is meaningful.
-Examples of oligomorphic structures include the atoms with equality only, the rational numbers with their linear order, and the Rado graph. Nonexamples include Presburger arithmetic and the real field. 
+Examples of oligomorphic structures include the atoms with equality only, the rational numbers with their linear order, and the Rado graph. Non-examples include Presburger arithmetic and the real field. 
 
 \begin{theorem}\label{thm:two-way-automata}
     Let $\atoms$ be an \emph{oligomorphic} structure with a decidable first-order theory. Then the emptiness problem is decidable for single-use deterministic two-way automata over $\atoms$.
@@ -759,9 +759,9 @@ A second limitation is that unlike the single-use category (cf.\ \Cref{thm:two-w
 
 \subparagraph{Related work: categories and $\lambda$-calculus.}
 
-There have been several works using category theory to generalize classical operations on automata, such as the coalgebraic ``generalized powerset construction''~\cite{DBLP:journals/corr/abs-1302-1046}. The closest to the philosophy that this paper might be the work of Colcombet and Petrişan~\cite{colcombet2020automata}: it introduces a setting where automata over different categories may be studied and compared (see~\cite{ColcombetPS21,Aristote24} for applications). Within this setting, Nguy{\~{ê}}n and Pradic have investigated some properties of automata over symmetric monoidal closed categories~\cite[Sections~1.2.3~and~4.7--4.8]{titoPhD}.
+There have been several works using category theory to generalize classical operations on automata, such as the coalgebraic ``generalized powerset construction''~\cite{DBLP:journals/corr/abs-1302-1046}. The closest to the philosophy that this paper might be the work of Colcombet and Petrişan~\cite{colcombet2020automata}: it introduces a setting where automata over different categories may be studied and compared (see e.g.~\cite{Aristote24} for applications). Within this setting, Pradic and the second author have investigated some properties of automata over symmetric monoidal closed categories~\cite[Sections~1.2.3~and~4.7--4.8]{titoPhD}.
 
-The latter emerged as part of their research on ``implicit automata''~\cite{IATLC,IATLC2,titoPhD,pradic2024implicit}, which is about relating the expressive power of automata and typed $\lambda$-calculi. In~\cite{IATLC2,titoPhD}, a monoidal closed category of single-use assignments on string-valued registers is built and used to relate a register-based string transducer model to a $\lambda$-calculus with linear types. Indeed, symmetric monoidal closed categories are famous for providing denotational semantics for the linear $\lambda$-calculus. Similarly, our results here could serve to characterize the languages of words with atoms from~\cite{bojanczykstefanski2020} via some typed $\lambda$-calculus.
+The latter emerged as part of their research on ``implicit automata''~\cite{IATLC,titoPhD,pradic2024implicit}, which is about relating the expressive power of automata and typed $\lambda$-calculi. In~\cite[Chapter~4]{titoPhD}, a monoidal closed category of single-use assignments on string-valued registers is built and used to relate a register-based string transducer model to a $\lambda$-calculus with linear types. Indeed, symmetric monoidal closed categories are famous for providing denotational semantics for the linear $\lambda$-calculus. Similarly, our results here could serve to characterize the languages of words with atoms studied by the first and third author in~\cite{bojanczykstefanski2020} via some typed $\lambda$-calculus.
 
 Conversely, our \Cref{thm:single-use-closed} might also be provable by representing single-use functions as $\lambda$-terms (or programs in some richly structured syntactic formalism) instead of strategies over games. Indeed, it is a classical fact that a simple type is inhabited by finitely many linear $\lambda$-terms up to $\beta$-conversion (when there are no primitive constants), and variations on this fact have been used in the literature to relate automata and $\lambda$-calculus~\cite{IATLC,LambdaTransducer}.
 
