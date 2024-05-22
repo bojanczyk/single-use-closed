@@ -1,0 +1,183 @@
+\documentclass[a4paper,UKenglish,cleveref, autoref, thm-restate]{lipics-v2021}
+
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{graphicx}
+\usepackage{xspace}
+\usepackage{color} 
+\usepackage[all]{xy}
+\usepackage{tikz-cd}
+\usepackage{hyperref}
+\usepackage{mathtools}
+\usepackage{macros}
+\usepackage{booktabs}
+\usepackage{relsize} 
+\usepackage{float}
+
+
+\bibliographystyle{plainurl}% the mandatory bibstyle
+
+
+\title{Function spaces for orbit-finite sets} %TODO Please add
+
+
+
+\author{Mikołaj Bojańczyk}{University of Warsaw, Poland \and \url{https://www.mimuw.edu.pl/~bojan/}}{bojan@mimuw.edu.pl}{https://orcid.org/0000-0002-7758-1072}{}%{(Optional) author-specific funding acknowledgements}
+
+\author{Lê Thành Dũng (Tito) Nguy\~{\^{e}}n}{École normale supérieure de Lyon, France \and \url{https://nguyentito.eu/}}{nltd@nguyentito.eu}{https://orcid.org/0000-0002-6900-5577}{}
+
+
+\author{Rafał Stefański}{University of Warsaw, Poland}{rafal.stefanski@mimuw.edu.pl}{https://orcid.org/0000-0002-8439-4056}{}%{(Optional) author-specific funding acknowledgements}
+
+
+\authorrunning{M.~Bojańczyk, L.~T.~D.~Nguy\~{\^{e}}n and R.~Stefański} %TODO mandatory. First: Use abbreviated first/middle names. Second (only in severe cases): Use first author plus 'et al.'
+
+\Copyright{Mikołaj Bojańczyk, Lê Thành Dũng Nguy\~{\^{e}}n and Rafał Stefański} %TODO mandatory, please use full first names. LIPIcs license is "CC-BY";  http://creativecommons.org/licenses/by/3.0/
+
+\ccsdesc[500]{Theory of computation~Formal languages and automata theory}
+
+\keywords{Orbit-finite sets, automata, linear types, game semantics} %TODO mandatory; please add comma-separated list of keywords
+
+%\category{Track B: Automata, Logic, Semantics, and Theory of Programming}
+
+%\relatedversion{} %optional, e.g. full version hosted on arXiv, HAL, or other respository/website
+\relatedversiondetails[linktext={arXiv:2404.05265}]{Full version with appendix}{https://arxiv.org/abs/2404.05265} %linktext and cite are optional
+
+%\supplement{}%optional, e.g. related research data, source code, ... hosted on a repository like zenodo, figshare, GitHub, ...
+%\supplementdetails[linktext={opt. text shown instead of the URL}, cite=DBLP:books/mk/GrayR93, subcategory={Description, Subcategory}, swhid={Software Heritage Identifier}]{General Classification (e.g. Software, Dataset, Model, ...)}{URL to related version} %linktext, cite, and subcategory are optional
+
+%\funding{(Optional) general funding statement \dots}%optional, to capture a funding statement, which applies to all authors. Please enter author specific funding statements as fifth argument of the \author macro.
+
+\acknowledgements{L.~T.~D.\ Nguy\~{\^{e}}n would like to thank Clovis Eberhart and Cécilia Pradic for their ongoing collaboration on ``implicit automata for data words'' (cf.~\cite[\S1.4.4]{titoPhD}), which inspired some ideas in this paper.
+                  R. Stefański would like to thank Samson Abramsky for introducing him to the beautiful world of game semantics and suggesting to study it in the context of this paper.}%optional
+
+\nolinenumbers %uncomment to disable line numbering
+\hideLIPIcs
+
+
+%Editor-only macros:: begin (do not touch as author)%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\EventEditors{Karl Bringmann, Martin Grohe, Gabriele Puppis, and Ola Svensson}
+\EventNoEds{4}
+\EventLongTitle{51st International Colloquium on Automata, Languages, and Programming (ICALP 2024)}
+\EventShortTitle{ICALP 2024}
+\EventAcronym{ICALP}
+\EventYear{2024}
+\EventDate{July 8--12, 2024}
+\EventLocation{Tallinn, Estonia}
+\EventLogo{}
+\SeriesVolume{297}
+\ArticleNo{158}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\begin{document}
+
+
+\newcommand{\loli}{\multimap}
+
+
+\maketitle 
+\begin{abstract}
+    Orbit-finite sets are a generalisation of finite sets, and as such support many operations allowed for finite sets, such as pairing, quotienting, or taking subsets. However, they do not support function spaces, i.e.~if $X$ and $Y$ are orbit-finite sets, then the space of finitely supported functions from $X$ to $Y$ is not orbit-finite. We propose a solution to this problem inspired by linear logic.
+\end{abstract}
+
+\subparagraph{Orbit-finite sets.}
+
+The class of orbit-finite sets contains all finite sets and some infinite sets, but still shares some properties with the class of finite sets.  The idea, which dates back to Fraenkel--Mostowski models of set theory,  is to begin with an infinite set $\atoms$ of \emph{atoms} or \emph{urelements}. We think of the atoms as being names, such as Eve or John, and atoms can only be compared with respect to equality. Intuitively speaking, an  orbit-finite set is a set  that can be constructed using the atoms, such as $\atoms^2$ or $\atoms^*$, subject to the constraint that there are finitely many elements up to  renaming atoms. For example, $\atoms^2$ is orbit-finite because it has two elements up to renaming atoms, namely (John, John) and (John, Eve), while $\atoms^*$ is not orbit-finite, because the length of a sequence is invariant under renaming atoms, and there are infinitely many possible lengths. For a survey on orbit-finite sets, see~\cite{bojanczyk_slightly2018}.
+
+The notion of orbit-finiteness can be seen as an attempt to find an appropriate notion of finiteness for the  nominal sets of Gabbay and Pitts~\cite{PittsAM:nomsns} (which have also been used to handle syntax with binders).  This attempt emerged from the study of computational models such as monoids~\cite{bojanczykNominalMonoids2013} and automata~\cite{bojanczykAutomataTheoryNominal2014} over infinite alphabets. Let us illustrate orbit-finiteness using an automaton example.
+
+\begin{example}[An orbit-finite automaton]\label{ex:first-letter-repeats}
+    Let  $L \subseteq \atoms^*$ be the language of  words in which the letter from the first position does not appear again. This language contains John $\cdot$ Mark $\cdot$ Mark $\cdot$ Eve, because John does not reappear, but it does not contain John $\cdot$ Mark $\cdot$ John. To recognize this language, we can use a deterministic automaton, which uses its state to remember the first letter. In this automaton, the input alphabet is $\Sigma = \atoms$ and  the state space is $Q = 1 + 1 + \atoms$. In this state space, there are two special states, namely the initial state and a rejecting error state, and furthermore there is one state for each atom $a \in \atoms$, which represents a situation where the first letter was $a$ but it has not been seen again yet. This state space is infinite; but it is orbit-finite, since each of the three components in $Q$ represents a single orbit.\exampleend
+\end{example}
+
+Orbit-finite sets have many advantages, which ensure that they are a good setting for automata theory, and discrete mathematics in general. For example, an orbit-finite set can be represented in a finite way~\cite{bojanczyk_slightly2018}, which ensures that it becomes meaningful to talk about algorithms that input orbit-finite sets, such as an emptiness check for an automaton. Also, orbit-finite sets are closed under taking disjoint unions and products, which ensures that natural automata constructions, such as the union of two nondeterministic automata or the product of two deterministic automata can be performed.
+%  (Closure of orbit-finite sets under products is not immediately obvious, for example the set $\atoms$ has one orbit, but the set $\atoms^3$ has five orbits.)
+
+However, orbit-finite sets do not have all the closure properties of finite sets. Notably missing is the powerset operation, and more generally taking function spaces. For example, the powerset of $\atoms$ is not orbit-finite, since already the finite subsets give infinitely many orbits (two finite subsets of different sizes will be in different orbits). The lack of powersets means that one cannot do the subset construction from automata theory, and in particular deterministic and nondeterministic automata are not equivalent. This non-equivalence was known from the early days of automata for infinite alphabets~\cite{kaminskiFiniteMemoryAutomata1994}, and in fact, some decision problems, such as equivalence, are decidable for deterministic automata but undecidable for nondeterministic automata~\cite{nevenFiniteStateMachines2004}. Another construction that fails is converting a deterministic automaton into a monoid~\cite[p.~221]{bojanczykNominalMonoids2013}; this is because function spaces on orbit-finite sets are no longer orbit-finite, as explained in the following example.
+
+\begin{example}[Failure of the monoid construction]\label{ex:first-letter-repeats-monoid}
+    Let us show that the  automaton from Example~\ref{ex:first-letter-repeats} cannot be converted into a monoid. The standard construction would be to define the monoid as the subset $M \subseteq Q \to Q$ of all state transformations, namely the subset generated by individual input letters. 
+    Unfortunately, this construction does not work. This is because in order  for  two input words to give the same state transformation, they need to have the same set of letters that appear in them. In particular, the corresponding set of set transformations is not orbit-finite, for the same reason as why the finite powerset is not orbit-finite. Not only does the standard construction not work, but also this language is not recognized by any orbit-finite monoid.\exampleend
+\end{example}
+
+\subparagraph{The single-use restriction.}
+An attempt to address this problem was provided in~\cite{stefanski-phd,bojanczykstefanski2020}, based on \emph{single-use} functions. The idea, which originates in linear types and linear logic,  is to restrict the functions so that they use each argument at most once. For example, consider the following two functions that input atoms and output Booleans:
+\begin{align*}
+a \in \atoms \mapsto 
+\begin{cases}
+    \text{true} & \text{if $a=$ John}\\
+    \text{false} & \text{otherwise}
+\end{cases}
+\qquad \qquad 
+a \in \atoms \mapsto 
+\begin{cases}
+    \text{true} & \text{if $a=$ John or $a = $Eve}\\
+    \text{false} & \text{otherwise}
+\end{cases}
+\end{align*}
+Intuitively, the first function is single-use, since it compares the input atom to John only, while the second function is not single-use, since it requires two comparisons, with John and Eve. Here is another example, which shows that the problems with the monoid construction from Example~\ref{ex:first-letter-repeats-monoid} could be blamed on a violation of the single-use condition.
+\begin{example}
+    Consider  the transition function of the automaton in Example~\ref{ex:first-letter-repeats}, which inputs a state in $1 + 1 + \atoms$ together with an input letter from $\atoms$, and returns a new state.  This function is not single use. Indeed, if the state is in $\atoms$, then the transition function compares it for equality with the input letter; but if the comparison returns true, another copy of the old state must be kept as the new state for future comparisons. \exampleend
+\end{example}
+
+If one restricts attention to functions that are single-use, much of the usual robustness of automata theory is recovered, with deterministic automata being equivalent to monoids, and both being equivalent to two-way deterministic automata~\cite{bojanczykstefanski2020}.
+
+Despite the success of the single-use restriction in solving automata problems, one would ideally prefer a more principled approach, in which instead of defining single-use automata, we would define a more general object, namely single-use sets and functions. Then the definitions of  automata and monoids, as well theorems speaking about them, should arise automatically as a result of suitable closure properties of the sets and functions.
+
+This approach was pursued in~\cite{stefanski-phd}, in which a \emph{category} of orbit-finite sets with single-use functions was proposed. In this corresponding category,  one can represent the set of all single-use functions between two orbit-finite sets $X$ and $Y$ as a new set, call it $X \Rightarrow Y$, which is  also orbit-finite.  However, as we will see later in this paper, this proposal is not entirely satisfactory, since it fails to account for standard operations that one would like to perform on function spaces, most importantly partial application (currying). In the language of category theory, the proposal from~\cite{stefanski-phd} failed to be a monoidal closed category.
+
+
+ \subparagraph{Contributions.}
+ The main contribution of this work is to propose a notion of single-use sets and functions, which extends the proposal from~\cite{stefanski-phd}, but which is rich enough to be closed under taking function spaces. More formally, we propose a category of single-use functions between \emph{linear types} that denote orbit-finite sets with additional metadata, and we prove that:
+ \begin{theorem}\label{thm:single-use-closed}
+    Let $V$ and $W$ be objects (i.e.~linear types). There exists an object, denoted by  $\funspace V W$, and a morphism (i.e.~a single-use function)
+    $\mathrm{eval} : (\funspace V W) \otimes V \to  W$
+    with the following property. For every morphism
+    $f : {X \otimes V} \to  W$
+    there is a (\emph{not necessarily unique}) morphism
+    $h :  X \to (\funspace V W)$
+    such that the following diagram commutes:
+    \[
+    \begin{tikzcd}[column sep=large]
+    X \otimes V
+    \arrow[r,"h \otimes \mathrm{id}"]
+    \arrow[dr,"f"']
+    &
+    (\funspace V W) \otimes V
+    \arrow[d,"\mathrm{eval}"] \\
+    &
+    W
+    \end{tikzcd}
+    \]
+\end{theorem}
+In other words, our symmetric monoidal category is \emph{weakly closed}. To guarantee uniqueness in the universal property, and thus get an actual symmetric monoidal closed category, one can perform a quotient by partial equivalence relations.
+
+The main idea is to extend the type system from \cite{stefanski-phd} with the additive conjunction `$\&$' of linear logic. Thanks to the distinction between $X \otimes Y$ (in \cite{stefanski-phd} denoted as $X \times Y$) and $X \& Y$, the function space can be built so that the appropriate operations on functions, namely application and currying, can be implemented in a single-use way. Note that this function space is a derived notion, not a type constructor in our syntax; indeed, our linear types are all ``first-order'', so that they denote orbit-finite sets in a straightforward way:
+\begin{align*}
+    \qquad \sem{1} = 1
+\quad
+\sem{\atoms} = \atoms
+\quad
+\sem{X+Y} = \sem X + \sem Y
+\quad
+\sem{X \otimes Y} =
+\sem{X \& Y} = \sem X \times \sem Y.
+\end{align*}
+Our construction of weak function spaces uses \emph{game semantics} to represent single-use functions as first-order data. More precisely, it is closely based on the ``simple games'' exposed in e.g.~\cite{abramsky2013semantics,Hyland1997}. However, as far as we know, it is an original idea to have an infinite but orbit-finite base type $\atoms$, and to observe that all constructions in game semantics are consistent with orbit-finiteness. We believe that the resulting category deserves further study, and that it is an interesting and non-trivial example of a category representing ``finite'' objects.
+
+\subparagraph{Related work: categories and $\lambda$-calculus.}
+
+There have been several works using category theory to generalize classical operations on automata, such as the coalgebraic ``generalized powerset construction''~\cite{DBLP:journals/corr/abs-1302-1046}. The closest to the philosophy that this paper might be the work of Colcombet and Petrişan~\cite{colcombet2020automata}: it introduces a setting where automata over different categories may be studied and compared (see e.g.~\cite{Aristote24} for applications). Within this setting, Pradic and the second author have investigated some properties of automata over symmetric monoidal closed categories~\cite[Sections~1.2.3~and~4.7--4.8]{titoPhD}.
+
+The latter emerged as part of their research on ``implicit automata''~\cite{IATLC,titoPhD,pradic2024implicit}, which is about relating the expressive power of automata and typed $\lambda$-calculi. In~\cite[Chapter~4]{titoPhD}, a monoidal closed category of single-use assignments on string-valued registers is built and used to relate a register-based string transducer model to a $\lambda$-calculus with linear types. Indeed, symmetric monoidal closed categories are famous for providing denotational semantics for the linear $\lambda$-calculus. Similarly, our results here could serve to characterize the languages of words with atoms studied by the first and third author in~\cite{bojanczykstefanski2020} via some typed $\lambda$-calculus.
+
+Conversely, our \Cref{thm:single-use-closed} might also be provable by representing single-use functions as $\lambda$-terms (or programs in some richly structured syntactic formalism) instead of strategies over games. Indeed, it is a classical fact that a simple type is inhabited by finitely many linear $\lambda$-terms up to $\beta$-conversion (when there are no primitive constants), and variations on this fact have been used in the literature to relate automata and $\lambda$-calculus~\cite{IATLC,LambdaTransducer}.
+
+
+\bibliography{bib}
+
+
+
+\end{document}
